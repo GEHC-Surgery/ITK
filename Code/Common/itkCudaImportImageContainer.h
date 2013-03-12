@@ -23,6 +23,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include <cuda_runtime.h>
 #include <utility>
 
+//#define CITK_DEBUG_ENABLED 1
+
 namespace itk
 {
 
@@ -236,7 +238,9 @@ private:
   bool                 m_ContainerManageMemory;
   bool                 m_ContainerManageDevice;
 
+#ifdef CITK_DEBUG_ENABLED
   int                  serial;
+#endif
 
   mutable enum memoryStatus{
     UNKNOWN,

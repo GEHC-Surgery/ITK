@@ -25,6 +25,12 @@
 #include <string.h>
 #include <time.h>
 
+#ifdef CITK_DEBUG_ENABLED
+#define CITK_DEBUG(x) std::cout << "CITK: " << serial << ": " x << std::endl
+#else
+#define CITK_DEBUG(x)
+#endif
+
 namespace itk
 {
 
@@ -32,7 +38,9 @@ template <typename TElementIdentifier, typename TElement>
 CudaImportImageContainer<TElementIdentifier , TElement>
 ::CudaImportImageContainer()
 {
-  //serial = (int)(rand()/10000000);
+#ifdef CITK_DEBUG_ENABLED
+  serial = (int)(rand()/10000000);
+#endif
   m_ImageLocation = UNKNOWN;
   m_DevicePointer = 0;
   m_ImportPointer = 0;
@@ -60,7 +68,7 @@ void
 CudaImportImageContainer< TElementIdentifier , TElement >
 ::Reserve(ElementIdentifier size)
 {
-  //std::cout << serial <<" Reserving CPU " << std::endl;
+  CITK_DEBUG(<< "Reserving CPU");
 
   /* Parent Class */
   if (m_ImportPointer)
@@ -95,7 +103,7 @@ CudaImportImageContainer< TElementIdentifier , TElement >
     this->Modified();
     }
   m_ImageLocation = CPU;
-  //std::cout << serial << " Reserved CPU " << std::endl;
+  CITK_DEBUG(<< "Reserved CPU ");
 }
 
 /**
@@ -107,13 +115,14 @@ void
 CudaImportImageContainer< TElementIdentifier , TElement >
 ::ReserveGPU(ElementIdentifier size)
 {
-  //std::cout << serial <<" Reserving CPU " << std::endl;
+  CITK_DEBUG(<< "Reserving GPU ");
 
   /* Parent Class */
   if (m_DevicePointer)
     {
     if (size > m_Capacity)
       {
+      CITK_DEBUG(<< "Reserving in new GPU buffer because " << size << " > " << m_Capacity);
       TElement* temp = this->AllocateGPUElements(size);
       // only copy the portion of the data used in the old buffer
 
@@ -130,6 +139,7 @@ CudaImportImageContainer< TElementIdentifier , TElement >
       }
     else
       {
+      CITK_DEBUG(<< "GPU buffer already big enough: " << size << " <= " << m_Capacity);
       m_Size = size;
       this->Modified();
       }
@@ -143,7 +153,7 @@ CudaImportImageContainer< TElementIdentifier , TElement >
     this->Modified();
     }
   m_ImageLocation = GPU;
-  //std::cout << serial << " Reserved CPU " << std::endl;
+  CITK_DEBUG(<< "Reserved GPU ");
 }
 
 
@@ -156,7 +166,7 @@ void
 CudaImportImageContainer< TElementIdentifier , TElement >
 ::Squeeze(void)
 {
-  //std::cout << serial << " Squeezing CPU " << std::endl;
+  CITK_DEBUG(<< "Squeezing CPU");
 
   /* Parent Code */
   if (m_ImportPointer)
@@ -178,7 +188,7 @@ CudaImportImageContainer< TElementIdentifier , TElement >
       }
     }
 
-  //std::cout << serial << " Squeezed CPU " << std::endl;
+  CITK_DEBUG(<< "Squeezed CPU");
 }
 
 
@@ -191,7 +201,7 @@ void
 CudaImportImageContainer< TElementIdentifier , TElement >
 ::Initialize(void)
 {
-  //std::cout << serial << " Initializing CPU " << std::endl;
+  CITK_DEBUG(<< "Initializing CPU");
 
   /* Parent code */
   if (m_ImportPointer)
@@ -203,7 +213,7 @@ CudaImportImageContainer< TElementIdentifier , TElement >
     this->Modified();
     }
 
-  //std::cout << serial << " Initialized CPU " << std::endl;
+  CITK_DEBUG(<< "Initialized CPU");
 }
 
 
@@ -287,7 +297,7 @@ TElement* CudaImportImageContainer< TElementIdentifier , TElement >
   cudaMalloc( &data, sizeof(TElement)*size);
   itkExceptionOnCudaErrorMacro(<< "Failed to allocate GPU memory for image.");
 
-  //std::cout << "CITK: " << serial << " AllocateGPUElements: " << static_cast<void *>(data) << std::endl;
+  CITK_DEBUG(<< "AllocateGPUElements: " << static_cast<void *>(data));
   return data;
 
 }
@@ -341,6 +351,8 @@ CudaImportImageContainer< TElementIdentifier , TElement >
 {
 
   AllocateGPU();
+  CITK_DEBUG(<< "Copying to GPU (" << static_cast<void *>(m_DevicePointer)
+             << " <-- " << static_cast<void *>(m_ImportPointer) << ")");
   cudaMemcpy(m_DevicePointer, m_ImportPointer,
              sizeof(TElement)*m_Size, cudaMemcpyHostToDevice);
   itkExceptionOnCudaErrorMacro(<< "Failed to copy CPU buffer to GPU");
@@ -354,6 +366,8 @@ CudaImportImageContainer< TElementIdentifier , TElement >
 ::CopyToCPU() const
 {
   AllocateCPU();
+  CITK_DEBUG(<< "Copying to CPU (" << static_cast<void *>(m_ImportPointer)
+             << " <-- " << static_cast<void *>(m_DevicePointer) << ")");
   cudaMemcpy(m_ImportPointer, m_DevicePointer,
              sizeof(TElement)*m_Size, cudaMemcpyDeviceToHost);
   itkExceptionOnCudaErrorMacro(<< "Failed to copy GPU buffer to CPU");
