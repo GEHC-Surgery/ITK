@@ -5,7 +5,7 @@ ENDIF (NOT ITK_USE_REVIEW_STATISTICS)
 
 SUBDIRS(FEM NeuralNetworks)
 
-ADD_LIBRARY(ITKNumerics
+CUDA_ADD_LIBRARY(ITKNumerics
   itkAmoebaOptimizer.cxx
   itkCacheableScalarFunction.cxx
   itkCompositeValleyFunction.cxx

@@ -785,6 +785,13 @@ ENDIF(NOT ITK_INSTALL_NO_DEVELOPMENT)
 # The entire ITK tree should use the same include path, except for the
 # Wrapping directory.
 
+#include CUDA dependency
+FIND_PACKAGE(CUDA QUIET REQUIRED)
+
+IF(NOT CUDA_FOUND)
+   MESSAGE(FATAL_ERROR "CUDA could not be located on your system.")
+ENDIF(NOT CUDA_FOUND)
+
 # Create the list of include directories needed for ITK header files.
 INCLUDE(${ITK_SOURCE_DIR}/itkIncludeDirectories.cmake)
 
@@ -894,4 +901,3 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     ENDIF("${COMP_OPTION}" STREQUAL "-ffloat-store")
   ENDFOREACH(COMP_OPTION)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-

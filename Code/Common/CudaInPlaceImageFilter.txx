@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    itkInPlaceImageFilter.txx
+  Module:    CudaInPlaceImageFilter.txx
   Language:  C++
   Date:      $Date$
   Version:   $Revision$
@@ -9,18 +9,15 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-  Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkInPlaceImageFilter_txx
-#define __itkInPlaceImageFilter_txx
+#ifndef __itkCudaInPlaceImageFilter_txx
+#define __itkCudaInPlaceImageFilter_txx
 
-#include "itkInPlaceImageFilter.h"
+#include "CudaInPlaceImageFilter.h"
 
 namespace itk
 {
@@ -29,8 +26,8 @@ namespace itk
  *
  */
 template <class TInputImage, class TOutputImage>
-InPlaceImageFilter<TInputImage, TOutputImage>
-::InPlaceImageFilter()
+CudaInPlaceImageFilter<TInputImage, TOutputImage>
+::CudaInPlaceImageFilter()
   : m_InPlace(true)
 {
 }
@@ -39,16 +36,16 @@ InPlaceImageFilter<TInputImage, TOutputImage>
  *
  */
 template <class TInputImage, class TOutputImage>
-InPlaceImageFilter<TInputImage, TOutputImage>
-::~InPlaceImageFilter()
+CudaInPlaceImageFilter<TInputImage, TOutputImage>
+::~CudaInPlaceImageFilter()
 {
 }
-  
+
 
 
 template<class TInputImage, class TOutputImage>
-void 
-InPlaceImageFilter<TInputImage, TOutputImage>
+void
+CudaInPlaceImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -64,14 +61,11 @@ InPlaceImageFilter<TInputImage, TOutputImage>
 }
 
 template<class TInputImage, class TOutputImage>
-void 
-InPlaceImageFilter<TInputImage, TOutputImage>
+void
+CudaInPlaceImageFilter<TInputImage, TOutputImage>
 ::AllocateOutputs()
 {
-  // trigger a copy if the previous filter was GPU enabled.
-  this->GetInput()->GetBufferPointer();
-
-  // if told to run in place and the types support it, 
+  // if told to run in place and the types support it,
   if (this->GetInPlace() && this->CanRunInPlace())
     {
     // Graft this first input to the output.  Later, we'll need to
@@ -81,47 +75,45 @@ InPlaceImageFilter<TInputImage, TOutputImage>
       = dynamic_cast<TOutputImage *>(const_cast<TInputImage *>(this->GetInput()));
     if (inputAsOutput)
       {
-      // trigger copy from GPU
+      // trigger the import here
+      inputAsOutput->GetDevicePointer();
       this->GraftOutput( inputAsOutput );
-      }
-    else
-      {
-      // if we cannot cast the input to an output type, then allocate
-      // an output usual.
-      OutputImagePointer outputPtr;
-
-      outputPtr = this->GetOutput(0);
-      outputPtr->SetBufferedRegion(outputPtr->GetRequestedRegion());
-      outputPtr->Allocate();
-      }
-    
-    // If there are more than one outputs, allocate the remaining outputs
-    for (unsigned int i=1; i < this->GetNumberOfOutputs(); i++)
-      {
-      OutputImagePointer outputPtr;
-      
-      outputPtr = this->GetOutput(i);
-      outputPtr->SetBufferedRegion(outputPtr->GetRequestedRegion());
-      outputPtr->Allocate();
       }
     }
   else
     {
-    Superclass::AllocateOutputs();
+    // if we cannot cast the input to an output type, then allocate
+    // an output usual.
+    OutputImagePointer outputPtr;
+    outputPtr = this->GetOutput(0);
+    outputPtr->SetBufferedRegion(outputPtr->GetRequestedRegion());
+    outputPtr->AllocateGPU();
+    }
+
+
+
+  // If there are more than one outputs, allocate the remaining outputs
+  for (unsigned int i=1; i < this->GetNumberOfOutputs(); i++)
+    {
+    OutputImagePointer outputPtr;
+
+    outputPtr = this->GetOutput(i);
+    outputPtr->SetBufferedRegion(outputPtr->GetRequestedRegion());
+      outputPtr->AllocateGPU();
     }
 }
 
 template<class TInputImage, class TOutputImage>
-void 
-InPlaceImageFilter<TInputImage, TOutputImage>
+void
+CudaInPlaceImageFilter<TInputImage, TOutputImage>
 ::ReleaseInputs()
 {
-  // if told to run in place and the types support it, 
+  // if told to run in place and the types support it,
   if (this->GetInPlace() && this->CanRunInPlace())
     {
     // Release any input where the ReleaseData flag has been set
     ProcessObject::ReleaseInputs();
-    
+
     // Release input 0 by default since we overwrote it
     TInputImage * ptr = const_cast<TInputImage*>( this->GetInput() );
     if( ptr )

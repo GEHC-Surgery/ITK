@@ -70,7 +70,7 @@ SET(ITKIO_SRCS
 ENDIF( NOT ITK_USE_TRANSFORM_IO_FACTORIES )
 
 # Add ITKIO library
-ADD_LIBRARY(ITKIO ${ITKIO_SRCS})
+CUDA_ADD_LIBRARY(ITKIO ${ITKIO_SRCS})
 
 # Enable warnings for trunctation of 64bits to 32bits in Mac
 IF (APPLE)

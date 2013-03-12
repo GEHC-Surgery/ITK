@@ -13,6 +13,9 @@ IF(ITK_USE_SYSTEM_GDCM)
   SET(ITK_INCLUDE_DIRS_SYSTEM ${GDCM_DIR})
 ENDIF(ITK_USE_SYSTEM_GDCM)
 
+# Include CUDA directories since they are now needed with the CITK patch
+LIST(APPEND ITK_INCLUDE_DIRS_SYSTEM ${CUDA_TOOLKIT_INCLUDE})
+
 #-----------------------------------------------------------------------------
 # Include directories from the build tree.
 SET(ITK_INCLUDE_DIRS_BUILD_TREE ${ITK_BINARY_DIR})
