@@ -380,7 +380,7 @@ CudaImportImageContainer< TElementIdentifier, TElement >
   // should only need to allocate CPU memory if the import
   // pointer is null
   if (!m_ImportPointer)
-    m_ImportPointer = (TElement *)malloc(sizeof(TElement)*m_Size);
+    m_ImportPointer = this->AllocateElements(m_Size);
 }
 
 } // end namespace itk
