@@ -19,6 +19,7 @@
 
 #include "itkCudaImportImageContainer.h"
 #include "cuda.h"
+#include "itkCudaUtility.h"
 #include <cstring>
 #include <stdlib.h>
 #include <string.h>
@@ -117,6 +118,7 @@ CudaImportImageContainer< TElementIdentifier , TElement >
       // only copy the portion of the data used in the old buffer
 
       cudaMemcpy(temp, m_DevicePointer, m_Size*sizeof(TElement), cudaMemcpyDeviceToDevice);
+      itkExceptionOnCudaErrorMacro(<< "Failed to reserve GPU memory (size: " << m_Size*sizeof(TElement) << " bytes)");
 
       DeallocateManagedMemory();
 
@@ -279,31 +281,13 @@ template <typename TElementIdentifier, typename TElement>
 TElement* CudaImportImageContainer< TElementIdentifier , TElement >
 ::AllocateGPUElements(ElementIdentifier size) const
 {
-  // Encapsulate all image memory allocation here to throw an
-  // exception when memory allocation fails even when the compiler
-  // does not do this by default.
-
-  /* Parent code */
+  // Encapsulate all image GPU memory allocation here to throw an
+  // exception when memory allocation fails.
   TElement* data;
-  try
-    {
-    void * m_Tmp;
-    cudaMalloc( &m_Tmp, sizeof(TElement)*size);
-    data = (TElement *)m_Tmp;
-    m_ImageLocation = GPU;
-    }
-  catch(...)
-    {
-    data = 0;
-    }
-  if(!data)
-    {
-    // We cannot construct an error string here because we may be out
-    // of memory.  Do not use the exception macro.
-    throw MemoryAllocationError(__FILE__, __LINE__,
-                                "Failed to allocate GPU memory for image.",
-                                ITK_LOCATION);
-    }
+  cudaMalloc( &data, sizeof(TElement)*size);
+  itkExceptionOnCudaErrorMacro(<< "Failed to allocate GPU memory for image.");
+
+  //std::cout << "CITK: " << serial << " AllocateGPUElements: " << static_cast<void *>(data) << std::endl;
   return data;
 
 }
@@ -322,6 +306,8 @@ void CudaImportImageContainer< TElementIdentifier , TElement >
   if (m_DevicePointer && m_ContainerManageDevice)
     {
     cudaFree(m_DevicePointer);
+    itkExceptionOnCudaErrorMacro(<< "Failed to deallocate GPU memory for image (m_DevicePointer: "
+                                 << static_cast<void *>(m_DevicePointer) << ")");
     }
 
   m_DevicePointer = 0;
@@ -357,6 +343,7 @@ CudaImportImageContainer< TElementIdentifier , TElement >
   AllocateGPU();
   cudaMemcpy(m_DevicePointer, m_ImportPointer,
              sizeof(TElement)*m_Size, cudaMemcpyHostToDevice);
+  itkExceptionOnCudaErrorMacro(<< "Failed to copy CPU buffer to GPU");
 
   m_ImageLocation = GPU;
 }
@@ -369,6 +356,8 @@ CudaImportImageContainer< TElementIdentifier , TElement >
   AllocateCPU();
   cudaMemcpy(m_ImportPointer, m_DevicePointer,
              sizeof(TElement)*m_Size, cudaMemcpyDeviceToHost);
+  itkExceptionOnCudaErrorMacro(<< "Failed to copy GPU buffer to CPU");
+
   m_ImageLocation = CPU;
 }
 
@@ -379,6 +368,7 @@ CudaImportImageContainer< TElementIdentifier, TElement >
 {
   void * m_Tmp;
   cudaMalloc( &m_Tmp, sizeof(TElement)*m_Size);
+  itkExceptionOnCudaErrorMacro(<< "Failed to allocate GPU memory for image");
   m_DevicePointer = (TElement *)m_Tmp;
 }
 
