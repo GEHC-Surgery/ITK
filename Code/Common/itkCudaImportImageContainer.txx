@@ -366,10 +366,10 @@ void
 CudaImportImageContainer< TElementIdentifier, TElement >
 ::AllocateGPU() const
 {
-  void * m_Tmp;
-  cudaMalloc( &m_Tmp, sizeof(TElement)*m_Size);
-  itkExceptionOnCudaErrorMacro(<< "Failed to allocate GPU memory for image");
-  m_DevicePointer = (TElement *)m_Tmp;
+  // should only need to allocate GPU memory if the device
+  // pointer is null
+  if (!m_DevicePointer)
+    m_DevicePointer = this->AllocateGPUElements(m_Size);
 }
 
 template <typename TElementIdentifier, typename TElement>
