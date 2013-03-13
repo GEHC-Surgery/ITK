@@ -55,7 +55,26 @@ template <typename TElementIdentifier, typename TElement>
 CudaImportImageContainer< TElementIdentifier , TElement >
 ::~CudaImportImageContainer()
 {
-  DeallocateManagedMemory();
+//  CITK_DEBUG(<< "destructor");
+
+  // Do our best to deallocate memory without letting exceptions out of the
+  // destructor (just log an error message and swallow the exception)
+  try
+    {
+    this->DeallocateManagedCPUMemory();
+    }
+  catch(...)
+    {
+    itkGenericOutputMacro(<< "Failed to deallocate managed CPU memory")
+    }
+  try
+    {
+    this->DeallocateManagedGPUMemory();
+    }
+  catch(...)
+    {
+    itkGenericOutputMacro(<< "Failed to deallocate managed GPU memory")
+    }
 }
 
 
@@ -306,24 +325,41 @@ template <typename TElementIdentifier, typename TElement>
 void CudaImportImageContainer< TElementIdentifier , TElement >
 ::DeallocateManagedMemory()
 {
+  this->DeallocateManagedCPUMemory();
+  this->DeallocateManagedGPUMemory();
+
+  m_Capacity = 0;
+  m_Size = 0;
+}
+
+template <typename TElementIdentifier, typename TElement>
+void CudaImportImageContainer< TElementIdentifier , TElement >
+::DeallocateManagedCPUMemory() const
+{
   // CPU Deallocate
   if (m_ImportPointer && m_ContainerManageMemory)
     {
     delete [] m_ImportPointer;
     }
 
+  m_ImportPointer = 0;
+}
+
+template <typename TElementIdentifier, typename TElement>
+void CudaImportImageContainer< TElementIdentifier , TElement >
+::DeallocateManagedGPUMemory() const
+{
+  //CITK_DEBUG(<< "DeallocateManagedGPUMemory (" << static_cast<void *>(m_DevicePointer) << ")");
   // GPU Deallocate
   if (m_DevicePointer && m_ContainerManageDevice)
     {
+    CITK_DEBUG(<< "cudaFree(" << static_cast<void *>(m_DevicePointer) << ")");
     cudaFree(m_DevicePointer);
     itkExceptionOnCudaErrorMacro(<< "Failed to deallocate GPU memory for image (m_DevicePointer: "
                                  << static_cast<void *>(m_DevicePointer) << ")");
     }
 
   m_DevicePointer = 0;
-  m_ImportPointer = 0;
-  m_Capacity = 0;
-  m_Size = 0;
 }
 
 template <typename TElementIdentifier, typename TElement>
