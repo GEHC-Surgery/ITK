@@ -244,8 +244,7 @@ public:
   const TPixel *GetBufferPointer() const
     { return m_Buffer ? m_Buffer->GetBufferPointer() : 0; }
 
-  /** Return a pointer to the beginning of the buffer on the GPU.  This is used by
-   * the image iterator class. */
+  /** Return a pointer to the beginning of the buffer on the GPU. */
   TPixel *GetDevicePointer()
     { return m_Buffer ? m_Buffer->GetDevicePointer() : 0; }
   TPixel *GetDevicePointer() const
