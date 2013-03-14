@@ -238,13 +238,16 @@ public:
      { return this->GetPixel(index); }
 
   /** Return a pointer to the beginning of the buffer.  This is used by
-   * the image iterator class. */
+   * the image iterator class. If the latest copy of the image resides
+   * on the GPU, calling this will trigger a copy to the CPU. */
   TPixel *GetBufferPointer()
     { return m_Buffer ? m_Buffer->GetBufferPointer() : 0; }
   const TPixel *GetBufferPointer() const
     { return m_Buffer ? m_Buffer->GetBufferPointer() : 0; }
 
-  /** Return a pointer to the beginning of the buffer on the GPU. */
+  /** Return a pointer to the beginning of the buffer on the GPU. If
+   * the latest copy of the image resides on the CPU, calling this
+   * will trigger a copy to the GPU. */
   TPixel *GetDevicePointer()
     { return m_Buffer ? m_Buffer->GetDevicePointer() : 0; }
   TPixel *GetDevicePointer() const
