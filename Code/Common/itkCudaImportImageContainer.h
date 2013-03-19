@@ -195,6 +195,8 @@ protected:
   virtual TElement* AllocateElements(ElementIdentifier size) const;
   virtual TElement* AllocateGPUElements(ElementIdentifier size) const;
   virtual void DeallocateManagedMemory();
+  virtual void DeallocateManagedCPUMemory() const;
+  virtual void DeallocateManagedGPUMemory() const;
 
   /* Set the m_Size member that represents the number of elements
           * currently stored in the container. Use this function with great
