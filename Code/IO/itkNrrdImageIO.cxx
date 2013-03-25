@@ -19,6 +19,7 @@
 #endif
 
 #include <string>
+#include <sstream>
 #include "itkNrrdImageIO.h"
 #include "itkMacro.h"
 #include "itkMetaDataObject.h"
@@ -1076,9 +1077,35 @@ void NrrdImageIO::Write( const void* buffer)
     else
       {
       // not a NRRD field packed into meta data; just a regular key/value
-      std::string value;  // local for Borland
-      ExposeMetaData<std::string>(thisDic, *keyIt, value);
-      nrrdKeyValueAdd(nrrd, (*keyIt).c_str(), value.c_str());
+
+      std::string stringValue;  // local for Borland
+
+      // Try interpreting the MetaDataObject value as all native types and
+      // lastly as std::string
+#define NATIVETYPE_EXPOSEMETADATA_TO_NRRD(TYPE_NAME) \
+      { \
+        TYPE_NAME value; \
+        if (stringValue.empty() && ExposeMetaData< TYPE_NAME >(thisDic, *keyIt, value)) \
+          { \
+          std::stringstream strm; \
+          strm << value; \
+          stringValue = strm.str(); \
+          } \
+      }
+
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( unsigned char )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( short )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( unsigned short )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( int )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( unsigned int )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( long )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( unsigned long )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( float )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( double )
+      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( std::string )
+#undef NATIVETYPE_EXPOSEMETADATA_TO_NRRD
+
+      nrrdKeyValueAdd(nrrd, (*keyIt).c_str(), stringValue.c_str());
       }
     }
 
