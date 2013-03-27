@@ -106,7 +106,7 @@ template <> \
 inline void MetaDataObject< TYPE_NAME > \
 ::Print(std::ostream& os) const \
 { \
-  os << this->m_MetaDataObjectValue << std::endl; \
+  os << std::boolalpha << this->m_MetaDataObjectValue << std::endl; \
 }
 
 NATIVE_TYPE_METADATAPRINT_NOCONST( unsigned char )
