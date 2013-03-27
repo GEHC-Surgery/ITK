@@ -20,6 +20,14 @@
 
 #include <string>
 #include <sstream>
+// For rtrim:
+#include <algorithm>
+#include <functional>
+#include <cctype>
+#include <locale>
+
+#include <itksys/SystemTools.hxx>
+
 #include "itkNrrdImageIO.h"
 #include "itkMacro.h"
 #include "itkMetaDataObject.h"
@@ -29,6 +37,12 @@
 # include <math.h> 
 # include <float.h> // for _control87() 
 #endif // defined(__BORLANDC__) 
+
+// trim whitespace from end of string
+static inline std::string &rtrim(std::string &s) {
+        s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+        return s;
+}
 
 namespace itk {
 
@@ -1077,34 +1091,15 @@ void NrrdImageIO::Write( const void* buffer)
     else
       {
       // not a NRRD field packed into meta data; just a regular key/value
+      // Use the MetaDataObjectBase::Print() method to convert the value to
+      // a string
 
-      std::string stringValue;  // local for Borland
+      std::stringstream strm;
+      thisDic[*keyIt]->Print(strm);
+      std::string stringValue(strm.str());
 
-      // Try interpreting the MetaDataObject value as all native types and
-      // lastly as std::string
-#define NATIVETYPE_EXPOSEMETADATA_TO_NRRD(TYPE_NAME) \
-      { \
-        TYPE_NAME value; \
-        if (stringValue.empty() && ExposeMetaData< TYPE_NAME >(thisDic, *keyIt, value)) \
-          { \
-          std::stringstream strm; \
-          strm << value; \
-          stringValue = strm.str(); \
-          } \
-      }
-
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( unsigned char )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( short )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( unsigned short )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( int )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( unsigned int )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( long )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( unsigned long )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( float )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( double )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( bool )
-      NATIVETYPE_EXPOSEMETADATA_TO_NRRD( std::string )
-#undef NATIVETYPE_EXPOSEMETADATA_TO_NRRD
+      // Trim any trailing whitespace (including newline)
+      rtrim(stringValue);
 
       nrrdKeyValueAdd(nrrd, (*keyIt).c_str(), stringValue.c_str());
       }
