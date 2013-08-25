@@ -209,6 +209,10 @@ if( ITK_USE_GPU )
    include(itkOpenCL)
 endif()
 
+# For now, CUDA is always on. Might be nice to make it optional based on
+# ITK_USE_GPU option
+include(itkCUDA)
+
 #-----------------------------------------------------------------------------
 # Manage FFT v3 Options
 #

@@ -58,6 +58,19 @@ Image< TPixel, VImageDimension >
   m_Buffer->Reserve(num);
 }
 
+template< typename TPixel, unsigned int VImageDimension>
+void
+Image<TPixel, VImageDimension>
+::AllocateGPU()
+{
+  OffsetValueType num;
+
+  this->ComputeOffsetTable();
+  num = this->GetOffsetTable()[VImageDimension];
+
+  m_Buffer->ReserveGPU(num);
+}
+
 template< typename TPixel, unsigned int VImageDimension >
 void
 Image< TPixel, VImageDimension >

@@ -86,7 +86,7 @@ TileImageFilter< TInputImage, TOutputImage >
 
       const TInputImage * inputImage = this->GetInput( it.Get().m_ImageNumber );
 
-      typedef ImportImageContainer< SizeValueType, InputPixelType > PixelContainerType;
+      typedef CudaImportImageContainer< SizeValueType, InputPixelType > PixelContainerType;
 
       tempImage->SetPixelContainer( const_cast< PixelContainerType * >( inputImage->GetPixelContainer() ) );
 

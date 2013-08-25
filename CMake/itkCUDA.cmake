@@ -1,0 +1,6 @@
+#if (ITK_USE_GPU)
+  find_package ( CUDA REQUIRED )
+  if ( NOT ${CUDA_FOUND} )
+     message ( FATAL "Could not find CUDA" )
+  endif ()
+#endif()

@@ -19,6 +19,7 @@
 #define __itkImage_h
 
 #include "itkImageRegion.h"
+#include "itkCudaImportImageContainer.h"
 #include "itkImportImageContainer.h"
 #include "itkDefaultPixelAccessor.h"
 #include "itkDefaultPixelAccessorFunctor.h"
@@ -130,7 +131,8 @@ public:
   typedef typename Superclass::SizeValueType SizeValueType;
 
   /** Container used to store pixels in the image. */
-  typedef ImportImageContainer< SizeValueType, PixelType > PixelContainer;
+  typedef CudaImportImageContainer< SizeValueType, PixelType > PixelContainer;
+  typedef ImportImageContainer< SizeValueType, PixelType >     SuperPixelContainer;
 
   /** Direction typedef support. A matrix of direction cosines. */
   typedef typename Superclass::DirectionType DirectionType;
@@ -170,6 +172,7 @@ public:
   /** Allocate the image memory. The size of the image must
    * already be set, e.g. by calling SetRegions(). */
   void Allocate();
+  void AllocateGPU();
 
   /** Restore the data object to its initial state. This means releasing
    * memory. */
@@ -225,13 +228,22 @@ public:
   { return this->GetPixel(index); }
 
   /** Return a pointer to the beginning of the buffer.  This is used by
-   * the image iterator class. */
+   * the image iterator class. If the latest copy of the image resides
+   * on the GPU, calling this will trigger a copy to the CPU. */
   virtual TPixel * GetBufferPointer()
   { return m_Buffer ? m_Buffer->GetBufferPointer() : 0; }
   virtual const TPixel * GetBufferPointer() const
   { return m_Buffer ? m_Buffer->GetBufferPointer() : 0; }
 
-  /** Return a pointer to the container. */
+  /** Return a pointer to the beginning of the buffer on the GPU. If
+   * the latest copy of the image resides on the CPU, calling this
+   * will trigger a copy to the GPU. */
+  TPixel *GetDevicePointer()
+    { return m_Buffer ? m_Buffer->GetDevicePointer() : 0; }
+  TPixel *GetDevicePointer() const
+    { return m_Buffer ? m_Buffer->GetDevicePointer() : 0; }
+
+ /** Return a pointer to the container. */
   PixelContainer * GetPixelContainer()
   { return m_Buffer.GetPointer(); }
 

@@ -74,6 +74,9 @@ void
 InPlaceImageFilter< TInputImage, TOutputImage >
 ::InternalAllocateOutputs( const TrueType& )
 {
+  // trigger a copy if the previous filter was GPU enabled.
+  this->GetInput()->GetBufferPointer();
+
   // Use ProcessObject's GetInput method to get a DataObject pointer,
   // then perform a dynamic_cast to the expected InputImageType. This
   // may fail and that is an expected likely hood, if inputPtr is NULL
