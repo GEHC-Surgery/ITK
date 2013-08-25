@@ -68,6 +68,11 @@ set(ITKCommon_INCLUDE_DIRS
   )
 set(ITKCommon_LIBRARIES ITKCommon)
 
+#if (ITK_USE_GPU)
+  set(ITKCommon_SYSTEM_INCLUDE_DIRS ${CUDA_INCLUDE_DIRS})
+  set(ITKCommon_SYSTEM_LIBRARY_DIRS ${CUDA_LIBRARIES})
+#endif()
+
 itk_module_impl()
 
 install(FILES
