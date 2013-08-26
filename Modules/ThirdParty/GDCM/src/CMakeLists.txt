@@ -1,6 +1,6 @@
 if(ITK_USE_SYSTEM_GDCM)
   add_library(ITKGDCM ITK-GDCM.cxx)
-  target_link_libraries(ITKGDCM gdcmDICT gdcmMSFF)
+  target_link_libraries(ITKGDCM gdcmDICT gdcmMSFF gdcmDSED gdcmCommon)
   itk_module_target(ITKGDCM)
   return()
 endif()
