@@ -282,7 +282,6 @@ void GDCMImageIO::Read(void *pointer)
     }
 
   const gdcm::PixelFormat & pixeltype = image.GetPixelFormat();
-  itkAssertInDebugAndIgnoreInReleaseMacro( pixeltype_debug == pixeltype );
 
   if ( m_RescaleSlope != 1.0 || m_RescaleIntercept != 0.0 )
     {
