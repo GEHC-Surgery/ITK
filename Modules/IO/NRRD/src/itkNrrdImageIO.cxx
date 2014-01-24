@@ -23,6 +23,21 @@
 #include "itkIOCommon.h"
 #include "itkFloatingPointExceptions.h"
 
+#include <sstream>
+// For rtrim:
+#include <algorithm>
+#include <functional>
+#include <cctype>
+#include <locale>
+
+#include <itksys/SystemTools.hxx>
+
+// trim whitespace from end of string
+static inline std::string &rtrim(std::string &s) {
+        s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+        return s;
+}
+
 namespace itk
 {
 #define KEY_PREFIX "NRRD_"
@@ -1070,9 +1085,17 @@ void NrrdImageIO::Write(const void *buffer)
     else
       {
       // not a NRRD field packed into meta data; just a regular key/value
-      std::string value;
-      ExposeMetaData< std::string >(thisDic, *keyIt, value);
-      nrrdKeyValueAdd( nrrd, ( *keyIt ).c_str(), value.c_str() );
+      // Use the MetaDataObjectBase::Print() method to convert the value to
+      // a string
+
+      std::stringstream strm;
+      thisDic[*keyIt]->Print(strm);
+      std::string stringValue(strm.str());
+
+      // Trim any trailing whitespace (including newline)
+      rtrim(stringValue);
+
+      nrrdKeyValueAdd(nrrd, (*keyIt).c_str(), stringValue.c_str());
       }
     }
 
