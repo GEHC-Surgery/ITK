@@ -47,15 +47,15 @@ namespace itk
  * \ingroup ITKCommon
  */
 template< typename TValueType >
-class Array:public vnl_vector< TValueType >
+class Array : public vnl_vector< TValueType >
 {
 public:
 
   /** The element type stored at each location in the Array. */
-  typedef TValueType                                   ValueType;
-  typedef Array                                        Self;
-  typedef vnl_vector< TValueType >                     VnlVectorType;
-  typedef typename vnl_vector< TValueType>::size_type  SizeValueType;
+  typedef TValueType                                  ValueType;
+  typedef Array                                       Self;
+  typedef vnl_vector< TValueType >                    VnlVectorType;
+  typedef typename vnl_vector< TValueType>::size_type SizeValueType;
 
 public:
 
@@ -88,7 +88,7 @@ public:
         bool LetArrayManageMemory = false);
 
   /** Constructor to initialize an array from another of any data type */
-  template< class TArrayValue >
+  template< typename TArrayValue >
   Array(const Array< TArrayValue > & r)
   {
     this->m_LetArrayManageMemory = true;
@@ -100,7 +100,10 @@ public:
   }
 
   /** Set the all the elements of the array to the specified value */
-  void Fill(TValueType const & v) { this->fill(v); }
+  void Fill(TValueType const & v)
+    {
+    this->fill(v);
+    }
 
   /** Copy opertor */
   const Self & operator=(const Self & rhs);
@@ -162,21 +165,25 @@ private:
 template< typename TValueType >
 std::ostream & operator<<(std::ostream & os, const Array< TValueType > & arr)
 {
-  const unsigned int length = arr.size();
-  const signed int   last   = (unsigned int)length - 1;
-
   os << "[";
-  for ( signed int i = 0; i < last; ++i )
-    {
-    os << arr[i] << ", ";
-    }
+  const unsigned int length = arr.size();
   if ( length >= 1 )
     {
-    os << arr[last];
+    const unsigned int   last   = length - 1;
+    for ( unsigned int i = 0; i < last; ++i )
+      {
+      os << arr[i] << ", ";
+      }
+      os << arr[last];
     }
   os << "]";
   return os;
 }
+
+// declaration of specialization
+template<> ITKCommon_EXPORT std::ostream & operator<< <double> (std::ostream & os, const Array< double > & arr);
+template<> ITKCommon_EXPORT std::ostream & operator<< <float> (std::ostream & os, const Array< float > & arr);
+
 } // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

@@ -27,7 +27,7 @@
 #include "itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor.h"
 #include "itkJointHistogramMutualInformationImageToImageMetricv4.h"
 
-template<class TFilter>
+template<typename TFilter>
 class CommandIterationUpdate : public itk::Command
 {
 public:
@@ -54,11 +54,11 @@ public:
       { return; }
 
     unsigned int currentLevel = filter->GetCurrentLevel();
-    typename TFilter::ShrinkFactorsArrayType shrinkFactors = filter->GetShrinkFactorsPerLevel();
+    typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
     typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
     typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
 
-    typename itk::ObjectToObjectOptimizerBase::Pointer optimizerBase = (const_cast<TFilter*>(filter))->GetOptimizer();
+    typename itk::ObjectToObjectOptimizerBase::Pointer optimizerBase = (const_cast<TFilter*>(filter))->GetModifiableOptimizer();
     typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
     typename GradientDescentOptimizerv4Type::Pointer optimizer = dynamic_cast<GradientDescentOptimizerv4Type *>(optimizerBase.GetPointer());
     if( !optimizer )
@@ -76,7 +76,7 @@ public:
 
     //debug:
     std::cout << "  CL Current level:           " << currentLevel << std::endl;
-    std::cout << "   SF Shrink factor:          " << shrinkFactors[currentLevel] << std::endl;
+    std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;
     std::cout << "   SS Smoothing sigma:        " << smoothingSigmas[currentLevel] << std::endl;
     std::cout << "   RFP Required fixed params: " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
     std::cout << "   LR Final learning rate:    " << optimizer->GetLearningRate() << std::endl;
@@ -98,30 +98,30 @@ public:
     }
 };
 
-template <unsigned int VImageDimension>
+template <unsigned int VImageDimension, typename TPixel>
 int PerformSimpleImageRegistration( int argc, char *argv[] )
 {
-  if( argc < 6 )
+  if( argc < 7 )
     {
-    std::cout << argv[0] << " imageDimension fixedImage movingImage outputImage numberOfAffineIterations numberOfDeformableIterations" << std::endl;
+    std::cout << argv[0] << " pixelType imageDimension fixedImage movingImage outputImage numberOfAffineIterations numberOfDeformableIterations" << std::endl;
     exit( 1 );
     }
 
-  typedef double                                 PixelType;
+  typedef TPixel                                 PixelType;
   typedef itk::Image<PixelType, VImageDimension> FixedImageType;
   typedef itk::Image<PixelType, VImageDimension> MovingImageType;
 
   typedef itk::ImageFileReader<FixedImageType> ImageReaderType;
 
   typename ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
-  fixedImageReader->SetFileName( argv[2] );
+  fixedImageReader->SetFileName( argv[3] );
   fixedImageReader->Update();
   typename FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
   fixedImage->Update();
   fixedImage->DisconnectPipeline();
 
   typename ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
-  movingImageReader->SetFileName( argv[3] );
+  movingImageReader->SetFileName( argv[4] );
   movingImageReader->Update();
   typename MovingImageType::Pointer movingImage = movingImageReader->GetOutput();
   movingImage->Update();
@@ -149,6 +149,7 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
   mutualInformationMetric->SetUseMovingImageGradientFilter( false );
   mutualInformationMetric->SetUseFixedImageGradientFilter( false );
   mutualInformationMetric->SetUseFixedSampledPointSet( false );
+  mutualInformationMetric->SetVirtualDomainFromImage( fixedImage );
   affineSimple->SetMetric( mutualInformationMetric );
 
   typedef itk::RegistrationParameterScalesFromPhysicalShift<MIMetricType> AffineScalesEstimatorType;
@@ -177,12 +178,16 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
 
   typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
   typename GradientDescentOptimizerv4Type::Pointer affineOptimizer =
-    dynamic_cast<GradientDescentOptimizerv4Type * >( affineSimple->GetOptimizer() );
+    dynamic_cast<GradientDescentOptimizerv4Type * >( affineSimple->GetModifiableOptimizer() );
   if( !affineOptimizer )
     {
     itkGenericExceptionMacro( "Error dynamic_cast failed" );
     }
-  affineOptimizer->SetNumberOfIterations( atoi( argv[5] ) );
+#ifdef NDEBUG
+  affineOptimizer->SetNumberOfIterations( atoi( argv[6] ) );
+#else
+  affineOptimizer->SetNumberOfIterations( 1 );
+#endif
   affineOptimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   affineOptimizer->SetDoEstimateLearningRateAtEachIteration( true );
   affineOptimizer->SetScalesEstimator( scalesEstimator1 );
@@ -193,7 +198,7 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
 
   {
   typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageMetricType;
-  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineSimple->GetMetric() );
+  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineSimple->GetModifiableMetric() );
   //imageMetric->SetUseFloatingPointCorrection(true);
   imageMetric->SetFloatingPointCorrectionResolution(1e4);
   }
@@ -211,7 +216,7 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
 
   {
   typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageMetricType;
-  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineOptimizer->GetMetric() );
+  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineOptimizer->GetModifiableMetric() );
   std::cout << "Affine parameters after registration: " << std::endl
             << affineOptimizer->GetCurrentPosition() << std::endl
             << "Last LearningRate: " << affineOptimizer->GetLearningRate() << std::endl
@@ -268,7 +273,11 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
 
   typename GradientDescentOptimizerv4Type::Pointer optimizer = GradientDescentOptimizerv4Type::New();
   optimizer->SetLearningRate( 1.0 );
-  optimizer->SetNumberOfIterations( atoi( argv[6] ) );
+#ifdef NDEBUG
+  optimizer->SetNumberOfIterations( atoi( argv[7] ) );
+#else
+  optimizer->SetNumberOfIterations( 1 );
+#endif
   optimizer->SetScalesEstimator( scalesEstimator );
   optimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   optimizer->SetDoEstimateLearningRateAtEachIteration( true );
@@ -279,6 +288,12 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
   displacementFieldSimple->SetMovingInitialTransform( compositeTransform );
   displacementFieldSimple->SetMetric( correlationMetric );
   displacementFieldSimple->SetOptimizer( optimizer );
+
+  typename DisplacementFieldRegistrationType::OptimizerWeightsType optimizerWeights;
+  optimizerWeights.SetSize( VImageDimension );
+  optimizerWeights.Fill( 0.995 );
+
+  displacementFieldSimple->SetOptimizerWeights( optimizerWeights );
 
   // Shrink the virtual domain by specified factors for each level.  See documentation
   // for the itkShrinkImageFilter for more detailed behavior.
@@ -362,7 +377,7 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
 
   typedef itk::ImageFileWriter<FixedImageType> WriterType;
   typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( argv[4] );
+  writer->SetFileName( argv[5] );
   writer->SetInput( resampler->GetOutput() );
   writer->Update();
 
@@ -371,19 +386,33 @@ int PerformSimpleImageRegistration( int argc, char *argv[] )
 
 int itkSimpleImageRegistrationTest( int argc, char *argv[] )
 {
-  if( argc < 6 )
+  if( argc < 7 )
     {
-    std::cout << argv[0] << " imageDimension fixedImage movingImage outputImage numberOfAffineIterations numberOfDeformableIterations" << std::endl;
+    std::cout << argv[0] << " pixelType imageDimension fixedImage movingImage outputImage numberOfAffineIterations numberOfDeformableIterations" << std::endl;
     exit( 1 );
     }
 
-  switch( atoi( argv[1] ) )
+  switch( atoi( argv[2] ) )
    {
    case 2:
-     PerformSimpleImageRegistration<2>( argc, argv );
+     if( strcmp( argv[1], "float") == 0 )
+       {
+       PerformSimpleImageRegistration<2,float>( argc, argv );
+       }
+     else
+       {
+       PerformSimpleImageRegistration<2,double>( argc, argv );
+       }
      break;
    case 3:
-     PerformSimpleImageRegistration<3>( argc, argv );
+     if( strcmp( argv[1], "float") == 0 )
+       {
+       PerformSimpleImageRegistration<3,float>( argc, argv );
+       }
+     else
+       {
+       PerformSimpleImageRegistration<3,double>( argc, argv );
+       }
      break;
    default:
       std::cerr << "Unsupported dimension" << std::endl;

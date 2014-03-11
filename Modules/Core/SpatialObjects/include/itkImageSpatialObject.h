@@ -35,9 +35,9 @@ namespace itk
  */
 
 template< unsigned int TDimension = 3,
-          class TPixelType = unsigned char
+          typename TPixelType = unsigned char
           >
-class ITK_EXPORT ImageSpatialObject:
+class ImageSpatialObject:
   public SpatialObject< TDimension >
 {
 public:
@@ -116,8 +116,7 @@ public:
 
   /** Set/Get the interpolator */
   void SetInterpolator(InterpolatorType *interpolator);
-
-  itkGetObjectMacro(Interpolator, InterpolatorType);
+  itkGetModifiableObjectMacro(Interpolator, InterpolatorType);
 
 protected:
   ImageSpatialObject(const Self &); //purposely not implemented

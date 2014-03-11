@@ -22,13 +22,11 @@
 #include "itkMeshFileWriter.h"
 #include <itksys/SystemTools.hxx>
 
-template< class TMesh >
+template< typename TMesh >
 int
 TestPointsContainer( typename TMesh::PointsContainerPointer points0,
                      typename TMesh::PointsContainerPointer points1 )
 {
-  const double tol = 1e-6;
-
   typedef TMesh                                           MeshType;
   typedef typename MeshType::PointsContainerConstIterator PointsContainerConstIterator;
 
@@ -43,6 +41,7 @@ TestPointsContainer( typename TMesh::PointsContainerPointer points0,
     PointsContainerConstIterator pt0 = points0->Begin();
     PointsContainerConstIterator pt1 = points1->Begin();
 
+    const double tol = 1e-6;
     while ( ( pt0 != points0->End() ) && ( pt1 != points1->End() ) )
       {
       if( pt0->Index() != pt1->Index() )
@@ -77,7 +76,7 @@ TestPointsContainer( typename TMesh::PointsContainerPointer points0,
   return EXIT_SUCCESS;
 }
 
-template< class TMesh >
+template< typename TMesh >
 int
 TestCellsContainer( typename TMesh::CellsContainerPointer cells0,
                     typename TMesh::CellsContainerPointer cells1 )
@@ -140,7 +139,7 @@ TestCellsContainer( typename TMesh::CellsContainerPointer cells0,
   return EXIT_SUCCESS;
 }
 
-template< class TMesh >
+template< typename TMesh >
 int
 TestPointDataContainer( typename TMesh::PointDataContainerPointer pointData0,
                        typename TMesh::PointDataContainerPointer pointData1 )
@@ -191,7 +190,7 @@ TestPointDataContainer( typename TMesh::PointDataContainerPointer pointData0,
   return EXIT_SUCCESS;
 }
 
-template< class TMesh >
+template< typename TMesh >
 int
 TestCellDataContainer( typename TMesh::CellDataContainerPointer cellData0,
                       typename TMesh::CellDataContainerPointer cellData1 )
@@ -242,7 +241,7 @@ TestCellDataContainer( typename TMesh::CellDataContainerPointer cellData0,
   return EXIT_SUCCESS;
 }
 
-template< class TMesh >
+template< typename TMesh >
 int
 test(char *INfilename, char *OUTfilename, bool IsBinary)
 {
@@ -271,7 +270,7 @@ test(char *INfilename, char *OUTfilename, bool IsBinary)
   if( itksys::SystemTools::GetFilenameLastExtension(INfilename) ==
       itksys::SystemTools::GetFilenameLastExtension(OUTfilename) )
     {
-    writer->SetMeshIO(reader->GetMeshIO());
+    writer->SetMeshIO(reader->GetModifiableMeshIO());
     }
   writer->SetFileName(OUTfilename);
   writer->SetInput( reader->GetOutput() );

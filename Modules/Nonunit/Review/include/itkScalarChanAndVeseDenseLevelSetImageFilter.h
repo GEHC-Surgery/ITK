@@ -59,10 +59,10 @@ namespace itk
  * \wikiexample{Segmentation/SinglephaseChanAndVeseDenseFieldLevelSetSegmentation,Single-phase Chan And Vese Dense Field Level Set Segmentation}
  * \endwiki
  */
-template< class TInputImage, class TFeatureImage, class TOutputImage,
-          class TFunction = ScalarChanAndVeseLevelSetFunction< TInputImage, TFeatureImage >,
+template< typename TInputImage, typename TFeatureImage, typename TOutputImage,
+          typename TFunction = ScalarChanAndVeseLevelSetFunction< TInputImage, TFeatureImage >,
           class TSharedData = typename TFunction::SharedDataType >
-class ITK_EXPORT ScalarChanAndVeseDenseLevelSetImageFilter:
+class ScalarChanAndVeseDenseLevelSetImageFilter:
   public MultiphaseDenseFiniteDifferenceImageFilter< TInputImage, TFeatureImage, TOutputImage,
                                                      TFunction >
 {
@@ -117,10 +117,10 @@ public:
   typedef typename ROIFilterType::Pointer                                   ROIFilterPointer;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< OutputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
   /** Set/Get the feature image to be used for speed function of the level set

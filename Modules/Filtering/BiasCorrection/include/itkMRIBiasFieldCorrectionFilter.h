@@ -43,7 +43,7 @@ namespace itk
  * included for energy value calculation), and the bias field (TBiasField).
  * \ingroup ITKBiasCorrection
  */
-template< class TImage, class TImageMask, class TBiasField >
+template< typename TImage, typename TImageMask, typename TBiasField >
 class MRIBiasEnergyFunction:public SingleValuedCostFunction
 {
 public:
@@ -220,8 +220,8 @@ private:
  * (http://www.cs.unc.edu/~styner/docs/StynerTR97.pdf)
  * \ingroup ITKBiasCorrection
  */
-template< class TInputImage, class TOutputImage, class TMaskImage >
-class ITK_EXPORT MRIBiasFieldCorrectionFilter:
+template< typename TInputImage, typename TOutputImage, typename TMaskImage >
+class MRIBiasFieldCorrectionFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -294,15 +294,12 @@ public:
    * Without this mask, this filter calculates the energy value using
    * all pixels in the input image.  */
   void SetInputMask(ImageMaskType *inputMask);
+  itkGetModifiableObjectMacro(InputMask, ImageMaskType);
 
-  itkGetObjectMacro(InputMask, ImageMaskType);
-
-  /** Sets the out mask image pointer.
+  /** Get/Set the out mask image pointer.
    * Without this mask, this filter corrects every pixel in the input image. */
   void SetOutputMask(ImageMaskType *outputMask);
-
-  /** Gets the output mask image pointer. */
-  itkGetObjectMacro(OutputMask, ImageMaskType);
+  itkGetModifiableObjectMacro(OutputMask, ImageMaskType);
 
   /** If you set this true, this filter assumes the bias field is
    * multiplicative and internally uses log intensity values for
@@ -486,7 +483,7 @@ protected:
 
   /** Converts pixel type, and
    *  copies image data from source to target. */
-  template< class TSource, class TTarget >
+  template< typename TSource, typename TTarget >
   void CopyAndConvertImage(const TSource *source,
                            TTarget *target,
                            typename TTarget::RegionType requestedRegion)

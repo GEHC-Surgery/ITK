@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkMeshFileWriter_h
 #define __itkMeshFileWriter_h
+#include "ITKIOMeshExport.h"
 
 #include "itkProcessObject.h"
 #include "itkMeshIOBase.h"
@@ -29,7 +30,7 @@ namespace itk
  *
  * \ingroup ITKIOMesh
  */
-class ITK_ABI_EXPORT MeshFileWriterException:public ExceptionObject
+class ITKIOMesh_HIDDEN MeshFileWriterException:public ExceptionObject
 {
 public:
   /** Run-time information. */
@@ -72,8 +73,8 @@ public:
  * \ingroup IOFilters
  * \ingroup ITKIOMesh
  */
-template< class TInputMesh >
-class ITK_EXPORT MeshFileWriter:public ProcessObject
+template< typename TInputMesh >
+class ITKIOMesh_HIDDEN MeshFileWriter:public ProcessObject
 {
 public:
   /** Standard class typedefs. */
@@ -127,8 +128,7 @@ public:
     m_FactorySpecifiedMeshIO = false;
     m_UserSpecifiedMeshIO = true;
   }
-
-  itkGetObjectMacro(MeshIO, MeshIOBase);
+  itkGetModifiableObjectMacro(MeshIO, MeshIOBase);
 
   void SetFileTypeAsASCII(){m_FileTypeIsBINARY = false; }
   void SetFileTypeAsBINARY(){m_FileTypeIsBINARY = true; }
@@ -155,16 +155,16 @@ protected:
   ~MeshFileWriter();
   void PrintSelf(std::ostream & os, Indent indent) const;
 
-  template< class Output >
+  template< typename Output >
   void CopyPointsToBuffer(Output *data);
 
-  template< class Output >
+  template< typename Output >
   void CopyCellsToBuffer(Output *data);
 
-  template< class Output >
+  template< typename Output >
   void CopyPointDataToBuffer(Output *data);
 
-  template< class Output >
+  template< typename Output >
   void CopyCellDataToBuffer(Output *data);
 
   void WritePoints();

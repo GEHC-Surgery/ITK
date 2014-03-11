@@ -60,6 +60,10 @@ class InternalHeader
 {
 public:
   InternalHeader():m_Header(0) {}
+  ~InternalHeader()
+  {
+    delete m_Header;
+  }
   gdcm::File *m_Header;
 };
 
@@ -83,6 +87,8 @@ GDCMImageIO::GDCMImageIO()
 
   m_KeepOriginalUID = false;
 
+  m_LoadPrivateTags = false;
+
   m_InternalComponentType = UNKNOWNCOMPONENTTYPE;
 
   // by default assume that images will be 2D.
@@ -96,10 +102,6 @@ GDCMImageIO::GDCMImageIO()
 
 GDCMImageIO::~GDCMImageIO()
 {
-  if ( this->m_DICOMHeader->m_Header )
-    {
-    delete this->m_DICOMHeader->m_Header;
-    }
   delete this->m_DICOMHeader;
 }
 
@@ -266,7 +268,8 @@ void GDCMImageIO::Read(void *pointer)
     image = icpc.GetOutput();
     }
 
-  if ( image.GetPhotometricInterpretation() == gdcm::PhotometricInterpretation::PALETTE_COLOR )
+  gdcm::PhotometricInterpretation pi = image.GetPhotometricInterpretation();
+  if ( pi == gdcm::PhotometricInterpretation::PALETTE_COLOR )
     {
     gdcm::ImageApplyLookupTable ialut;
     ialut.SetInput(image);
@@ -282,6 +285,14 @@ void GDCMImageIO::Read(void *pointer)
     }
 
   const gdcm::PixelFormat & pixeltype = image.GetPixelFormat();
+#ifndef NDEBUG
+  // ImageApplyLookupTable is meant to change the pixel type for PALETTE_COLOR images
+  // (from single values to triple values per pixel)
+  if ( pi != gdcm::PhotometricInterpretation::PALETTE_COLOR )
+    {
+    itkAssertInDebugAndIgnoreInReleaseMacro( pixeltype_debug == pixeltype );
+    }
+#endif
 
   if ( m_RescaleSlope != 1.0 || m_RescaleIntercept != 0.0 )
     {
@@ -308,12 +319,6 @@ void GDCMImageIO::Read(void *pointer)
 #endif
 }
 
-// TODO: this function was not part of gdcm::Tag API as of gdcm 2.0.10:
-static std::string PrintAsPipeSeparatedString(const gdcm::Tag & tag)
-{
-  std::string ret = tag.PrintAsPipeSeparatedString();
-  return ret;
-}
 
 void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
 {
@@ -440,11 +445,18 @@ void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
   rowDirection[0] = dircos[0];
   rowDirection[1] = dircos[1];
   rowDirection[2] = dircos[2];
+
   columnDirection[0] = dircos[3];
   columnDirection[1] = dircos[4];
   columnDirection[2] = dircos[5];
 
   vnl_vector< double > sliceDirection = vnl_cross_3d(rowDirection, columnDirection);
+
+  // orthogonalize
+  sliceDirection.normalize();
+  rowDirection = vnl_cross_3d(columnDirection,sliceDirection).normalize();
+  columnDirection = vnl_cross_3d(sliceDirection,rowDirection);
+
   this->SetDirection(0, rowDirection);
   this->SetDirection(1, columnDirection);
   this->SetDirection(2, sliceDirection);
@@ -478,7 +490,7 @@ void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
        * Old behavior was to skip SQ, Pixel Data element. I decided that it is not safe to mime64
        * VR::UN element. There used to be a bug in gdcm 1.2.0 and VR:UN element.
        */
-      if ( tag.IsPublic() && vr != gdcm::VR::SQ
+      if ( (m_LoadPrivateTags || tag.IsPublic()) && vr != gdcm::VR::SQ
            && tag != gdcm::Tag(0x7fe0, 0x0010) /* && vr != gdcm::VR::UN*/ )
         {
         const gdcm::ByteValue *bv = ref.GetByteValue();
@@ -496,7 +508,7 @@ void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
               (unsigned char *)bin,
               static_cast< int >( 0 ) ) );
           std::string encodedValue(bin, encodedLengthActual);
-          EncapsulateMetaData< std::string >(dico, PrintAsPipeSeparatedString(tag), encodedValue);
+          EncapsulateMetaData< std::string >(dico, tag.PrintAsPipeSeparatedString(), encodedValue);
           delete[] bin;
           }
         }
@@ -504,9 +516,9 @@ void GDCMImageIO::InternalReadImageInformation(std::ifstream & file)
     else /* if ( vr & gdcm::VR::VRASCII ) */
       {
       // Only copying field from the public DICOM dictionary
-      if ( tag.IsPublic() )
+      if ( m_LoadPrivateTags || tag.IsPublic() )
         {
-        EncapsulateMetaData< std::string >( dico, PrintAsPipeSeparatedString(tag), sf.ToString(tag) );
+        EncapsulateMetaData< std::string >( dico, tag.PrintAsPipeSeparatedString(), sf.ToString(tag) );
         }
       }
     }
@@ -675,7 +687,7 @@ void GDCMImageIO::Write(const void *buffer)
 #if GDCM_MAJOR_VERSION == 2 && GDCM_MINOR_VERSION <= 12
           // This will not work in the vast majority of cases but to get at
           // least something working in GDCM 2.0.12
-          de.SetByteValue( value.c_str(), value.size() );
+          de.SetByteValue( value.c_str(), static_cast<uint32_t>(value.size()) );
 #else
           std::string si = sf.FromString( tag, value.c_str(), value.size() );
           de.SetByteValue( si.c_str(), si.size() );
@@ -696,6 +708,11 @@ void GDCMImageIO::Write(const void *buffer)
         m_GlobalNumberOfDimensions = numberOfDimensions;
         m_Origin.resize(m_GlobalNumberOfDimensions);
         m_Spacing.resize(m_GlobalNumberOfDimensions);
+        m_Direction.resize(m_GlobalNumberOfDimensions);
+        for (unsigned int i = 0; i < m_GlobalNumberOfDimensions; i++)
+          {
+          m_Direction[i].resize(m_GlobalNumberOfDimensions);
+          }
         }
       else if ( key == ITK_Origin )
         {
@@ -715,6 +732,19 @@ void GDCMImageIO::Write(const void *buffer)
         m_Spacing[1] = spacingArray[1];
         m_Spacing[2] = spacingArray[2];
         }
+      else if( key == ITK_ZDirection )
+        {
+        typedef Matrix< double > DoubleMatrixType;
+        DoubleMatrixType directionMatrix;
+        ExposeMetaData< DoubleMatrixType >( dict, key, directionMatrix );
+        for(int i = 0; i<3; i++)
+          {
+          for(int j = 0; j<3; j++)
+            {
+            m_Direction[i][j]=directionMatrix[i][j];
+            }
+          }
+        }
       else
         {
         itkDebugMacro(
@@ -731,8 +761,8 @@ void GDCMImageIO::Write(const void *buffer)
   gdcm::SmartPointer< gdcm::Image > simage = new gdcm::Image;
   gdcm::Image &                     image = *simage;
   image.SetNumberOfDimensions(2);   // good default
-  image.SetDimension(0, m_Dimensions[0]);
-  image.SetDimension(1, m_Dimensions[1]);
+  image.SetDimension(0, static_cast<unsigned int>(m_Dimensions[0]));
+  image.SetDimension(1, static_cast<unsigned int>(m_Dimensions[1]));
   //image.SetDimension(2, m_Dimensions[2] );
   image.SetSpacing(0, m_Spacing[0]);
   image.SetSpacing(1, m_Spacing[1]);
@@ -769,30 +799,46 @@ void GDCMImageIO::Write(const void *buffer)
     {
     // resize num of dim to 3:
     image.SetNumberOfDimensions(3);
-    image.SetDimension(2, m_Dimensions[2]);
+    image.SetDimension(2, static_cast<unsigned int>(m_Dimensions[2]));
     }
 
   // Do the direction now:
-  image.SetDirectionCosines(0, m_Direction[0][0]);
-  image.SetDirectionCosines(1, m_Direction[0][1]);
-  if ( m_Direction.size() == 3 )
-    {
-    image.SetDirectionCosines(2, m_Direction[0][2]);
-    }
+  // if the meta dictionary contains the tag "0020 0037", use it
+  const bool hasIOP = ExposeMetaData<std::string>(dict, "0020|0037",tempString);
+  if (hasIOP)
+  {
+    double directions[6];
+    sscanf(tempString.c_str(), "%lf\\%lf\\%lf\\%lf\\%lf\\%lf", &(directions[0]), &(directions[1]), &(directions[2]),&(directions[3]),&(directions[4]),&(directions[5]));
+    image.SetDirectionCosines(0, directions[0]);
+    image.SetDirectionCosines(1, directions[1]);
+    image.SetDirectionCosines(2, directions[2]);
+    image.SetDirectionCosines(3, directions[3]);
+    image.SetDirectionCosines(4, directions[4]);
+    image.SetDirectionCosines(5, directions[5]);
+  }
   else
-    {
-    image.SetDirectionCosines(2, 0);
-    }
-  image.SetDirectionCosines(3, m_Direction[1][0]);
-  image.SetDirectionCosines(4, m_Direction[1][1]);
-  if ( m_Direction.size() == 3 )
-    {
-    image.SetDirectionCosines(5, m_Direction[1][2]);
-    }
-  else
-    {
-    image.SetDirectionCosines(5, 0);
-    }
+  {
+    image.SetDirectionCosines(0, m_Direction[0][0]);
+    image.SetDirectionCosines(1, m_Direction[0][1]);
+    if ( m_Direction.size() == 3 )
+      {
+      image.SetDirectionCosines(2, m_Direction[0][2]);
+      }
+    else
+      {
+      image.SetDirectionCosines(2, 0);
+      }
+    image.SetDirectionCosines(3, m_Direction[1][0]);
+    image.SetDirectionCosines(4, m_Direction[1][1]);
+    if ( m_Direction.size() == 3 )
+      {
+      image.SetDirectionCosines(5, m_Direction[1][2]);
+      }
+    else
+      {
+      image.SetDirectionCosines(5, 0);
+      }
+  }
 
   // reset any previous value:
   m_RescaleSlope = 1.0;
@@ -882,7 +928,7 @@ void GDCMImageIO::Write(const void *buffer)
     {
     itkExceptionMacro(<< "DICOM does not support this component type");
     }
-  pixeltype.SetSamplesPerPixel( this->GetNumberOfComponents() );
+  pixeltype.SetSamplesPerPixel( static_cast<short unsigned int>( this->GetNumberOfComponents() ) );
 
   // Compute the outpixeltype
   gdcm::PixelFormat outpixeltype = gdcm::PixelFormat::UNKNOWN;
@@ -890,10 +936,10 @@ void GDCMImageIO::Write(const void *buffer)
     {
     if ( bitsAllocated != "" && bitsStored != "" && highBit != "" && pixelRep != "" )
       {
-      outpixeltype.SetBitsAllocated( atoi( bitsAllocated.c_str() ) );
-      outpixeltype.SetBitsStored( atoi( bitsStored.c_str() ) );
-      outpixeltype.SetHighBit( atoi( highBit.c_str() ) );
-      outpixeltype.SetPixelRepresentation( atoi( pixelRep.c_str() ) );
+      outpixeltype.SetBitsAllocated( static_cast<unsigned short int>(atoi( bitsAllocated.c_str() ) ));
+      outpixeltype.SetBitsStored( static_cast<unsigned short int>(atoi( bitsStored.c_str() )) );
+      outpixeltype.SetHighBit( static_cast<unsigned short int>(atoi( highBit.c_str()) ) );
+      outpixeltype.SetPixelRepresentation( static_cast<unsigned short int>(atoi( pixelRep.c_str() )) );
       if ( this->GetNumberOfComponents() != 1 )
         {
         itkExceptionMacro(<< "Sorry Dave I can't do that");
@@ -931,19 +977,19 @@ void GDCMImageIO::Write(const void *buffer)
     ir.SetIntercept(m_RescaleIntercept);
     ir.SetSlope(m_RescaleSlope);
     ir.SetPixelFormat(pixeltype);
-    ir.SetMinMaxForPixelType( outpixeltype.GetMin(), outpixeltype.GetMax() );
+    ir.SetMinMaxForPixelType( static_cast<double>(outpixeltype.GetMin()), static_cast<double>(outpixeltype.GetMax()) );
     image.SetIntercept(m_RescaleIntercept);
     image.SetSlope(m_RescaleSlope);
     char *copy = new char[len];
     ir.InverseRescale(copy, (char *)buffer, numberOfBytes);
-    pixeldata.SetByteValue(copy, len);
+    pixeldata.SetByteValue(copy, static_cast<uint32_t>(len));
     delete[] copy;
     }
   else
     {
     itkAssertInDebugAndIgnoreInReleaseMacro(len == numberOfBytes);
     // only do a straight copy:
-    pixeldata.SetByteValue( (char *)buffer, numberOfBytes );
+    pixeldata.SetByteValue( (char *)buffer, static_cast<unsigned int>(numberOfBytes) );
     }
   image.SetDataElement(pixeldata);
 
@@ -994,21 +1040,21 @@ void GDCMImageIO::Write(const void *buffer)
     const char *studyuid = m_StudyInstanceUID.c_str();
       {
       gdcm::DataElement de( gdcm::Tag(0x0020, 0x000d) ); // Study
-      de.SetByteValue( studyuid, strlen(studyuid) );
+      de.SetByteValue( studyuid, static_cast<unsigned int>(strlen(studyuid)) );
       de.SetVR( gdcm::Attribute< 0x0020, 0x000d >::GetVR() );
       header.Insert(de);
       }
     const char *seriesuid = m_SeriesInstanceUID.c_str();
       {
       gdcm::DataElement de( gdcm::Tag(0x0020, 0x000e) ); // Series
-      de.SetByteValue( seriesuid, strlen(seriesuid) );
+      de.SetByteValue( seriesuid, static_cast<unsigned int>(strlen(seriesuid)) );
       de.SetVR( gdcm::Attribute< 0x0020, 0x000e >::GetVR() );
       header.Insert(de);
       }
     const char *frameofreferenceuid = m_FrameOfReferenceInstanceUID.c_str();
       {
       gdcm::DataElement de( gdcm::Tag(0x0020, 0x0052) ); // Frame of Reference
-      de.SetByteValue( frameofreferenceuid, strlen(frameofreferenceuid) );
+      de.SetByteValue( frameofreferenceuid, static_cast<unsigned int>(strlen( frameofreferenceuid)) );
       de.SetVR( gdcm::Attribute< 0x0020, 0x0052 >::GetVR() );
       header.Insert(de);
       }
@@ -1163,19 +1209,23 @@ void GDCMImageIO::GetScanOptions(char *name)
   ExposeMetaData< std::string >(dict, "0018|0022", m_ScanOptions);
   strcpy ( name, m_ScanOptions.c_str() );
 }
+#endif
 
 bool GDCMImageIO::GetValueFromTag(const std::string & tag, std::string & value)
 {
   MetaDataDictionary & dict = this->GetMetaDataDictionary();
 
-  return ExposeMetaData< std::string >(dict, tag, value);
+  std::string tag_lower = tag;
+  std::transform( tag_lower.begin(), tag_lower.end(), tag_lower.begin(),
+                  static_cast<int(*)(int)>( ::tolower ) );
+
+  return ExposeMetaData< std::string >(dict, tag_lower, value);
 }
 
 bool GDCMImageIO::GetLabelFromTag(const std::string & tag,
                                   std::string & labelId)
 {
   gdcm::Tag t;
-
   if ( t.ReadFromPipeSeparatedString( tag.c_str() ) && t.IsPublic() )
     {
     const gdcm::Global &    g = gdcm::Global::GetInstance();
@@ -1186,7 +1236,6 @@ bool GDCMImageIO::GetLabelFromTag(const std::string & tag,
     }
   return false;
 }
-#endif
 
 void GDCMImageIO::PrintSelf(std::ostream & os, Indent indent) const
 {
@@ -1196,6 +1245,7 @@ void GDCMImageIO::PrintSelf(std::ostream & os, Indent indent) const
   os << indent << "RescaleSlope: " << m_RescaleSlope << std::endl;
   os << indent << "RescaleIntercept: " << m_RescaleIntercept << std::endl;
   os << indent << "KeepOriginalUID:" << ( m_KeepOriginalUID ? "On" : "Off" ) << std::endl;
+  os << indent << "LoadPrivateTags:" << ( m_LoadPrivateTags ? "On" : "Off" ) << std::endl;
   os << indent << "UIDPrefix: " << m_UIDPrefix << std::endl;
   os << indent << "StudyInstanceUID: " << m_StudyInstanceUID << std::endl;
   os << indent << "SeriesInstanceUID: " << m_SeriesInstanceUID << std::endl;

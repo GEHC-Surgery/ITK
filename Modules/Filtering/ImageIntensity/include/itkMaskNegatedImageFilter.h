@@ -30,13 +30,17 @@ namespace Functor
  * \brief
  * \ingroup ITKImageIntensity
  */
-template< class TInput, class TMask, class TOutput = TInput >
+template< typename TInput, typename TMask, typename TOutput = TInput >
 class MaskNegatedInput
 {
 public:
   typedef typename NumericTraits< TInput >::AccumulateType AccumulatorType;
 
-  MaskNegatedInput():m_OutsideValue(NumericTraits< TOutput >::Zero) {}
+  MaskNegatedInput()
+    : m_OutsideValue(NumericTraits< TOutput >::Zero)
+    , m_MaskingValue(NumericTraits< TMask >::ZeroValue())
+  {
+  }
   ~MaskNegatedInput() {}
   bool operator!=(const MaskNegatedInput &) const
   {
@@ -50,7 +54,7 @@ public:
 
   inline TOutput operator()(const TInput & A, const TMask & B) const
   {
-    if ( B != NumericTraits< TMask >::ZeroValue() )
+    if ( B != m_MaskingValue )
       {
       return m_OutsideValue;
       }
@@ -72,8 +76,20 @@ public:
     return m_OutsideValue;
   }
 
+  /** Method to explicitly set the masking value of the mask */
+  void SetMaskingValue(const TMask & maskingValue)
+  {
+    m_MaskingValue = maskingValue;
+  }
+
+  /** Method to get the outside value of the mask */
+  const TMask & GetMaskingValue() const
+  {
+    return m_MaskingValue;
+  }
 private:
   TOutput m_OutsideValue;
+  TMask   m_MaskingValue;
 };
 }
 /** \class MaskNegatedImageFilter
@@ -109,8 +125,8 @@ private:
  * \wikiexample{ImageProcessing/MaskNegatedImageFilter,Apply the inverse of a mask to an image}
  * \endwiki
  */
-template< class TInputImage, class TMaskImage, class TOutputImage = TInputImage >
-class ITK_EXPORT MaskNegatedImageFilter:
+template< typename TInputImage, typename TMaskImage, typename TOutputImage = TInputImage >
+class MaskNegatedImageFilter:
   public
   BinaryFunctorImageFilter< TInputImage, TMaskImage, TOutputImage,
                             Functor::MaskNegatedInput<
@@ -157,6 +173,22 @@ public:
     return this->GetFunctor().GetOutsideValue();
   }
 
+  /** Method to explicitly set the masking value of the mask. Defaults to 0 */
+  void SetMaskingValue(const typename TMaskImage::PixelType & maskingValue)
+  {
+    if ( this->GetMaskingValue() != maskingValue )
+      {
+      this->GetFunctor().SetMaskingValue(maskingValue);
+      this->Modified();
+      }
+  }
+
+  /** Method to get the masking value of the mask. */
+  const typename TMaskImage::PixelType & GetMaskingValue() const
+  {
+    return this->GetFunctor().GetMaskingValue();
+  }
+
   /** Set/Get the mask image. Pixels set to zero in the mask image will retain
    *  the original value of the input image while non-zero pixels in
    *  the mask will be set to the "OutsideValue".
@@ -173,13 +205,13 @@ public:
   }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( MaskEqualityComparableCheck,
                    ( Concept::EqualityComparable< typename TMaskImage::PixelType > ) );
   itkConceptMacro( InputConvertibleToOutputCheck,
                    ( Concept::Convertible< typename TInputImage::PixelType,
                                            typename TOutputImage::PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

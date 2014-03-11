@@ -44,8 +44,8 @@ void CompensatedSummationAddElement( TFloat& compensation, TFloat& sum, const TF
   const AccumulateType compensatedInput = static_cast< AccumulateType >( element - compensation );
   const AccumulateType tempSum          = sum + compensatedInput;
   // Warning: watch out for the compiler optimizing this out!
-  compensation = (tempSum - sum) - compensatedInput;
-  sum = tempSum;
+  compensation = static_cast<TFloat>( (tempSum - sum) - compensatedInput);
+  sum = static_cast<TFloat>( tempSum );
 }
 #ifndef __itkCompensatedSummation_cxx
 #ifdef __INTEL_COMPILER
@@ -56,7 +56,7 @@ void CompensatedSummationAddElement( TFloat& compensation, TFloat& sum, const TF
 #endif // _MSC_VER
 #endif // not __itkCompensatedSummation_cxx
 
-template < class TFloat >
+template < typename TFloat >
 CompensatedSummation< TFloat >
 ::CompensatedSummation():
   m_Sum( NumericTraits< AccumulateType >::Zero ),
@@ -64,7 +64,7 @@ CompensatedSummation< TFloat >
 {
 }
 
-template < class TFloat >
+template < typename TFloat >
 CompensatedSummation< TFloat >
 ::CompensatedSummation( const Self & rhs )
 {
@@ -72,21 +72,20 @@ CompensatedSummation< TFloat >
   this->m_Compensation = rhs.m_Compensation;
 }
 
-template < class TFloat >
-void
+template < typename TFloat >
+typename CompensatedSummation<TFloat>::Self &
 CompensatedSummation< TFloat >
 ::operator=( const Self & rhs )
 {
-  if ( this == &rhs )
+  if ( this != &rhs )
     {
-    return;
+    this->m_Sum = rhs.m_Sum;
+    this->m_Compensation = rhs.m_Compensation;
     }
-
-  this->m_Sum = rhs.m_Sum;
-  this->m_Compensation = rhs.m_Compensation;
+  return *this;
 }
 
-template < class TFloat >
+template < typename TFloat >
 void
 CompensatedSummation< TFloat >
 ::AddElement( const FloatType & element )
@@ -94,7 +93,7 @@ CompensatedSummation< TFloat >
   CompensatedSummationAddElement( this->m_Compensation, this->m_Sum, element );
 }
 
-template < class TFloat >
+template < typename TFloat >
 CompensatedSummation< TFloat > &
 CompensatedSummation< TFloat >
 ::operator+=( const FloatType & rhs )
@@ -103,7 +102,7 @@ CompensatedSummation< TFloat >
   return *this;
 }
 
-template < class TFloat >
+template < typename TFloat >
 CompensatedSummation< TFloat > &
 CompensatedSummation< TFloat >
 ::operator-=( const FloatType & rhs )
@@ -112,7 +111,7 @@ CompensatedSummation< TFloat >
   return *this;
 }
 
-template < class TFloat >
+template < typename TFloat >
 CompensatedSummation< TFloat > &
 CompensatedSummation< TFloat >
 ::operator*=( const FloatType & rhs )
@@ -122,7 +121,7 @@ CompensatedSummation< TFloat >
   return *this;
 }
 
-template < class TFloat >
+template < typename TFloat >
 CompensatedSummation< TFloat > &
 CompensatedSummation< TFloat >
 ::operator/=( const FloatType & rhs )
@@ -132,7 +131,7 @@ CompensatedSummation< TFloat >
   return *this;
 }
 
-template < class TFloat >
+template < typename TFloat >
 void
 CompensatedSummation< TFloat >
 ::ResetToZero()
@@ -141,7 +140,7 @@ CompensatedSummation< TFloat >
   this->m_Compensation = NumericTraits< AccumulateType >::Zero;
 }
 
-template < class TFloat >
+template < typename TFloat >
 CompensatedSummation< TFloat > &
 CompensatedSummation< TFloat >
 ::operator=( const FloatType & rhs )
@@ -152,7 +151,7 @@ CompensatedSummation< TFloat >
   return *this;
 }
 
-template < class TFloat >
+template < typename TFloat >
 const typename CompensatedSummation< TFloat >::AccumulateType &
 CompensatedSummation< TFloat >
 ::GetSum() const

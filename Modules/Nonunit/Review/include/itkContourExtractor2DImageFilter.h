@@ -92,8 +92,8 @@ namespace itk
  * \wikiexample{Segmentation/ContourExtractor2DImageFilter,Extract contours from an image}
  * \endwiki
  */
-template< class TInputImage >
-class ITK_EXPORT ContourExtractor2DImageFilter:
+template< typename TInputImage >
+class ContourExtractor2DImageFilter:
   public ImageToPathFilter< TInputImage, PolyLineParametricPath< 2 > >
 {
 public:
@@ -158,7 +158,7 @@ public:
   itkGetConstReferenceMacro(ContourValue, InputRealType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( DimensionShouldBe2,
                    ( Concept::SameDimension< itkGetStaticConstMacro(InputImageDimension), 2 > ) );
   itkConceptMacro( InputPixelTypeComparable,
@@ -167,7 +167,7 @@ public:
                    ( Concept::HasPixelTraits< InputPixelType > ) );
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

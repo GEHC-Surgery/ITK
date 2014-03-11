@@ -35,8 +35,8 @@ namespace itk
  *
  * \ingroup ITKVideoFiltering
  */
-template<class TImageToImageFilter>
-class ITK_EXPORT ImageFilterToVideoFilterWrapper :
+template<typename TImageToImageFilter>
+class ImageFilterToVideoFilterWrapper :
   public VideoToVideoFilter<
           itk::VideoStream<typename TImageToImageFilter::InputImageType>,
           itk::VideoStream<typename TImageToImageFilter::OutputImageType> >
@@ -63,7 +63,7 @@ public:
 
   /** Set the filter to use in the interal pipeline */
   itkSetObjectMacro(ImageFilter, ImageFilterType);
-  itkGetObjectMacro(ImageFilter, ImageFilterType);
+  itkGetModifiableObjectMacro(ImageFilter, ImageFilterType);
 
 protected:
 

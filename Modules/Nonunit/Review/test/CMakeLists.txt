@@ -43,8 +43,6 @@ itkMapRankImageFilterTest.cxx
 itkMaskedRankImageFilterTest.cxx
 itkMorphologicalWatershedFromMarkersImageFilterTest.cxx
 itkMorphologicalWatershedImageFilterTest.cxx
-itkMRCImageIOTest.cxx
-itkMRCImageIOTest2.cxx
 itkMultiphaseDenseFiniteDifferenceImageFilterTest.cxx
 itkMultiphaseFiniteDifferenceImageFilterTest.cxx
 itkMultiphaseSparseFiniteDifferenceImageFilterTest.cxx
@@ -92,12 +90,8 @@ set(BASELINE_ROOT ${ITK_DATA_ROOT}/Baseline)
 set(TEMP ${ITK_TEST_OUTPUT_DIR})
 
 
-if(ITK_USE_MINC2 AND MINC2_FOUND)
-  set(ITKReviewTests ${ITKReviewTests} itkMINC2ImageIOTest.cxx)
-endif()
 
-
-if( USE_FFTWD OR USE_FFTWF )
+if( ITK_USE_FFTWD OR ITK_USE_FFTWF )
   set( ITKReviewTests
     ${ITKReviewTests}
     itkFFTComplexToComplexImageFilterTest01.cxx
@@ -326,11 +320,16 @@ itk_add_test(NAME itkKappaSigmaThresholdImageFilterTest01
 itk_add_test(NAME itkKappaSigmaThresholdImageFilterTest02
       COMMAND ITKReviewTestDriver itkKappaSigmaThresholdImageFilterTest
               DATA{${ITK_DATA_ROOT}/Input/CellsFluorescence2.png} ${ITK_TEST_OUTPUT_DIR}/itkKappaSigmaThresholdImageFilterTest02.mha 10 3.0)
-itk_add_test(NAME itkLabelGeometryImageFilterTest2
+itk_add_test(NAME itkLabelGeometryImageFilterTest
       COMMAND ITKReviewTestDriver
-    --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkLabelGeometryImageFilterTest2Image.png}
-              ${ITK_TEST_OUTPUT_DIR}/itkLabelGeometryImageFilterTest2Image.png
-    itkLabelGeometryImageFilterTest DATA{${ITK_DATA_ROOT}/Input/BinaryImageWithVariousShapes01.png} ${ITK_TEST_OUTPUT_DIR}/itkLabelGeometryImageFilterTest2Image.png 2 DATA{${ITK_DATA_ROOT}/Input/GrayscaleImageWithVariousShapes01.png} ${ITK_TEST_OUTPUT_DIR})
+    --compare DATA{${BASELINE}/itkLabelGeometryImageFilterTest.png}
+              ${ITK_TEST_OUTPUT_DIR}/itkLabelGeometryImageFilterTest.png
+    itkLabelGeometryImageFilterTest DATA{${INPUTDATA}/LabelImageWithVariousShapes.png} DATA{${INPUTDATA}/GrayscaleImageWithVariousShapes.png} ${ITK_TEST_OUTPUT_DIR}/itkLabelGeometryImageFilterTest.png ${ITK_TEST_OUTPUT_DIR}/itkLabelGeometryImageFilterTest.csv DATA{${BASELINE}/itkLabelGeometryImageFilterTest.csv})
+itk_add_test(NAME itkLabelGeometryImageFilterTest3D
+      COMMAND ITKReviewTestDriver
+    --compare DATA{${BASELINE}/itkLabelGeometryImageFilterTest3D.mhd,itkLabelGeometryImageFilterTest3D.raw}
+              ${ITK_TEST_OUTPUT_DIR}/itkLabelGeometryImageFilterTest3D.mhd
+    itkLabelGeometryImageFilterTest DATA{${INPUTDATA}/LabelVolumeWithVariousShapes.mhd,LabelVolumeWithVariousShapes.raw} DATA{${INPUTDATA}/GrayscaleVolumeWithVariousShapes.mhd,GrayscaleVolumeWithVariousShapes.raw} ${ITK_TEST_OUTPUT_DIR}/itkLabelGeometryImageFilterTest3D.mhd ${ITK_TEST_OUTPUT_DIR}/itkLabelGeometryImageFilterTest3D.csv DATA{${BASELINE}/itkLabelGeometryImageFilterTest3D.csv})
 itk_add_test(NAME itkMapMaskedRankImageFilterTest3
       COMMAND ITKReviewTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkMaskedRankImageFilter3.png}
@@ -491,34 +490,6 @@ itk_add_test(NAME itkMorphologicalWatershedImageFilterTestLevel50
     --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkMorphologicalWatershedImageFilterTestLevel50.png}
               ${ITK_TEST_OUTPUT_DIR}/itkMorphologicalWatershedImageFilterTestLevel50.png
     itkMorphologicalWatershedImageFilterTest DATA{${ITK_DATA_ROOT}/Input/level.png} ${ITK_TEST_OUTPUT_DIR}/itkMorphologicalWatershedImageFilterTestLevel50.png 1 0 50)
-itk_add_test(NAME itkMRCImageIOTest
-      COMMAND ITKReviewTestDriver itkMRCImageIOTest
-              ${ITK_TEST_OUTPUT_DIR})
-itk_add_test(NAME itkMRCImageIOTest2a
-      COMMAND ITKReviewTestDriver
-    --compare-MD5 ${ITK_TEST_OUTPUT_DIR}/itkMRCImageIOTest2a.mrc
-                  5eac5b2827533e8df8b061ff0ab33718
-    itkMRCImageIOTest2
-        DATA{${ITK_DATA_ROOT}/Input/tilt_series_little.mrc}
-        ${ITK_TEST_OUTPUT_DIR}/itkMRCImageIOTest2a.mrc
-        5eac5b2827533e8df8b061ff0ab33718)
-itk_add_test(NAME itkMRCImageIOTest2b
-      COMMAND ITKReviewTestDriver
-    --compare-MD5 ${ITK_TEST_OUTPUT_DIR}/itkMRCImageIOTest2b.mrc
-                  5eac5b2827533e8df8b061ff0ab33718
-    itkMRCImageIOTest2
-        DATA{${ITK_DATA_ROOT}/Input/tilt_series_big.mrc}
-        ${ITK_TEST_OUTPUT_DIR}/itkMRCImageIOTest2b.mrc
-        5eac5b2827533e8df8b061ff0ab33718)
-itk_add_test(NAME itkMRCImageIOTest2c
-  COMMAND ITKReviewTestDriver
-    --compare-MD5 ${ITK_TEST_OUTPUT_DIR}/itkMRCImageIOTest2c.mrc
-                  38a2dcfc08812e04b1528f15ca3d2ab7
-    itkMRCImageIOTest2
-        DATA{${ITK_DATA_ROOT}/Input/RGBTestImageLZW.tif}
-        ${ITK_TEST_OUTPUT_DIR}/itkMRCImageIOTest2c.mrc
-        38a2dcfc08812e04b1528f15ca3d2ab7)
-
 itk_add_test(NAME itkMultiphaseDenseFiniteDifferenceImageFilterTest
       COMMAND ITKReviewTestDriver itkMultiphaseDenseFiniteDifferenceImageFilterTest)
 itk_add_test(NAME itkMultiphaseFiniteDifferenceImageFilterTest
@@ -604,27 +575,27 @@ itk_add_test(NAME itkScalarChanAndVeseDenseLevelSetImageFilterTest2_0
       COMMAND ITKReviewTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_0.mha}
               ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_0.mha
-    itkScalarChanAndVeseDenseLevelSetImageFilterTest2 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_0.mha 1 1 0 0 0)
+    itkScalarChanAndVeseDenseLevelSetImageFilterTest2 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png,:} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_0.mha 1 1 0 0 0)
 itk_add_test(NAME itkScalarChanAndVeseDenseLevelSetImageFilterTest2_1
       COMMAND ITKReviewTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_1.mha}
               ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_1.mha
-    itkScalarChanAndVeseDenseLevelSetImageFilterTest2 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_1.mha 1 1 1 1 200)
+    itkScalarChanAndVeseDenseLevelSetImageFilterTest2 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png,:} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_1.mha 1 1 1 1 200)
 itk_add_test(NAME itkScalarChanAndVeseDenseLevelSetImageFilterTest2_2
       COMMAND ITKReviewTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_2.mha}
               ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_2.mha
-    itkScalarChanAndVeseDenseLevelSetImageFilterTest2 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_2.mha 0 0 1 0 0)
+    itkScalarChanAndVeseDenseLevelSetImageFilterTest2 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png,:} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_2.mha 0 0 1 0 0)
 itk_add_test(NAME itkScalarChanAndVeseDenseLevelSetImageFilterTest2_3
       COMMAND ITKReviewTestDriver itkScalarChanAndVeseDenseLevelSetImageFilterTest2
-              DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_3.mha 0 0 0 0 0)
+              DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png,:} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_3.mha 0 0 0 0 0)
 itk_add_test(NAME itkScalarChanAndVeseDenseLevelSetImageFilterTest3
       COMMAND ITKReviewTestDriver itkScalarChanAndVeseDenseLevelSetImageFilterTest3)
 itk_add_test(NAME itkScalarChanAndVeseDenseLevelSetImageFilterTest4
       COMMAND ITKReviewTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkScalarChanAndVeseDenseLevelSetImageFilterTest2_0.mha}
               ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest4.mha
-    itkScalarChanAndVeseDenseLevelSetImageFilterTest4 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest4.mha 1 1 0 0 0)
+    itkScalarChanAndVeseDenseLevelSetImageFilterTest4 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png,:} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseDenseLevelSetImageFilterTest4.mha 1 1 0 0 0)
 itk_add_test(NAME itkScalarChanAndVeseLevelSetFunctionTest1
       COMMAND ITKReviewTestDriver itkScalarChanAndVeseLevelSetFunctionTest1)
 itk_add_test(NAME itkScalarChanAndVeseLevelSetFunctionTest2
@@ -635,7 +606,7 @@ itk_add_test(NAME itkScalarChanAndVeseSparseLevelSetImageFilterTest2
       COMMAND ITKReviewTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkScalarChanAndVeseSparseLevelSetImageFilterTest2.mha}
               ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseSparseLevelSetImageFilterTest2.mha
-    itkScalarChanAndVeseSparseLevelSetImageFilterTest2 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseSparseLevelSetImageFilterTest2.mha)
+    itkScalarChanAndVeseSparseLevelSetImageFilterTest2 DATA{${ITK_DATA_ROOT}/Baseline/Segmentation/ShapeDetectionLevelSetLeftVentricleTest.png,:} ${ITK_EXAMPLE_DATA_ROOT}/BrainProtonDensitySlice.png ${ITK_TEST_OUTPUT_DIR}/itkScalarChanAndVeseSparseLevelSetImageFilterTest2.mha)
 itk_add_test(NAME itkScalarRegionBasedLevelSetFunctionTest
       COMMAND ITKReviewTestDriver itkScalarRegionBasedLevelSetFunctionTest)
 itk_add_test(NAME itkShapedFloodFilledImageFunctionConditionalConstIteratorTest1

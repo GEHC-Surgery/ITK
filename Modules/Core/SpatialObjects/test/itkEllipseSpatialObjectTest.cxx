@@ -32,7 +32,7 @@ int itkEllipseSpatialObjectTest(int, char* [])
 
   EllipseType::ArrayType radius;
 
-  for(unsigned int i = 0; i<4 ;i++)
+  for(unsigned int i = 0; i < 4; i++)
   {
     radius[i] = i;
   }
@@ -41,7 +41,7 @@ int itkEllipseSpatialObjectTest(int, char* [])
 
   myEllipse->SetRadius(radius);
   EllipseType::ArrayType radius2 = myEllipse->GetRadius();
-  for(unsigned int i = 0; i<4 ;i++)
+  for(unsigned int i = 0; i<4;i++)
   {
     if(radius2[i]!=i)
     {
@@ -54,7 +54,7 @@ int itkEllipseSpatialObjectTest(int, char* [])
   myEllipse->SetRadius(3);
  EllipseType::ArrayType radius3 = myEllipse->GetRadius();
   std::cout << "Testing Global radii : ";
-  for(unsigned int i = 0; i<4 ;i++)
+  for(unsigned int i = 0; i<4;i++)
   {
     if(radius3[i]!=3)
     {
@@ -97,12 +97,12 @@ int itkEllipseSpatialObjectTest(int, char* [])
   EllipseType::TransformType::OffsetType offset;
   offset.Fill(10);
 
-  myEllipse->GetObjectToWorldTransform()->SetOffset(offset);
+  myEllipse->GetModifiableObjectToWorldTransform()->SetOffset(offset);
   myEllipse->ComputeObjectToParentTransform();
 
   EllipseType::TransformType::OffsetType offset2;
   offset2.Fill(15);
-  myEllipse2->GetObjectToWorldTransform()->SetOffset(offset2);
+  myEllipse2->GetModifiableObjectToWorldTransform()->SetOffset(offset2);
   myEllipse2->ComputeObjectToParentTransform();
 
   EllipseType::TransformType::OffsetType offset3;

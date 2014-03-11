@@ -24,7 +24,6 @@
 
 #include <memory>
 
-
 namespace itk
 {
 namespace Functor
@@ -241,7 +240,11 @@ public:
    * memory that is the appropriate size.
    * \sa GetIndex() */
   void SetIndex(const IndexValueType val[VIndexDimension])
-  { memcpy(m_Index, val, sizeof( IndexValueType ) * VIndexDimension); }
+  {
+    std::copy(val,
+              val+VIndexDimension,
+              m_Index);
+  }
 
   /** Sets the value of one of the elements in the index.
    * This method is mainly intended to facilitate the access to elements
@@ -279,7 +282,7 @@ public:
   IndexValueType m_Index[VIndexDimension];
 
   /** Copy values from a FixedArray by rounding each one of the components */
-  template< class TCoordRep >
+  template< typename TCoordRep >
   inline void CopyWithRound(const FixedArray< TCoordRep, VIndexDimension > & point)
   {
     itkForLoopRoundingAndAssignmentMacro(IndexType,
@@ -298,7 +301,7 @@ public:
   }
 
   /** Copy values from a FixedArray by casting each one of the components */
-  template< class TCoordRep >
+  template< typename TCoordRep >
   inline void CopyWithCast(const FixedArray< TCoordRep, VIndexDimension > & point)
   {
     for ( unsigned int i = 0; i < VIndexDimension; ++i )

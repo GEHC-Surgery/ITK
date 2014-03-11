@@ -28,11 +28,8 @@ MetaDataDictionary
 MetaDataDictionary
 ::~MetaDataDictionary()
 {
-  if ( m_Dictionary )
-    {
-    delete m_Dictionary;
-    m_Dictionary = 0;
-    }
+  delete m_Dictionary;
+  m_Dictionary = 0;
 }
 
 MetaDataDictionary
@@ -42,10 +39,14 @@ MetaDataDictionary
   *m_Dictionary = *( old.m_Dictionary );
 }
 
-void MetaDataDictionary
+MetaDataDictionary & MetaDataDictionary
 ::operator=(const MetaDataDictionary & old)
 {
-  *m_Dictionary = *( old.m_Dictionary );
+  if(this != &old)
+    {
+    *m_Dictionary = *( old.m_Dictionary );
+    }
+  return *this;
 }
 
 void
@@ -54,7 +55,7 @@ MetaDataDictionary
 {
   for ( MetaDataDictionaryMapType::const_iterator it = m_Dictionary->begin();
         it != m_Dictionary->end();
-        it++ )
+        ++it )
     {
     os << ( *it ).first <<  "  ";
     ( *it ).second->Print(os);

@@ -46,13 +46,12 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
  *
- *
  * \sa AccumulateImageFilter
- * \ingroup   IntensityImageFilters     SingelThreaded
+ * \ingroup IntensityImageFilters SingleThreaded
  * \ingroup ITKImageStatistics
  */
-template< class TInputImage, class TOutputImage, class TAccumulator >
-class ITK_EXPORT ProjectionImageFilter:
+template< typename TInputImage, typename TOutputImage, typename TAccumulator >
+class ProjectionImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -89,12 +88,12 @@ public:
   /** Input and output images must be the same dimension, or the output's
       dimension must be one less than that of the input. */
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( ImageDimensionCheck,
                    ( Concept::SameDimensionOrMinusOne<
                        itkGetStaticConstMacro(InputImageDimension),
                        itkGetStaticConstMacro(OutputImageDimension) > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
   /** Set/Get the direction in which to accumulate the data.  It must be set

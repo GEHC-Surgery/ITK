@@ -20,24 +20,28 @@
 
 #include "itkVTKVisualize2DLevelSetAsElevationMap.h"
 
+#include "vnl/vnl_math.h"
+
 #include "vtkVersion.h"
 
 #include "vtkScalarsToColors.h"
 #include "vtkDoubleArray.h"
 #include "vtkPointData.h"
 #include "vtkCellArray.h"
+#include "vtkProperty.h"
+#include "vtkTextProperty.h"
 
 namespace itk
 {
 
-template< class TInputImage, class TLevelSet >
+template< typename TInputImage, typename TLevelSet >
 VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
 ::VTKVisualize2DLevelSetAsElevationMap()
 {
   this->m_ColorValue = true;
   this->m_MinValue = itk::NumericTraits< double >::max( );
   this->m_MaxValue = itk::NumericTraits< double >::min( );
-  this->m_Constant = 0.1;
+  this->m_HeightScaling = 0.1;
 
   this->m_Mesh = vtkSmartPointer< vtkPolyData >::New();
 
@@ -64,13 +68,13 @@ VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
   this->m_Renderer->AddActor( this->m_SurfaceActor );
 }
 
-template< class TInputImage, class TLevelSet >
+template< typename TInputImage, typename TLevelSet >
 VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
 ::~VTKVisualize2DLevelSetAsElevationMap()
 {
 }
 
-template< class TInputImage, class TLevelSet >
+template< typename TInputImage, typename TLevelSet >
 void
 VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
 ::SetLevelSet( LevelSetType * levelSet )
@@ -78,7 +82,7 @@ VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
   this->m_LevelSet = levelSet;
 }
 
-template< class TInputImage, class TLevelSet >
+template< typename TInputImage, typename TLevelSet >
 void
 VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
 ::PrepareVTKPipeline()
@@ -101,7 +105,7 @@ VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
     }
 }
 
-template< class TInputImage, class TLevelSet >
+template< typename TInputImage, typename TLevelSet >
 void
 VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
 ::GenerateElevationMap()
@@ -182,7 +186,7 @@ VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
 
   inputImage->TransformIndexToPhysicalPoint( index, itkPoint2 );
 
-  double ratio = m_Constant *
+  double ratio = m_HeightScaling *
       static_cast< double >( itkPoint.EuclideanDistanceTo( itkPoint2 ) );
 
   if( den != 0. )
@@ -199,14 +203,14 @@ VTKVisualize2DLevelSetAsElevationMap< TInputImage, TLevelSet >
 
   vtkIdType vtkId[3];
 
-  for( InputImageSizeValueType j = 0; j < ( this->m_NumberOfSamples[1] - 1 ); j++ )
-    {
-    for( InputImageSizeValueType i = 0; i < ( this->m_NumberOfSamples[0] - 1 ); i++ )
-      {
-      vtkId[0] = j * m_NumberOfSamples[0] + i;
-      vtkId[1] = vtkId[0] + 1;
-      vtkId[2] = vtkId[1] + m_NumberOfSamples[0];
 
+  for( InputImageSizeValueType i = 0; i < ( this->m_NumberOfSamples[0] -1 ); i++ )
+    {
+    for( InputImageSizeValueType j = 0; j < ( this->m_NumberOfSamples[1] - 1 ); j++ )
+      {
+      vtkId[0] = i * m_NumberOfSamples[1] + j;
+      vtkId[1] = vtkId[0] + 1;
+      vtkId[2] = vtkId[1] + m_NumberOfSamples[1];
       this->m_Mesh->InsertNextCell( VTK_TRIANGLE, 3, static_cast< vtkIdType* >( vtkId ) );
 
       vtkId[1] = vtkId[2];

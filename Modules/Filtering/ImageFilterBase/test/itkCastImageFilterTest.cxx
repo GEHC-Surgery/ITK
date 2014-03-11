@@ -16,11 +16,10 @@
  *
  *=========================================================================*/
 
-#include <iostream>
-
 #include "itkCastImageFilter.h"
 #include "itkRandomImageSource.h"
 #include "itkVectorImage.h"
+#include <iostream>
 
 // Better name demanging for gcc
 #if __GNUC__ > 3 || ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 )
@@ -32,7 +31,7 @@
 #include <cxxabi.h>
 #endif
 
-template< class T >
+template< typename T >
 std::string GetCastTypeName()
 {
   std::string name;
@@ -50,7 +49,7 @@ std::string GetCastTypeName()
 }
 
 
-template < class TInputPixelType, class TOutputPixelType >
+template < typename TInputPixelType, typename TOutputPixelType >
 bool TestCastFromTo()
 {
   typedef itk::Image< TInputPixelType, 3 >                        InputImageType;
@@ -114,7 +113,7 @@ bool TestCastFromTo()
 }
 
 
-template < class TInputPixelType >
+template < typename TInputPixelType >
 bool TestCastFrom()
 {
   bool success =
@@ -142,7 +141,7 @@ bool TestVectorImageCast()
                 to VectorImage<unsigned char, 2> ..." << std::endl;
 
   typedef itk::VectorImage<unsigned char, 2>  UnsignedCharVectorImageType;
-  typedef itk::VectorImage<float, 2>  FloatVectorImageType;
+  typedef itk::VectorImage<float, 2>          FloatVectorImageType;
 
   // Create a 1x3 image of 2D vectors
   FloatVectorImageType::Pointer image = FloatVectorImageType::New();

@@ -29,7 +29,7 @@
 #include "itkVectorMagnitudeImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 
-template<class TFilter>
+template<typename TFilter>
 class CommandIterationUpdate : public itk::Command
 {
 public:
@@ -56,11 +56,11 @@ public:
       { return; }
 
     unsigned int currentLevel = filter->GetCurrentLevel();
-    typename TFilter::ShrinkFactorsArrayType shrinkFactors = filter->GetShrinkFactorsPerLevel();
+    typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
     typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
     typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
 
-    typename itk::ObjectToObjectOptimizerBase::Pointer optimizerBase = (const_cast<TFilter*>(filter))->GetOptimizer();
+    typename itk::ObjectToObjectOptimizerBase::Pointer optimizerBase = (const_cast<TFilter*>(filter))->GetModifiableOptimizer();
     typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
     typename GradientDescentOptimizerv4Type::Pointer optimizer = dynamic_cast<GradientDescentOptimizerv4Type *>(optimizerBase.GetPointer());
     if( !optimizer )
@@ -78,7 +78,7 @@ public:
 
     //debug:
     std::cout << "  CL Current level:           " << currentLevel << std::endl;
-    std::cout << "   SF Shrink factor:          " << shrinkFactors[currentLevel] << std::endl;
+    std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;
     std::cout << "   SS Smoothing sigma:        " << smoothingSigmas[currentLevel] << std::endl;
     std::cout << "   RFP Required fixed params: " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
     std::cout << "   LR Final learning rate:    " << optimizer->GetLearningRate() << std::endl;
@@ -149,12 +149,17 @@ int PerformBSplineExpImageRegistration( int argc, char *argv[] )
 
   typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
   typename GradientDescentOptimizerv4Type::Pointer affineOptimizer =
-    dynamic_cast<GradientDescentOptimizerv4Type * >( affineSimple->GetOptimizer() );
+    dynamic_cast<GradientDescentOptimizerv4Type * >( affineSimple->GetModifiableOptimizer() );
   if( !affineOptimizer )
     {
     itkGenericExceptionMacro( "Error dynamic_cast failed" );
     }
+#ifdef NDEBUG
   affineOptimizer->SetNumberOfIterations( atoi( argv[5] ) );
+#else
+  affineOptimizer->SetNumberOfIterations( 1 );
+#endif
+
   affineOptimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   affineOptimizer->SetDoEstimateLearningRateAtEachIteration( true );
 
@@ -164,7 +169,7 @@ int PerformBSplineExpImageRegistration( int argc, char *argv[] )
 
   {
   typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageMetricType;
-  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineSimple->GetMetric() );
+  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineSimple->GetModifiableMetric() );
   //imageMetric->SetUseFloatingPointCorrection(true);
   imageMetric->SetFloatingPointCorrectionResolution(1e4);
   }
@@ -182,7 +187,7 @@ int PerformBSplineExpImageRegistration( int argc, char *argv[] )
 
   {
   typedef itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageMetricType;
-  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineOptimizer->GetMetric() );
+  typename ImageMetricType::Pointer imageMetric = dynamic_cast<ImageMetricType*>( affineOptimizer->GetModifiableMetric() );
   std::cout << "Affine parameters after registration: " << std::endl
             << affineOptimizer->GetCurrentPosition() << std::endl
             << "Last LearningRate: " << affineOptimizer->GetLearningRate() << std::endl
@@ -248,7 +253,11 @@ int PerformBSplineExpImageRegistration( int argc, char *argv[] )
 
   typename GradientDescentOptimizerv4Type::Pointer optimizer = GradientDescentOptimizerv4Type::New();
   optimizer->SetLearningRate( 1.0 );
+#ifdef NDEBUG
   optimizer->SetNumberOfIterations( atoi( argv[6] ) );
+#else
+  optimizer->SetNumberOfIterations( 1 );
+#endif
   optimizer->SetScalesEstimator( NULL );
   optimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   optimizer->SetDoEstimateLearningRateAtEachIteration( true );

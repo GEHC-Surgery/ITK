@@ -83,7 +83,7 @@ namespace itk
  * \endwiki
  */
 class InternalHeader;
-class ITK_EXPORT GDCMImageIO:public ImageIOBase
+class GDCMImageIO:public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -152,6 +152,13 @@ public:
   itkGetConstMacro(KeepOriginalUID, bool);
   itkBooleanMacro(KeepOriginalUID);
 
+  /** Parse and load any private tags in the DICOM file. Loading DICOM
+   * files is faster when private tags are not needed. Default is false.
+   */
+  itkSetMacro(LoadPrivateTags, bool);
+  itkGetConstMacro(LoadPrivateTags, bool);
+  itkBooleanMacro(LoadPrivateTags);
+
 #if defined( ITKIO_DEPRECATED_GDCM1_API )
   /** Convenience methods to query patient information and scanner
    * information. These methods are here for compatibility with the
@@ -190,11 +197,10 @@ public:
   void GetModel(char *model);
 
   void GetScanOptions(char *options);
+#endif
 
   /** More general method to retrieve an arbitrary DICOM value based
-   * on a DICOM Tag (eg "0123|4567").
-   * WARNING: You need to use the lower case for hex 0x[a-f], for instance:
-   * "0020|000d" instead of "0020|000D" (the latter won't work)
+   * on a DICOM Tag (eg "0123|45ef").
    */
   bool GetValueFromTag(const std::string & tag, std::string & value);
 
@@ -206,7 +212,6 @@ public:
    * tagkey is returned in the variable labelId. */
   static bool GetLabelFromTag(const std::string & tag,
                               std::string & labelId);
-#endif
 
 #if defined( ITKIO_DEPRECATED_GDCM1_API )
   /** A DICOM file can contains multiple binary stream that can be very long
@@ -227,16 +232,6 @@ public:
   virtual bool GetLoadSequences () const { return true; }
   virtual void LoadSequencesOn () {}
   virtual void LoadSequencesOff () {}
-
-  /** Parse any private tags in the DICOM file. Defaults to the value
-   * of LoadPrivateTagsDefault. Loading DICOM files is faster when
-   * private tags are not needed.
-   * \warning this is a GDCM 1.x only option, no effect on GDCM 2.x
-   */
-  virtual void SetLoadPrivateTags( const bool ) {}
-  virtual bool GetLoadPrivateTags() const { return true; }
-  virtual void LoadPrivateTagsOn () {}
-  virtual void LoadPrivateTagsOff () {}
 
   /** Global method to define the default value for
    * LoadSequences. When instances of GDCMImageIO are created, the
@@ -290,6 +285,8 @@ protected:
   std::string m_FrameOfReferenceInstanceUID;
 
   bool m_KeepOriginalUID;
+
+  bool m_LoadPrivateTags;
 
 private:
   GDCMImageIO(const Self &);    //purposely not implemented

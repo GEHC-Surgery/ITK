@@ -110,10 +110,10 @@ int main()
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::FixedArray< float, 1 > MeasurementVectorType;
+  typedef itk::FixedArray< float, 1 >            MeasurementVectorType;
   typedef itk::Image< MeasurementVectorType, 2 > ArrayImageType;
   typedef itk::ComposeImageFilter< FloatImage2DType, ArrayImageType >
-    CasterType;
+                                                 CasterType;
 
   CasterType::Pointer caster = CasterType::New();
   caster->SetInput( random->GetOutput() );
@@ -130,7 +130,8 @@ int main()
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::Statistics::ImageToListSampleAdaptor< ArrayImageType > SampleType;
+  typedef itk::Statistics::ImageToListSampleAdaptor<
+                                                  ArrayImageType > SampleType;
   SampleType::Pointer sample = SampleType::New();
   // Software Guide : EndCodeSnippet
 

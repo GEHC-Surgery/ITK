@@ -21,7 +21,7 @@
 #include "itkApproximateSignedDistanceMapImageFilter.h"
 
 #include "itkNumericTraits.h"
-#include "itkImageRegionIterator.h"
+#include "itkImageScanlineIterator.h"
 #include "itkProgressAccumulator.h"
 #include "vcl_cmath.h"
 
@@ -30,7 +30,7 @@ namespace itk
 /**
  * Default constructor.
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 ApproximateSignedDistanceMapImageFilter< TInputImage, TOutputImage >
 ::ApproximateSignedDistanceMapImageFilter():
   m_IsoContourFilter( IsoContourType::New() ),
@@ -45,7 +45,7 @@ ApproximateSignedDistanceMapImageFilter< TInputImage, TOutputImage >
 /**
  * Generate Data.
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ApproximateSignedDistanceMapImageFilter< TInputImage, TOutputImage >
 ::GenerateData()
@@ -115,17 +115,20 @@ ApproximateSignedDistanceMapImageFilter< TInputImage, TOutputImage >
   // flip the sign of the output image.
   if ( m_InsideValue > m_OutsideValue )
     {
-    ImageRegionIterator< OutputImageType > ot( output, oRegion );
-    ot.GoToBegin();
+    ImageScanlineIterator< OutputImageType > ot( output, oRegion );
     while ( !ot.IsAtEnd() )
       {
-      ot.Set(ot.Get() * -1);
-      ++ot;
+      while ( !ot.IsAtEndOfLine() )
+        {
+        ot.Set(ot.Get() * -1);
+        ++ot;
+        }
+      ot.NextLine();
       }
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ApproximateSignedDistanceMapImageFilter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

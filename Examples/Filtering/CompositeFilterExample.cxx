@@ -62,7 +62,7 @@
 namespace itk {
 
 template <class TImageType>
-class ITK_EXPORT CompositeExampleImageFilter :
+class CompositeExampleImageFilter :
     public ImageToImageFilter<TImageType, TImageType>
 {
 public:
@@ -170,16 +170,14 @@ template <class TImageType>
 CompositeExampleImageFilter<TImageType>
 ::CompositeExampleImageFilter()
 {
+  m_Threshold = 1;
   m_GradientFilter = GradientType::New();
   m_ThresholdFilter = ThresholdType::New();
-  m_RescaleFilter = RescalerType::New();
-
   m_ThresholdFilter->SetInput( m_GradientFilter->GetOutput() );
+  m_RescaleFilter = RescalerType::New();
   m_RescaleFilter->SetInput( m_ThresholdFilter->GetOutput() );
-
-  m_Threshold = 1;
-
-  m_RescaleFilter->SetOutputMinimum(NumericTraits<PixelType>::NonpositiveMin());
+  m_RescaleFilter->SetOutputMinimum(
+                                  NumericTraits<PixelType>::NonpositiveMin());
   m_RescaleFilter->SetOutputMaximum(NumericTraits<PixelType>::max());
 }
 //  Software Guide : EndCodeSnippet
@@ -283,7 +281,7 @@ int main( int argc, char* argv[] )
     {
     writer->Update();
     }
-  catch ( itk::ExceptionObject e )
+  catch ( itk::ExceptionObject & e )
     {
     std::cerr << "Error: " << e << std::endl;
     }

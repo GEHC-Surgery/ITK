@@ -173,9 +173,9 @@ namespace itk
  *
  * \ingroup ITKReview
  */
-template< class TInputImage, class TFeatureImage, class TOutputImage, class TFunction,
+template< typename TInputImage, typename TFeatureImage, typename TOutputImage, typename TFunction,
           typename TIdCell = unsigned int >
-class ITK_EXPORT MultiphaseSparseFiniteDifferenceImageFilter:
+class MultiphaseSparseFiniteDifferenceImageFilter:
   public MultiphaseFiniteDifferenceImageFilter< TInputImage,
                                                 TFeatureImage, TOutputImage, TFunction, TIdCell >
 {
@@ -314,14 +314,14 @@ public:
   }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( OutputEqualityComparableCheck,
                    ( Concept::EqualityComparable< typename TOutputImage::PixelType > ) );
   itkConceptMacro( DoubleConvertibleToOutputCheck,
                    ( Concept::Convertible< double, typename TOutputImage::PixelType > ) );
   itkConceptMacro( OutputOStreamWritableCheck,
                    ( Concept::OStreamWritable< typename TOutputImage::PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:
@@ -330,10 +330,7 @@ protected:
   {
     while ( !m_SparseData.empty() )
       {
-      if ( m_SparseData.back() )
-        {
-        delete m_SparseData.back();
-        }
+      delete m_SparseData.back();
       m_SparseData.pop_back();
       }
   }

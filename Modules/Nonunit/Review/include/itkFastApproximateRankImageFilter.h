@@ -41,8 +41,8 @@ namespace itk
  * \ingroup ITKReview
  */
 
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT FastApproximateRankImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class FastApproximateRankImageFilter:
   public MiniPipelineSeparableImageFilter< TInputImage, TOutputImage,
                                            RankImageFilter< TInputImage, TInputImage,
                                                             FlatStructuringElement< TInputImage::ImageDimension > > >

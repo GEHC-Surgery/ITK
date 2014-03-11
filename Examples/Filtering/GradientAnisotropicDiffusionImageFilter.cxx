@@ -174,8 +174,8 @@ int main( int argc, char * argv[] )
   //
   //  The output of the filter is rescaled here and then sent to a writer.
   //
-  typedef unsigned char WritePixelType;
-  typedef itk::Image< WritePixelType, 2 > WriteImageType;
+  typedef unsigned char                          WritePixelType;
+  typedef itk::Image< WritePixelType, 2 >        WriteImageType;
   typedef itk::RescaleIntensityImageFilter<
                OutputImageType, WriteImageType > RescaleFilterType;
 
@@ -197,8 +197,8 @@ int main( int argc, char * argv[] )
   //  Software Guide : BeginLatex
   //
   // \begin{figure} \center
-  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySlice.eps}
-  // \includegraphics[width=0.44\textwidth]{GradientAnisotropicDiffusionImageFilterOutput.eps}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySlice}
+  // \includegraphics[width=0.44\textwidth]{GradientAnisotropicDiffusionImageFilterOutput}
   // \itkcaption[GradientAnisotropicDiffusionImageFilter output]{Effect of the
   // GradientAnisotropicDiffusionImageFilter on a slice from a MRI Proton
   // Density image  of the brain.}
@@ -223,4 +223,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

@@ -34,7 +34,7 @@ namespace itk
 //
 // Helper functions
 //
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::MatrixType
 CalculateRotationMatrix(vnl_symmetric_eigensystem< double > eig)
 {
@@ -80,7 +80,7 @@ CalculateRotationMatrix(vnl_symmetric_eigensystem< double > eig)
   return rotationMatrix;
 }
 
-template< class TLabelImage, class TIntensityImage, class TGenericImage >
+template< typename TLabelImage, typename TIntensityImage, typename TGenericImage >
 bool
 CalculateOrientedImage(
   LabelGeometryImageFilter< TLabelImage, TIntensityImage > *filter,
@@ -107,7 +107,12 @@ CalculateOrientedImage(
   typename TransformType::Pointer transform = TransformType::New();
   typename TransformType::MatrixType rotationMatrix(vnl_RotationMatrix);
   typename TransformType::CenterType center;
-  center = labelGeometry.m_Centroid;
+  typename TGenericImage::PointType origin;
+  for( unsigned int i = 0; i < TLabelImage::ImageDimension; i++ )
+  {
+    center[i] = labelGeometry.m_Centroid[i] * filter->GetInput()->GetSpacing()[i];
+    origin[i] = labelGeometry.m_OrientedBoundingBoxOrigin[i] * filter->GetInput()->GetSpacing()[i];
+  }
   typename TransformType::OutputVectorType translation;
   translation.Fill(0);
   transform->SetCenter(center);
@@ -132,7 +137,7 @@ CalculateOrientedImage(
   resampler->SetTransform(transform);
   resampler->SetSize(boundingBoxSize);
   resampler->SetOutputSpacing( filter->GetInput()->GetSpacing() );
-  resampler->SetOutputOrigin(labelGeometry.m_OrientedBoundingBoxOrigin);
+  resampler->SetOutputOrigin( origin );
 
   if ( useLabelImage )
     {
@@ -176,7 +181,7 @@ CalculateOrientedImage(
   return true;
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::LabelGeometryImageFilter()
 {
@@ -187,7 +192,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   m_CalculateOrientedIntensityRegions = false;
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 void
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GenerateData()
@@ -202,6 +207,10 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 
   // Iterator over the mapping from labels to geometry values.
   MapIterator mapIt;
+
+  // begin with empty m_LabelGeometryMapper and m_AllLabels
+  m_LabelGeometryMapper.clear();
+  m_AllLabels.clear();
 
   // Do the work
   while ( !labelIt.IsAtEnd() )
@@ -416,10 +425,13 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
       }
     ( *mapIt ).second.m_AxesLength = axesLength;
 
-    // The following three features are currently only defined in 2D.
-    ( *mapIt ).second.m_Eccentricity = vcl_sqrt( ( eigenvalues[1] - eigenvalues[0] ) / eigenvalues[1] );
-    ( *mapIt ).second.m_Elongation = axesLength[1] / axesLength[0];
-    ( *mapIt ).second.m_Orientation = vcl_atan2(eig.get_eigenvector(1)[1], eig.get_eigenvector(1)[0]);
+    // The following three features are currently only meaningful in 2D.
+    ( *mapIt ).second.m_Eccentricity = vcl_sqrt( ( eigenvalues[ImageDimension-1] - eigenvalues[0] ) / eigenvalues[ImageDimension-1] );
+    ( *mapIt ).second.m_Elongation = axesLength[ImageDimension-1] / axesLength[0];
+    RealType orientation = vcl_atan2(eig.get_eigenvector(ImageDimension-1)[1], eig.get_eigenvector(ImageDimension-1)[0]);
+    // Change the orientation from being between -pi to pi to being from 0 to pi.
+    // We can add pi because the orientation of the major axis is symmetric about the origin.
+    ( *mapIt ).second.m_Orientation = orientation < 0.0 ? orientation + vnl_math::pi : orientation;
 
     if ( m_CalculateOrientedBoundingBox == true )
       {
@@ -446,7 +458,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 bool
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::CalculateOrientedBoundingBoxVertices(vnl_symmetric_eigensystem< double > eig, LabelGeometry & labelGeometry)
@@ -590,7 +602,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   return true;
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::LabelIndicesType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetPixelIndices(LabelPixelType label) const
@@ -611,7 +623,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 SizeValueType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetVolume(LabelPixelType label) const
@@ -630,7 +642,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RealType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetIntegratedIntensity(LabelPixelType label) const
@@ -649,7 +661,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::LabelPointType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetCentroid(LabelPixelType label) const
@@ -670,7 +682,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::LabelPointType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetWeightedCentroid(LabelPixelType label) const
@@ -691,7 +703,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::VectorType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetEigenvalues(LabelPixelType label) const
@@ -711,7 +723,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::MatrixType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetEigenvectors(LabelPixelType label) const
@@ -731,7 +743,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::AxesLengthType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetAxesLength(LabelPixelType label) const
@@ -752,7 +764,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RealType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetMinorAxisLength(LabelPixelType label) const
@@ -762,7 +774,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   return axisLength[0];
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RealType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetMajorAxisLength(LabelPixelType label) const
@@ -772,7 +784,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
   return axisLength[ImageDimension - 1];
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RealType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetEccentricity(LabelPixelType label) const
@@ -791,7 +803,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RealType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetElongation(LabelPixelType label) const
@@ -810,7 +822,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RealType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetOrientation(LabelPixelType label) const
@@ -829,7 +841,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::BoundingBoxType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetBoundingBox(LabelPixelType label) const
@@ -850,7 +862,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RealType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetBoundingBoxVolume(LabelPixelType label) const
@@ -869,7 +881,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::LabelSizeType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetBoundingBoxSize(LabelPixelType label) const
@@ -890,7 +902,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::BoundingBoxVerticesType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetOrientedBoundingBoxVertices(LabelPixelType label) const
@@ -915,7 +927,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RealType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetOrientedBoundingBoxVolume(LabelPixelType label) const
@@ -934,7 +946,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::LabelPointType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetOrientedBoundingBoxSize(LabelPixelType label) const
@@ -958,7 +970,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::LabelPointType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetOrientedBoundingBoxOrigin(LabelPixelType label) const
@@ -979,7 +991,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::MatrixType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetRotationMatrix(LabelPixelType label) const
@@ -999,7 +1011,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::RegionType
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetRegion(LabelPixelType label) const
@@ -1035,7 +1047,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 TLabelImage *
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetOrientedLabelImage(LabelPixelType label) const
@@ -1054,7 +1066,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 TIntensityImage *
 LabelGeometryImageFilter< TLabelImage, TIntensityImage >
 ::GetOrientedIntensityImage(LabelPixelType label) const
@@ -1073,7 +1085,7 @@ LabelGeometryImageFilter< TLabelImage, TIntensityImage >
     }
 }
 
-template< class TImage, class TLabelImage >
+template< typename TImage, typename TLabelImage >
 void
 LabelGeometryImageFilter< TImage, TLabelImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

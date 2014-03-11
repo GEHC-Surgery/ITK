@@ -35,8 +35,8 @@ namespace itk
   *
   * \ingroup ITKCommon
   */
-template< class ValueType, class MeanType >
-class ITK_EXPORT ResourceProbe
+template< typename ValueType, typename MeanType >
+class ResourceProbe
 {
 public:
 
@@ -61,7 +61,11 @@ public:
   /** Start counting the change of value */
   void        Start(void);
 
-  /** Stop counting the change of value */
+  /** Stop counting the change of value.
+   *
+   * If a matching Start() has not been called before, there is no
+   * effect.
+   **/
   void        Stop(void);
 
   /** Returns the number of times that the probe has been started */

@@ -47,8 +47,8 @@ namespace itk
  *
  * \ingroup ITKDeconvolution
  */
-template< class TInputImage, class TKernelImage=TInputImage, class TOutputImage=TInputImage, class TInternalPrecision=double >
-class ITK_EXPORT IterativeDeconvolutionImageFilter :
+template< typename TInputImage, typename TKernelImage=TInputImage, typename TOutputImage=TInputImage, typename TInternalPrecision=double >
+class IterativeDeconvolutionImageFilter :
     public FFTConvolutionImageFilter< TInputImage, TKernelImage, TOutputImage, TInternalPrecision >
 {
 public:
@@ -81,7 +81,7 @@ public:
   itkGetMacro(NumberOfIterations, unsigned int);
 
   /** Set/get the current estimate. */
-  itkGetConstObjectMacro(CurrentEstimate, InternalImageType);
+  itkGetModifiableObjectMacro(CurrentEstimate, InternalImageType);
 
   /** Stop iteration. When this method is called, the iteration will
    * halt after the current iteration has completed. */

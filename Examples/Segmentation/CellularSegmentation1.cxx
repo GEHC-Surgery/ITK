@@ -84,7 +84,8 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  CellularAggregateType::Pointer cellularAggregate = CellularAggregateType::New();
+  CellularAggregateType::Pointer cellularAggregate
+                                               = CellularAggregateType::New();
   // Software Guide : EndCodeSnippet
 
   // We instantiate reader and writer types
@@ -202,7 +203,6 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   cellularAggregate->SetEgg( egg, position );
   // Software Guide : EndCodeSnippet
-
 
 
   //  Software Guide : BeginLatex

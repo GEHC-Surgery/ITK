@@ -36,7 +36,6 @@
 
 namespace itk
 {
-
 /** \class PatchBasedDenoisingImageFilter
  * \brief Derived class implementing a specific patch-based denoising algorithm, as detailed below.
  *
@@ -58,9 +57,8 @@ namespace itk
  * \ingroup ITKDenoising
  * \sa PatchBasedDenoisingBaseImageFilter
  */
-
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT PatchBasedDenoisingImageFilter :
+template <typename TInputImage, typename TOutputImage>
+class PatchBasedDenoisingImageFilter :
   public PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 {
 public:
@@ -112,7 +110,7 @@ public:
 
   /** Type definitions for delegate classes. */
   typedef itk::Statistics::RegionConstrainedSubsampler<
-      PatchSampleType, InputImageRegionType >            BaseSamplerType;
+      PatchSampleType, InputImageRegionType >          BaseSamplerType;
   typedef typename BaseSamplerType::Pointer            BaseSamplerPointer;
   typedef typename BaseSamplerType::InstanceIdentifier InstanceIdentifier;
 
@@ -147,19 +145,19 @@ public:
   itkBooleanMacro(UseSmoothDiscPatchWeights);
   itkGetConstMacro(UseSmoothDiscPatchWeights, bool);
 
-  /** Set/Get initial sigma estimate.
+  /** Set/Get initial kernel bandwidth estimate.
    * To prevent the class from automatically modifying this estimate,
-   * set DoKernelBandwidthEstimation to false in the base class.
+   * set KernelBandwidthEstimation to false in the base class.
    */
-  itkSetMacro(GaussianKernelSigma, RealArrayType);
-  itkGetConstMacro(GaussianKernelSigma, RealArrayType);
+  void SetKernelBandwidthSigma(const RealArrayType& kernelSigma);
+  itkGetConstMacro(KernelBandwidthSigma, RealArrayType);
 
-  /** Set/Get the fraction of the image to use for sigma estimation.
+  /** Set/Get the fraction of the image to use for kernel bandwidth sigma estimation.
    *  To reduce the computational burden for computing sigma,
    *  a small random fraction of the image pixels can be used.
    */
-  itkSetClampMacro(FractionPixelsForSigmaUpdate, double, 0.01, 1.0);
-  itkGetConstReferenceMacro(FractionPixelsForSigmaUpdate, double);
+  itkSetClampMacro(KernelBandwidthFractionPixelsForEstimation, double, 0.01, 1.0);
+  itkGetConstReferenceMacro(KernelBandwidthFractionPixelsForEstimation, double);
 
   /** Set/Get flag indicating whether conditional derivatives should be used
     estimating sigma. */
@@ -173,7 +171,7 @@ public:
    *  symmetric positive-definite eigensystem analysys will be used. See
    *  Hasan KM, Basser PJ, Parker DL, Alexander AL.
    *  Analytical computation of the eigenvalues and eigenvectors in DT-MRI.
-   *  J Magn Reson 2001; 152: 41–47.
+   *  J Magn Reson 2001; 152: 41-47.
    *  This faster algorithm may be slightly less accurate and possibly less stable in the presence
    *  of noise.  So far in practice it has been shown to work well.
    *
@@ -188,13 +186,14 @@ public:
   itkStaticConstMacro(MaxSigmaUpdateIterations, unsigned int,
                       20);
 
-  /** Set/Get the sigma multiplication factor used to modify the automatically-estimated sigma.
-   *  At times, it may be desirable to modify the value of the automatically-estimated sigma.
-   *  Typically, this number isn't very far from 1.
-   *  Note: This is used only when DoKernelBandwidthEstimation is True/On.
+  /** Set/Get the kernel bandwidth sigma multiplication factor used to modify the
+   *  automatically-estimated kernel bandwidth sigma. At times, it may be desirable
+   *  to modify the value of the automatically-estimated sigma.  Typically, this number
+   *  isn't very far from 1.
+   *  Note: This is used only when KernelBandwidthEstimation is True/On.
    */
-  itkSetClampMacro(SigmaMultiplicationFactor, double, 0.01, 100);
-  itkGetConstReferenceMacro(SigmaMultiplicationFactor, double);
+  itkSetClampMacro(KernelBandwidthMultiplicationFactor, double, 0.01, 100);
+  itkGetConstReferenceMacro(KernelBandwidthMultiplicationFactor, double);
 
   /** Set/Get the noise sigma.
    * Used by the noise model where appropriate, defaults to 5% of the image intensity range
@@ -205,7 +204,7 @@ public:
 
   /** Set/Get the class used for creating a subsample of patches. */
   itkSetObjectMacro(Sampler, BaseSamplerType);
-  itkGetObjectMacro(Sampler, BaseSamplerType);
+  itkGetModifiableObjectMacro(Sampler, BaseSamplerType);
 
 protected:
   PatchBasedDenoisingImageFilter();
@@ -342,7 +341,7 @@ protected:
       }
   }
 
-  template <class PixelT>
+  template <typename PixelT>
   void ComputeDifferenceAndWeightedSquaredNorm(const PixelT& a,
                                                const PixelT& b,
                                                const RealArrayType& weight,
@@ -374,7 +373,7 @@ protected:
       }
   }
 
-  template <class RealT>
+  template <typename RealT>
   RealType AddUpdate(const RealT& a,
                      const RealType& b)
   {
@@ -438,25 +437,26 @@ protected:
   //
   bool m_UseFastTensorComputations;
   //
-  RealArrayType  m_GaussianKernelSigma;
+  RealArrayType  m_KernelBandwidthSigma;
+  bool           m_KernelBandwidthSigmaIsSet;
   RealArrayType  m_IntensityRescaleInvFactor;
   PixelType      m_ZeroPixel;
   PixelArrayType m_ImageMin;
   PixelArrayType m_ImageMax;
-  double         m_FractionPixelsForSigmaUpdate;
+  double         m_KernelBandwidthFractionPixelsForEstimation;
   bool           m_ComputeConditionalDerivatives;
   double         m_MinSigma;
   double         m_MinProbability;
   unsigned int   m_SigmaUpdateDecimationFactor;
   double         m_SigmaUpdateConvergenceTolerance;
   ShortArrayType m_SigmaConverged;
-  double         m_SigmaMultiplicationFactor;
+  double         m_KernelBandwidthMultiplicationFactor;
   //
   RealType m_NoiseSigma;
   RealType m_NoiseSigmaSquared;
   bool     m_NoiseSigmaIsSet;
   //
-  BaseSamplerPointer m_Sampler;
+  BaseSamplerPointer                m_Sampler;
   typename ListAdaptorType::Pointer m_SearchSpaceList;
 
 private:

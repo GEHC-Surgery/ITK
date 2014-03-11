@@ -34,7 +34,6 @@ int itkGDCMImagePositionPatientTest( int argc, char* argv[] )
       " OutputTestDirectory" << std::endl;
     return EXIT_FAILURE;
     }
-  std::string directory(argv[1]);
 
   typedef itk::Image<short,3>                 Image3DType;
   typedef itk::Image<short,2>                 Image2DType;
@@ -90,7 +89,7 @@ int itkGDCMImagePositionPatientTest( int argc, char* argv[] )
   Writer2DType::Pointer writer2D = Writer2DType::New();
   std::ostringstream filename;
   filename.str("");
-  filename << argv[1] << "/Test2D.dcm";
+  filename << argv[1] << "/itkGDCMImagePositionPatientTest.dcm";
   writer2D->SetInput(src2D->GetOutput());
   writer2D->SetFileName(filename.str().c_str());
 

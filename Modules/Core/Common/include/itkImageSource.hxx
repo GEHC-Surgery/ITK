@@ -30,6 +30,7 @@
 #include "itkImageSource.h"
 
 #include "itkOutputDataObjectIterator.h"
+#include "itkImageRegionSplitterBase.h"
 
 #include "vnl/vnl_math.h"
 
@@ -38,7 +39,7 @@ namespace itk
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 ImageSource< TOutputImage >
 ::ImageSource()
 {
@@ -58,7 +59,7 @@ ImageSource< TOutputImage >
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 ProcessObject::DataObjectPointer
 ImageSource< TOutputImage >
 ::MakeOutput(ProcessObject::DataObjectPointerArraySizeType)
@@ -69,7 +70,7 @@ ImageSource< TOutputImage >
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 typename ImageSource< TOutputImage >::OutputImageType *
 ImageSource< TOutputImage >
 ::GetOutput()
@@ -82,7 +83,7 @@ ImageSource< TOutputImage >
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 const typename ImageSource< TOutputImage >::OutputImageType *
 ImageSource< TOutputImage >
 ::GetOutput() const
@@ -94,7 +95,7 @@ ImageSource< TOutputImage >
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 typename ImageSource< TOutputImage >::OutputImageType *
 ImageSource< TOutputImage >
 ::GetOutput(unsigned int idx)
@@ -112,7 +113,7 @@ ImageSource< TOutputImage >
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 ImageSource< TOutputImage >
 ::GraftOutput(DataObject *graft)
@@ -123,7 +124,7 @@ ImageSource< TOutputImage >
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 ImageSource< TOutputImage >
 ::GraftOutput(const DataObjectIdentifierType & key, DataObject *graft)
@@ -144,7 +145,7 @@ ImageSource< TOutputImage >
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 ImageSource< TOutputImage >
 ::GraftNthOutput(unsigned int idx, DataObject *graft)
@@ -157,68 +158,34 @@ ImageSource< TOutputImage >
   this->GraftOutput( this->MakeNameFromOutputIndex(idx), graft );
 }
 
+
 //----------------------------------------------------------------------------
-template< class TOutputImage >
+template< typename TOutputImage >
+const ImageRegionSplitterBase*
+ImageSource< TOutputImage >
+::GetImageRegionSplitter(void) const
+{
+  return this->GetGlobalDefaultSplitter();
+}
+
+//----------------------------------------------------------------------------
+template< typename TOutputImage >
 unsigned int
 ImageSource< TOutputImage >
 ::SplitRequestedRegion(unsigned int i, unsigned int num, OutputImageRegionType & splitRegion)
 {
+  const ImageRegionSplitterBase * splitter = this->GetImageRegionSplitter();
+
   // Get the output pointer
   OutputImageType *outputPtr = this->GetOutput();
 
-  const typename TOutputImage::SizeType & requestedRegionSize =
-    outputPtr->GetRequestedRegion().GetSize();
-
-  int splitAxis;
-  typename TOutputImage::IndexType splitIndex;
-  typename TOutputImage::SizeType splitSize;
-
-  // Initialize the splitRegion to the output requested region
   splitRegion = outputPtr->GetRequestedRegion();
-  splitIndex = splitRegion.GetIndex();
-  splitSize = splitRegion.GetSize();
+  return splitter->GetSplit( i, num, splitRegion );
 
-  // split on the outermost dimension available
-  splitAxis = outputPtr->GetImageDimension() - 1;
-  while ( requestedRegionSize[splitAxis] == 1 )
-    {
-    --splitAxis;
-    if ( splitAxis < 0 )
-      { // cannot split
-      itkDebugMacro("  Cannot Split");
-      return 1;
-      }
-    }
-
-  // determine the actual number of pieces that will be generated
-  typename TOutputImage::SizeType::SizeValueType range = requestedRegionSize[splitAxis];
-  unsigned int valuesPerThread = Math::Ceil< unsigned int >(range / (double)num);
-  unsigned int maxThreadIdUsed = Math::Ceil< unsigned int >(range / (double)valuesPerThread) - 1;
-
-  // Split the region
-  if ( i < maxThreadIdUsed )
-    {
-    splitIndex[splitAxis] += i * valuesPerThread;
-    splitSize[splitAxis] = valuesPerThread;
-    }
-  if ( i == maxThreadIdUsed )
-    {
-    splitIndex[splitAxis] += i * valuesPerThread;
-    // last thread needs to process the "rest" dimension being split
-    splitSize[splitAxis] = splitSize[splitAxis] - i * valuesPerThread;
-    }
-
-  // set the split region ivars
-  splitRegion.SetIndex(splitIndex);
-  splitRegion.SetSize(splitSize);
-
-  itkDebugMacro("  Split Piece: " << splitRegion);
-
-  return maxThreadIdUsed + 1;
 }
 
 //----------------------------------------------------------------------------
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 ImageSource< TOutputImage >
 ::AllocateOutputs()
@@ -245,7 +212,7 @@ ImageSource< TOutputImage >
 }
 
 //----------------------------------------------------------------------------
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 ImageSource< TOutputImage >
 ::GenerateData()
@@ -263,7 +230,12 @@ ImageSource< TOutputImage >
   ThreadStruct str;
   str.Filter = this;
 
-  this->GetMultiThreader()->SetNumberOfThreads( this->GetNumberOfThreads() );
+  // Get the output pointer
+  const OutputImageType *outputPtr = this->GetOutput();
+  const ImageRegionSplitterBase * splitter = this->GetImageRegionSplitter();
+  const unsigned int validThreads = splitter->GetNumberOfSplits( outputPtr->GetRequestedRegion(), this->GetNumberOfThreads() );
+
+  this->GetMultiThreader()->SetNumberOfThreads( validThreads );
   this->GetMultiThreader()->SetSingleMethod(this->ThreaderCallback, &str);
 
   // multithread the execution
@@ -276,7 +248,7 @@ ImageSource< TOutputImage >
 
 //----------------------------------------------------------------------------
 // The execute method created by the subclass.
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 ImageSource< TOutputImage >
 ::ThreadedGenerateData(const OutputImageRegionType &,
@@ -299,7 +271,7 @@ ImageSource< TOutputImage >
 // Callback routine used by the threading library. This routine just calls
 // the ThreadedGenerateData method after setting the correct region for this
 // thread.
-template< class TOutputImage >
+template< typename TOutputImage >
 ITK_THREAD_RETURN_TYPE
 ImageSource< TOutputImage >
 ::ThreaderCallback(void *arg)

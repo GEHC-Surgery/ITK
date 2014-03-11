@@ -1,5 +1,6 @@
-option(ITK_USE_SYSTEM_DCMTK "Use an outside build of DCMTK." OFF)
+## Only present and build DCMTK options if ITKIODCMTK is requested
 
+option(ITK_USE_SYSTEM_DCMTK "Use an outside build of DCMTK." OFF)
 # iconv library seems to be present unpredictably, never
 # on linux, sometimes on OS X and probably never on Windows
 option(DCMTK_USE_LIBICONV "Use IConv Library in DCMTK" OFF)
@@ -8,7 +9,11 @@ option(DCMTK_USE_LIBICONV "Use IConv Library in DCMTK" OFF)
 #  add_library(... IMPORTED GLOBAL)
 # in the adjacent CMakeLists.txt file instead.
 # For now define targets here to make them global.
-if(NOT ITK_USE_SYSTEM_DCMTK)
+if(ITK_USE_SYSTEM_DCMTK)
+  # Use local FindDCMTK.cmake.
+  list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_LIST_DIR}/CMake")
+  find_package(DCMTK REQUIRED)
+else(ITK_USE_SYSTEM_DCMTK)
   if(MSVC)
     message(FATAL_ERROR "The ITKDCMTK module requires ITK_USE_SYSTEM_DCMTK to be ON for MSVC.")
   endif()
@@ -23,4 +28,4 @@ if(NOT ITK_USE_SYSTEM_DCMTK)
     # add it as an imported  library target
     add_library(${lib} ${_ITKDCMTK_LIB_LINKAGE} IMPORTED)
   endforeach()
-endif(NOT ITK_USE_SYSTEM_DCMTK)
+endif(ITK_USE_SYSTEM_DCMTK)

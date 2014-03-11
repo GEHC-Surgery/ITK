@@ -29,6 +29,18 @@
 
 namespace itk
 {
+
+MeshIOFactory
+::MeshIOFactory()
+{
+}
+
+MeshIOFactory
+::~MeshIOFactory()
+{
+}
+
+
 MeshIOBase::Pointer
 MeshIOFactory
 ::CreateMeshIO(const char *path, FileModeType mode)
@@ -80,11 +92,10 @@ void
 MeshIOFactory
 ::RegisterBuiltInFactories()
 {
-  static bool firstTime = true;
-
   static SimpleMutexLock mutex;
 
     {
+    static bool firstTime = true;
     // This helper class makes sure the Mutex is unlocked
     // in the event an exception is thrown.
     MutexLockHolder< SimpleMutexLock > mutexHolder(mutex);

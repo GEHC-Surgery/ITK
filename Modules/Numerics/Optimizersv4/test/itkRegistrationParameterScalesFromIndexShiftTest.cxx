@@ -25,8 +25,8 @@
  *  \class RegistrationParameterScalesFromIndexShiftTestMetric for test.
  *  Create a simple metric to use for testing here.
  */
-template< class TFixedImage,class TMovingImage,class TVirtualImage = TFixedImage >
-class ITK_EXPORT RegistrationParameterScalesFromIndexShiftTestMetric:
+template< typename TFixedImage,typename TMovingImage,typename TVirtualImage = TFixedImage >
+class RegistrationParameterScalesFromIndexShiftTestMetric:
   public itk::ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage>
 {
 public:
@@ -133,7 +133,7 @@ int itkRegistrationParameterScalesFromIndexShiftTest(int , char* [])
   fixedTransform->SetIdentity();
   // Transform done
 
-  // Metric 
+  // Metric
   typedef RegistrationParameterScalesFromIndexShiftTestMetric
     <FixedImageType, MovingImageType>   MetricType;
   MetricType::Pointer metric = MetricType::New();

@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "itkTestingMacros.h"
 #include "itkTxtTransformIOFactory.h"
 #include "itkTransformFileWriter.h"
 #include "itkTransformFileReader.h"
@@ -27,21 +28,19 @@
 #include "itkBSplineTransform.h"
 #include "itksys/SystemTools.hxx"
 
-
-static int oneTest(const char *goodname,const char *badname)
+template<typename ScalarType>
+static int oneTest(const std::string & outputDirectory, const char *goodname,const char *badname)
 {
   unsigned int i;
-  typedef itk::AffineTransform<double,4>  AffineTransformType;
-  typedef itk::AffineTransform<double,10> AffineTransformTypeNotRegistered;
-  AffineTransformType::Pointer        affine = AffineTransformType::New();
-  AffineTransformType::InputPointType cor;
-
+  typedef itk::AffineTransform<ScalarType,4>  AffineTransformType;
+  typedef itk::AffineTransform<ScalarType,10> AffineTransformTypeNotRegistered;
+  typename AffineTransformType::Pointer affine = AffineTransformType::New();
+  typename AffineTransformType::InputPointType cor;
 
   itk::ObjectFactoryBase::RegisterFactory(itk::TxtTransformIOFactory::New() );
 
-
   // Set it's parameters
-  AffineTransformType::ParametersType p = affine->GetParameters();
+  typename AffineTransformType::ParametersType p = affine->GetParameters();
   for ( i = 0; i < p.GetSize(); i++ )
     {
     p[i] = i;
@@ -53,15 +52,15 @@ static int oneTest(const char *goodname,const char *badname)
     p[i] = i;
     }
   affine->SetFixedParameters ( p );
-  itk::TransformFileWriter::Pointer writer;
-  itk::TransformFileReader::Pointer reader;
+  typename itk::TransformFileWriterTemplate<ScalarType>::Pointer writer;
+  typename itk::TransformFileReaderTemplate<ScalarType>::Pointer reader;
 
-  reader = itk::TransformFileReader::New();
-  writer = itk::TransformFileWriter::New();
+  reader = itk::TransformFileReaderTemplate<ScalarType>::New();
+  writer = itk::TransformFileWriterTemplate<ScalarType>::New();
   writer->AddTransform(affine);
 
-  writer->SetFileName( goodname );
-  reader->SetFileName( goodname );
+  writer->SetFileName( outputDirectory + goodname );
+  reader->SetFileName( outputDirectory + goodname );
 
   // Testing writing std::cout << "Testing write : ";
   affine->Print ( std::cout );
@@ -83,13 +82,13 @@ static int oneTest(const char *goodname,const char *badname)
 
   try
     {
-    itk::TransformFileReader::TransformListType *list;
+    typename itk::TransformFileReaderTemplate<ScalarType>::TransformListType *list;
     list = reader->GetTransformList();
-    itk::TransformFileReader::TransformListType::iterator lit = list->begin();
+    typename itk::TransformFileReaderTemplate<ScalarType>::TransformListType::iterator lit = list->begin();
     while ( lit != list->end() )
       {
       (*lit)->Print ( std::cout );
-      lit++;
+      ++lit;
       }
     }
   catch( itk::ExceptionObject & excp )
@@ -102,7 +101,7 @@ static int oneTest(const char *goodname,const char *badname)
 
 
   std::cout << "Creating bad writer" << std::endl;
-  AffineTransformTypeNotRegistered::Pointer Bogus = AffineTransformTypeNotRegistered::New();
+  typename AffineTransformTypeNotRegistered::Pointer Bogus = AffineTransformTypeNotRegistered::New();
 
   // Set it's parameters
   p = Bogus->GetParameters();
@@ -118,13 +117,13 @@ static int oneTest(const char *goodname,const char *badname)
     }
   Bogus->SetFixedParameters ( p );
 
-  itk::TransformFileWriter::Pointer badwriter;
-  itk::TransformFileReader::Pointer badreader;
-  badreader = itk::TransformFileReader::New();
-  badwriter = itk::TransformFileWriter::New();
-  badwriter->AddTransform(Bogus);
-  badwriter->SetFileName(badname);
-  badreader->SetFileName(badname);
+  typename itk::TransformFileWriterTemplate<ScalarType>::Pointer badwriter;
+  typename itk::TransformFileReaderTemplate<ScalarType>::Pointer badreader;
+  badreader = itk::TransformFileReaderTemplate<ScalarType>::New();
+  badwriter = itk::TransformFileWriterTemplate<ScalarType>::New();
+  badwriter->AddTransform( Bogus );
+  badwriter->SetFileName( outputDirectory + badname );
+  badreader->SetFileName( outputDirectory + badname );
 
   // Testing writing
   std::cout << "Testing write of non register transform : " << std::endl;
@@ -171,12 +170,13 @@ static int oneTest(const char *goodname,const char *badname)
 // EOL at end of file.
 // This test will exercise this reported bug:
 // http://public.kitware.com/Bug/view.php?id=7028
+template<typename ScalarType>
 int
-secondTest()
+secondTest( const std::string & outputDirectory )
 {
   std::filebuf fb;
-  fb.open("IllegalTransform.txt",std::ios::out);
-  std::ostream os(&fb);
+  fb.open( (outputDirectory + "IllegalTransform.txt").c_str(), std::ios::out );
+  std::ostream os( &fb );
   os << "#Insight Transform File V1.0"
      << std::endl
      << "#Transform 0"
@@ -189,21 +189,21 @@ secondTest()
      << std::endl
      << "FixedParameters: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18";
   fb.close();
-  itk::TransformFileReader::Pointer reader;
-  reader = itk::TransformFileReader::New();
-  reader->SetFileName("IllegalTransform.txt");
+  typename itk::TransformFileReaderTemplate<ScalarType>::Pointer reader;
+  reader = itk::TransformFileReaderTemplate<ScalarType>::New();
+  reader->SetFileName( outputDirectory + "IllegalTransform.txt" );
   try
     {
     reader->Update();
     std::cerr << "FAILED to throw expected exception" << std::endl;
-    itk::TransformFileReader::TransformListType *list;
+    typename itk::TransformFileReaderTemplate<ScalarType>::TransformListType *list;
     list = reader->GetTransformList();
-    itk::TransformFileReader::TransformListType::iterator lit =
+    typename itk::TransformFileReaderTemplate<ScalarType>::TransformListType::iterator lit =
       list->begin();
     while ( lit != list->end() )
       {
       (*lit)->Print ( std::cout );
-      lit++;
+      ++lit;
       }
     }
   catch( itk::ExceptionObject & excp )
@@ -216,14 +216,47 @@ secondTest()
   return EXIT_FAILURE;
 }
 
+
+int
+templatelessTest( const std::string & outputDirectory )
+{
+  const std::string outputFile = outputDirectory + "itkIOTransformTxtTestRigid2DTransform.tfm";
+
+  typedef itk::Rigid2DTransform< float > TransformType;
+  TransformType::Pointer transform = TransformType::New();
+
+  itk::TransformFileWriter::Pointer writer = itk::TransformFileWriter::New();
+  writer->SetInput( transform );
+  writer->SetFileName( outputFile );
+  TRY_EXPECT_NO_EXCEPTION( writer->Update() );
+
+  return EXIT_SUCCESS;
+}
+
+
 int itkIOTransformTxtTest(int argc, char* argv[])
 {
-  if (argc > 1)
+  if (argc < 2)
     {
+    std::cerr << "Usage: "
+              << argv[0]
+              << " outputDirectory"
+              << std::endl;
+
     itksys::SystemTools::ChangeDirectory(argv[1]);
     }
-  int result1 =  oneTest("Transforms.txt", "TransformsBad.txt" );
-  int result2 =  secondTest();
-  return !( result1 == EXIT_SUCCESS
-     && result2 == EXIT_SUCCESS);
+  const std::string outputDirectory = std::string(argv[1]) + "/";
+  const int result1 =  oneTest<float>( outputDirectory, "Transforms_float.txt", "TransformsBad_float.txt" );
+  const int result2 =  secondTest<float>( outputDirectory );
+
+  const int result3 =  oneTest<double>( outputDirectory, "Transforms_double.txt", "TransformsBad_double.txt" );
+  const int result4 =  secondTest<double>( outputDirectory );
+
+  const int result5 = templatelessTest( outputDirectory );
+
+  return (
+          ( !( result1 == EXIT_SUCCESS && result2 == EXIT_SUCCESS) ) &&
+          ( !( result3 == EXIT_SUCCESS && result4 == EXIT_SUCCESS) ) &&
+            !( result5 == EXIT_SUCCESS )
+          );
 }

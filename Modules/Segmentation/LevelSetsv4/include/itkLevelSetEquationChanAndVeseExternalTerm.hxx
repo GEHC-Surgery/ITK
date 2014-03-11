@@ -23,7 +23,7 @@
 
 namespace itk
 {
-template< class TInput, class TLevelSetContainer >
+template< typename TInput, typename TLevelSetContainer >
 LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
 ::LevelSetEquationChanAndVeseExternalTerm()
 {
@@ -33,14 +33,14 @@ LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
   this->m_CacheImage = 0;
 }
 
-template< class TInput, class TLevelSetContainer >
+template< typename TInput, typename TLevelSetContainer >
 LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
 ::~LevelSetEquationChanAndVeseExternalTerm()
 {
 }
 
 
-template< class TInput, class TLevelSetContainer >
+template< typename TInput, typename TLevelSetContainer >
 void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
 ::ComputeProduct( const LevelSetInputIndexType& iP, LevelSetOutputRealType& prod )
 {
@@ -50,7 +50,7 @@ void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
   prod *= -(1 - this->m_Heaviside->Evaluate( -value ) );
 }
 
-template< class TInput, class TLevelSetContainer >
+template< typename TInput, typename TLevelSetContainer >
 void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
 ::ComputeProductTerm( const LevelSetInputIndexType& iP, LevelSetOutputRealType& prod )
 {
@@ -60,7 +60,7 @@ void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
     {
     if(this->m_DomainMapImageFilter == 0)
       {
-      this->m_DomainMapImageFilter = this->m_LevelSetContainer->GetDomainMapFilter();
+      this->m_DomainMapImageFilter = this->m_LevelSetContainer->GetModifiableDomainMapFilter();
       this->m_CacheImage = this->m_DomainMapImageFilter->GetOutput();
       }
     const LevelSetIdentifierType id = this->m_CacheImage->GetPixel( iP );
@@ -114,7 +114,7 @@ void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
     }
 }
 
-template< class TInput, class TLevelSetContainer >
+template< typename TInput, typename TLevelSetContainer >
 void LevelSetEquationChanAndVeseExternalTerm< TInput, TLevelSetContainer >
 ::UpdatePixel( const LevelSetInputIndexType& iP, const LevelSetOutputRealType & oldValue,
              const LevelSetOutputRealType & newValue )

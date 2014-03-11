@@ -2,6 +2,7 @@ itk_module_test()
 set(ITKIOTIFFTests
 itkTIFFImageIOTest.cxx
 itkTIFFImageIOTest2.cxx
+itkTIFFImageIOCompressionTest.cxx
 itkLargeTIFFImageWriteReadTest.cxx
 )
 
@@ -111,8 +112,23 @@ itk_add_test(NAME itkTIFFImageIOFloatTest
               ${ITK_TEST_OUTPUT_DIR}/rampFloat.tif
     itkTIFFImageIOTest DATA{Baseline/rampFloat.tif} ${ITK_TEST_OUTPUT_DIR}/rampFloat.tif 3 4)
 
+######################
+# Test Compression
 
+set (Compression "NoCompression;LZW;JPEG;PackBits")
+set (CompressionFiles "cthead1;RGBTestImageJPEG")
+foreach(f ${CompressionFiles})
+  foreach(c ${Compression})
+    set (file TestTIFFCompression_${f}_${c}.tif})
+    itk_add_test(NAME itkTIFFImageIOCompression_${f}_${c}
+          COMMAND ITKIOTIFFTestDriver
+          --compare DATA{Baseline/TestTIFFCompression_${f}_${c}.tif}
+              ${ITK_TEST_OUTPUT_DIR}/TestTIFFCompression_${f}_${c}.tif
+        itkTIFFImageIOCompressionTest DATA{${ITK_DATA_ROOT}/Input/${f}.tif} ${ITK_TEST_OUTPUT_DIR}/TestTIFFCompression_${f}_${c}.tif ${c})
+      endforeach()
+endforeach()
 
+######################
 if( "${ITK_COMPUTER_MEMORY_SIZE}" GREATER 5 )
 
   # Image of 1.67 Gigabytes (pixels size is 16bits)
@@ -138,12 +154,14 @@ if( "${ITK_COMPUTER_MEMORY_SIZE}" GREATER 5 )
                        LABELS BigIO
                        RESOURCE_LOCK MEMORY_SIZE
                       )
+  set_property(TEST itkLargeTIFFImageWriteReadTest1 APPEND PROPERTY LABELS RUNS_LONG)
+  set_property(TEST itkLargeTIFFImageWriteReadTest2 APPEND PROPERTY LABELS RUNS_LONG)
+  set_property(TEST itkLargeTIFFImageWriteReadTest3 APPEND PROPERTY LABELS RUNS_LONG)
 endif()
 
 
 if( "${ITK_COMPUTER_MEMORY_SIZE}" GREATER 12 )
 
-if(ITK_BUG_2822_IS_FIXED)
   # Image of 9.12 Gigabytes (pixels size is 16bits)
   itk_add_test(NAME itkLargeTIFFImageWriteReadTest4
       COMMAND ITKIOTIFFTestDriver
@@ -155,6 +173,6 @@ if(ITK_BUG_2822_IS_FIXED)
     LABELS BigIO
     RESOURCE_LOCK MEMORY_SIZE
     )
-endif()
+  set_property(TEST itkLargeTIFFImageWriteReadTest4 APPEND PROPERTY LABELS RUNS_LONG)
 
 endif()

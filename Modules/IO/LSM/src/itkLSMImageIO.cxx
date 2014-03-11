@@ -110,7 +110,6 @@ LSMImageIO::~LSMImageIO()
 // LSM image file.
 bool LSMImageIO::CanReadFile(const char *filename)
 {
-  std::ifstream file;
   std::string   fname(filename);
 
   if ( fname == "" )
@@ -165,21 +164,26 @@ void LSMImageIO::Read(void *buffer)
 
 void LSMImageIO::ReadImageInformation()
 {
+  // this really should be a compile time assert
+  itkAssertInDebugAndIgnoreInReleaseMacro( sizeof( zeiss_info ) == TIF_CZ_LSMINFO_SIZE );
+
   this->TIFFImageIO::ReadImageInformation();
 
   // Now is a good time to check what was read and replaced it with LSM
   // information
-  short tif_cz_lsminfo_size;
+  unsigned int tif_cz_lsminfo_size;
   void *praw = this->TIFFImageIO::ReadRawByteFromTag(TIF_CZ_LSMINFO, tif_cz_lsminfo_size);
-  // FIXME byte swap
-  ByteSwapper< unsigned short >::SwapRangeFromSystemToLittleEndian(
-    reinterpret_cast< unsigned short * >( praw ), tif_cz_lsminfo_size / 2);
-  const zeiss_info *zi = reinterpret_cast< zeiss_info * >( praw );
-  if ( sizeof( *zi ) != TIF_CZ_LSMINFO_SIZE )
+  zeiss_info *zi = reinterpret_cast< zeiss_info * >( praw );
+  if ( praw == NULL
+       || tif_cz_lsminfo_size != TIF_CZ_LSMINFO_SIZE )
     {
-    itkExceptionMacro(<< "Problem of alignement on your platform");
+    // no zeiss info, just use tiff spacing
     return;
     }
+  // FIXME byte swap, when should it happen? writting?
+  ByteSwapper<double>::SwapFromSystemToLittleEndian( &zi->F64VoxelSizeX );
+  ByteSwapper<double>::SwapFromSystemToLittleEndian( &zi->F64VoxelSizeY );
+  ByteSwapper<double>::SwapFromSystemToLittleEndian( &zi->F64VoxelSizeZ );
   m_Spacing[0] = zi->F64VoxelSizeX;
   m_Spacing[1] = zi->F64VoxelSizeY;
   // TIFF only support 2 or 3 dimension:
@@ -253,9 +257,9 @@ void LSMImageIO::Write(const void *buffer)
     pages = m_Dimensions[2];
     }
 
-  int    scomponents = this->GetNumberOfComponents();
-  double resolution = -1;
-  int    bps;
+  uint16_t    scomponents = this->GetNumberOfComponents();
+  float resolution = -1;
+  uint16_t    bps;
 
   switch ( this->GetComponentType() )
     {
@@ -271,7 +275,7 @@ void LSMImageIO::Write(const void *buffer)
       itkExceptionMacro(<< "TIFF supports unsigned char and unsigned short");
     }
 
-  int predictor;
+  uint16_t predictor;
 
   TIFF *tif = TIFFOpen(m_FileName.c_str(), "w");
   if ( !tif )
@@ -322,7 +326,7 @@ void LSMImageIO::Write(const void *buffer)
       delete[] sample_info;
       }
 
-    int compression;
+    uint16_t compression;
 
     if ( m_UseCompression )
       {

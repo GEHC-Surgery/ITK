@@ -403,7 +403,7 @@ NiftiImageIO::MustRescale()
 }
 
 // Internal function to rescale pixel according to Rescale Slope/Intercept
-template< class TBuffer >
+template< typename TBuffer >
 void RescaleFunction(TBuffer *buffer,
                      double slope,
                      double intercept,
@@ -1604,7 +1604,6 @@ NiftiImageIO
                                                                                                         // distinguish
                                                                                                         // between
                                                                                                         // them.
-  return;
 }
 
 namespace
@@ -1649,13 +1648,19 @@ NiftiImageIO::SetImageIOOrientationFromNIfTI(unsigned short int dims)
       case a75_sagittal_unflipped:
         orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIR;
         break;
-      // according to analyze documents, you don't see flipped
-      // orientation in the wild
-      case a75_transverse_flipped:
-      case a75_coronal_flipped:
-      case a75_sagittal_flipped:
-      case a75_orient_unknown:
       case a75_coronal_unflipped:
+        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
+        break;
+      case a75_transverse_flipped:
+        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI;
+        break;
+      case a75_sagittal_flipped:
+        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIL;
+        break;
+      case a75_coronal_flipped:
+        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSP;
+        break;
+      case a75_orient_unknown:
         orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
         break;
       }

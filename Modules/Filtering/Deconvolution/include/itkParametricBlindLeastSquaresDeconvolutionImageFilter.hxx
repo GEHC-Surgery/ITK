@@ -27,7 +27,7 @@
 namespace itk
 {
 
-template< class TInputImage, class TKernelImage, class TOutputImage >
+template< typename TInputImage, typename TKernelImage, typename TOutputImage >
 ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage >
 ::ParametricBlindLeastSquaresDeconvolutionImageFilter()
 {
@@ -35,13 +35,13 @@ ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, 
   m_Beta  = 0.01;
 }
 
-template< class TInputImage, class TKernelImage, class TOutputImage >
+template< typename TInputImage, typename TKernelImage, typename TOutputImage >
 ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage >
 ::~ParametricBlindLeastSquaresDeconvolutionImageFilter()
 {
 }
 
-template< class TInputImage, class TKernelImage, class TOutputImage >
+template< typename TInputImage, typename TKernelImage, typename TOutputImage >
 void
 ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage >
 ::SetKernelSource(KernelSourceType * kernelSource)
@@ -60,7 +60,7 @@ ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, 
   this->SetKernelImage( m_KernelSource->GetOutput() );
 }
 
-template< class TInputImage, class TKernelImage, class TOutputImage >
+template< typename TInputImage, typename TKernelImage, typename TOutputImage >
 void
 ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage >
 ::Initialize(ProgressAccumulator * progress, float progressWeight,
@@ -80,7 +80,7 @@ ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, 
   typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage( m_TransformedInput );
   duplicator->Update();
-  m_TransformedCurrentEstimate = duplicator->GetOutput();
+  m_TransformedCurrentEstimate = duplicator->GetModifiableOutput();
   m_TransformedCurrentEstimate->DisconnectPipeline();
 
   // Computes the difference between convolution of estimate with
@@ -96,7 +96,7 @@ ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, 
 
 }
 
-template< class TInputImage, class TKernelImage, class TOutputImage >
+template< typename TInputImage, typename TKernelImage, typename TOutputImage >
 void
 ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage >
 ::Iteration(ProgressAccumulator * progress, float /*iterationProgressWeight*/)
@@ -247,7 +247,7 @@ ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, 
   m_KernelSource->SetParameters( parameters );
 }
 
-template< class TInputImage, class TKernelImage, class TOutputImage >
+template< typename TInputImage, typename TKernelImage, typename TOutputImage >
 void
 ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage >
 ::Finish(ProgressAccumulator * progress, float progressWeight)
@@ -272,7 +272,7 @@ ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, 
   m_ImageUpdateFilter = NULL;
 }
 
-template< class TInputImage, class TKernelImage, class TOutputImage >
+template< typename TInputImage, typename TKernelImage, typename TOutputImage >
 void
 ParametricBlindLeastSquaresDeconvolutionImageFilter< TInputImage, TKernelImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

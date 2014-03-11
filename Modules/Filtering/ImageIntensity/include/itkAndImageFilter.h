@@ -27,10 +27,10 @@ namespace Functor
 {
 /**
  * \class AND
- * \brief
+ * \brief bitwise AND functor
  * \ingroup ITKImageIntensity
  */
-template< class TInput1, class TInput2 = TInput1, class TOutput = TInput1 >
+template< typename TInput1, typename TInput2 = TInput1, typename TOutput = TInput1 >
 class AND
 {
 public:
@@ -53,13 +53,13 @@ public:
 };
 }
 /** \class AndImageFilter
- * \brief Implements the AND logical operator pixel-wise between two images.
+ * \brief Implements the AND bitwise operator pixel-wise between two images.
  *
  * This class is templated over the types of the two
  * input images and the type of the output image.
  * Numeric conversions (castings) are done by the C++ defaults.
  *
- * Since the logical AND operation is only defined in C++ for integer
+ * Since the bitwise AND operation is only defined in C++ for integer
  * types, the images passed to this filter must comply with the requirement
  * of using integer pixel type.
  *
@@ -67,7 +67,7 @@ public:
  * \code
  *  output_pixel = static_cast<OutputPixelType>( input1_pixel & input2_pixel )
  * \endcode
- * Where "&" is the boolean AND operator in C++.
+ * Where "&" is the bitwise AND operator in C++.
  *
  * \ingroup IntensityImageFilters
  * \ingroup MultiThreaded
@@ -77,8 +77,8 @@ public:
  * \wikiexample{ImageProcessing/AndImageFilter,Binary AND two images}
  * \endwiki
  */
-template< class TInputImage1, class TInputImage2 = TInputImage1, class TOutputImage = TInputImage1 >
-class ITK_EXPORT AndImageFilter:
+template< typename TInputImage1, typename TInputImage2 = TInputImage1, typename TOutputImage = TInputImage1 >
+class AndImageFilter:
   public
   BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage,
                             Functor::AND<
@@ -106,12 +106,12 @@ public:
                BinaryFunctorImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
-  itkConceptMacro( Input1Input2OutputLogicalOperatorsCheck,
-                   ( Concept::LogicalOperators< typename TInputImage1::PixelType,
+  // Begin concept checking
+  itkConceptMacro( Input1Input2OutputBitwiseOperatorsCheck,
+                   ( Concept::BitwiseOperators< typename TInputImage1::PixelType,
                                                 typename TInputImage2::PixelType,
                                                 typename TOutputImage::PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

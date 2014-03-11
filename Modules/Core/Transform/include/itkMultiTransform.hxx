@@ -19,7 +19,6 @@
 #define __itkMultiTransform_hxx
 
 #include "itkMultiTransform.h"
-#include <cstring> // for memcpy on some platforms
 
 namespace itk
 {
@@ -28,7 +27,7 @@ namespace itk
  * Constructor
  */
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 MultiTransform<TScalar, NDimensions, NSubDimensions>::MultiTransform() : Superclass( 0 )
 {
   this->m_NumberOfLocalParameters = NumericTraits< NumberOfParametersType >::Zero;
@@ -40,7 +39,7 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>::MultiTransform() : Supercl
  * Destructor
  */
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 MultiTransform<TScalar, NDimensions, NSubDimensions>::
 ~MultiTransform()
 {
@@ -50,7 +49,7 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>::
  * Get transform category
  */
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 typename MultiTransform<TScalar, NDimensions, NSubDimensions>::TransformCategoryType
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::GetTransformCategory() const
@@ -61,7 +60,7 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
 
   for( SizeValueType tind = 0; tind < this->GetNumberOfTransforms(); tind++ )
     {
-    TransformCategoryType type = this->GetNthTransform( tind ).GetPointer()->GetTransformCategory();
+    const TransformCategoryType type = this->GetNthTransformConstPointer( tind )->GetTransformCategory();
     if( tind == 0 )
       {
       result = type;
@@ -83,7 +82,7 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
  * Are all the transforms linear?
  */
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 bool
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::IsLinear() const
@@ -91,7 +90,7 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
   // If all sub-transforms are linear, return true.
   for( SizeValueType tind = 0; tind < this->GetNumberOfTransforms(); tind++ )
     {
-    if( ! this->GetNthTransform( tind ).GetPointer()->IsLinear() )
+    if( ! this->GetNthTransformConstPointer( tind )->IsLinear() )
       {
       return false;
       }
@@ -100,7 +99,7 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
 }
 
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 const typename MultiTransform<TScalar, NDimensions, NSubDimensions>::ParametersType
 & MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::GetParameters() const
@@ -117,9 +116,9 @@ const typename MultiTransform<TScalar, NDimensions, NSubDimensions>::ParametersT
     {
     const ParametersType & subParameters = (*it)->GetParameters();
     /* use vnl_vector data_block() to get data ptr */
-    memcpy( &(this->m_Parameters.data_block() )[offset],
-            subParameters.data_block(),
-            subParameters.Size() * sizeof( ParametersValueType ) );
+    std::copy(subParameters.data_block(),
+              subParameters.data_block()+subParameters.Size(),
+              &(this->m_Parameters.data_block() )[offset]);
     offset += subParameters.Size();
     ++it;
     }
@@ -129,7 +128,7 @@ const typename MultiTransform<TScalar, NDimensions, NSubDimensions>::ParametersT
 }
 
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 void
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::SetParameters(const ParametersType & inputParameters)
@@ -163,9 +162,9 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
       {
       /* New parameter data, so copy it in */
       /* Use vnl_vector data_block() to get data ptr */
-      memcpy( subParameters.data_block(),
-              &(inputParameters.data_block() )[offset],
-              subParameters.Size() * sizeof( ParametersValueType ) );
+      std::copy(&(inputParameters.data_block() )[offset],
+                &(inputParameters.data_block() )[offset]+subParameters.Size(),
+                subParameters.data_block());
       offset += subParameters.Size();
       }
       /* Call SetParameters explicitly to include anything extra it does */
@@ -173,12 +172,10 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
     ++it;
     }
   while( it != transforms.end() );
-
-  return;
 }
 
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 const typename MultiTransform<TScalar, NDimensions, NSubDimensions>::ParametersType
 & MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::GetFixedParameters(void) const
@@ -196,9 +193,9 @@ const typename MultiTransform<TScalar, NDimensions, NSubDimensions>::ParametersT
     {
     const ParametersType & subFixedParameters = (*it)->GetFixedParameters();
     /* use vnl_vector data_block() to get data ptr */
-    memcpy( &(this->m_FixedParameters.data_block() )[offset],
-            subFixedParameters.data_block(),
-            subFixedParameters.Size() * sizeof( ParametersValueType ) );
+    std::copy(subFixedParameters.data_block(),
+              subFixedParameters.data_block()+subFixedParameters.Size(),
+              &(this->m_FixedParameters.data_block() )[offset]);
     offset += subFixedParameters.Size();
     ++it;
     }
@@ -208,7 +205,7 @@ const typename MultiTransform<TScalar, NDimensions, NSubDimensions>::ParametersT
 }
 
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 void
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::SetFixedParameters(const ParametersType & inputParameters)
@@ -235,20 +232,18 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
     {
     ParametersType & subFixedParameters = const_cast<ParametersType &>( (*it)->GetFixedParameters() );
     /* Use vnl_vector data_block() to get data ptr */
-    memcpy( subFixedParameters.data_block(),
-            &(this->m_FixedParameters.data_block() )[offset],
-            subFixedParameters.Size() * sizeof( ParametersValueType ) );
+    std::copy(&(this->m_FixedParameters.data_block() )[offset],
+              &(this->m_FixedParameters.data_block() )[offset]+subFixedParameters.Size(),
+              subFixedParameters.data_block());
     /* Call SetParameters explicitly to include anything extra it does */
     (*it)->SetFixedParameters(subFixedParameters);
     offset += subFixedParameters.Size();
     ++it;
     }
   while( it != transforms.end() );
-
-  return;
 }
 
-template<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+template<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 typename MultiTransform<TScalar, NDimensions, NSubDimensions>::NumberOfParametersType
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::GetNumberOfParameters(void) const
@@ -262,18 +257,17 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
    * we wouldn't know that in this class, so this is safest. */
   NumberOfParametersType result = NumericTraits< NumberOfParametersType >::Zero;
 
-  const TransformType * transform;
 
   for( SizeValueType tind = 0; tind < this->GetNumberOfTransforms(); tind++ )
     {
     /* Use raw pointer for efficiency */
-    transform = this->GetNthTransform( tind ).GetPointer();
+    const TransformType * transform = this->GetNthTransformConstPointer( tind );
     result += transform->GetNumberOfParameters();
     }
   return result;
 }
 
-template<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+template<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 typename MultiTransform<TScalar, NDimensions, NSubDimensions>::NumberOfParametersType
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::GetNumberOfLocalParameters(void) const
@@ -289,11 +283,10 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
    * number of local parameters to possibly change, so we can cache
    * the value. */
   NumberOfParametersType result = NumericTraits< NumberOfParametersType >::Zero;
-  const TransformType * transform;
 
   for( SizeValueType tind = 0; tind < this->GetNumberOfTransforms(); tind++ )
     {
-    transform = this->GetNthTransform( tind ).GetPointer();
+    const TransformType * transform = this->GetNthTransformConstPointer( tind );
     result += transform->GetNumberOfLocalParameters();
     }
   this->m_NumberOfLocalParameters = result;
@@ -301,24 +294,23 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
 }
 
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 typename MultiTransform<TScalar, NDimensions, NSubDimensions>::NumberOfParametersType
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::GetNumberOfFixedParameters(void) const
 {
   NumberOfParametersType result = NumericTraits< NumberOfParametersType >::Zero;
-  const TransformType * transform;
 
   for( SizeValueType tind = 0; tind < this->GetNumberOfTransforms(); tind++ )
     {
-    transform = this->GetNthTransform( tind ).GetPointer();
+    const TransformType * transform = this->GetNthTransformConstPointer( tind );
     result += transform->GetFixedParameters().Size();
     }
   return result;
 }
 
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 void
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::UpdateTransformParameters(  const DerivativeType & update, ScalarType  factor )
@@ -341,11 +333,11 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
     }
 
   NumberOfParametersType offset = NumericTraits< NumberOfParametersType >::Zero;
-  TransformType * subtransform;
 
   for( SizeValueType tind = 0; tind < this->GetNumberOfTransforms(); tind++ )
     {
-    subtransform = const_cast<TransformType*>( this->GetNthTransform( tind ).GetPointer() );
+    // HACK:  The following line looks wrong.  We should not need to const_cast
+    TransformType * subtransform = this->GetNthTransformModifiablePointer( tind );
     /* The input values are in a monolithic block, so we have to point
      * to the subregion corresponding to the individual subtransform.
      * This simply creates an Array object with data pointer, no
@@ -363,7 +355,7 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
  * return an inverse transformation
  */
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 bool
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::GetInverse( Self *inverse ) const
@@ -390,7 +382,7 @@ MultiTransform<TScalar, NDimensions, NSubDimensions>
 }
 
 template
-<class TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
+<typename TScalar, unsigned int NDimensions, unsigned int NSubDimensions>
 void
 MultiTransform<TScalar, NDimensions, NSubDimensions>
 ::PrintSelf( std::ostream& os, Indent indent ) const

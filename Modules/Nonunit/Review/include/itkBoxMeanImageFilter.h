@@ -39,8 +39,8 @@ namespace itk
  * \ingroup ITKReview
  */
 
-template< class TInputImage, class TOutputImage = TInputImage >
-class ITK_EXPORT BoxMeanImageFilter:
+template< typename TInputImage, typename TOutputImage = TInputImage >
+class BoxMeanImageFilter:
   public BoxImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -75,12 +75,12 @@ public:
                       TInputImage::ImageDimension);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( SameDimension,
                    ( Concept::SameDimension< itkGetStaticConstMacro(InputImageDimension),
                                              itkGetStaticConstMacro(OutputImageDimension) > ) );
 
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

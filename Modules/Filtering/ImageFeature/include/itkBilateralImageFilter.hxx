@@ -28,7 +28,24 @@
 
 namespace itk
 {
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
+BilateralImageFilter< TInputImage, TOutputImage >
+::BilateralImageFilter()
+{
+  this->m_Radius.Fill(1);
+  this->m_AutomaticKernelSize = true;
+  this->m_DomainSigma.Fill(4.0);
+  this->m_RangeSigma = 50.0;
+  this->m_FilterDimensionality = ImageDimension;
+  this->m_NumberOfRangeGaussianSamples = 100;
+  this->m_DynamicRange = 0.0;
+  this->m_DynamicRangeUsed = 0.0;
+  this->m_DomainMu = 2.5;  // keep small to keep kernels small
+  this->m_RangeMu = 4.0;   // can be bigger then DomainMu since we only
+                           // index into a single table
+}
+
+template< typename TInputImage, typename TOutputImage >
 void
 BilateralImageFilter< TInputImage, TOutputImage >
 ::SetRadius(const SizeValueType i)
@@ -36,7 +53,7 @@ BilateralImageFilter< TInputImage, TOutputImage >
   m_Radius.Fill(i);
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 BilateralImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
@@ -107,7 +124,7 @@ throw( InvalidRequestedRegionError )
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 BilateralImageFilter< TInputImage, TOutputImage >
 ::BeforeThreadedGenerateData()
@@ -229,7 +246,7 @@ BilateralImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 BilateralImageFilter< TInputImage, TOutputImage >
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -330,7 +347,7 @@ BilateralImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 BilateralImageFilter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

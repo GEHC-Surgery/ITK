@@ -61,12 +61,11 @@
 #include "itkSubtractImageFilter.h"
 
 
-
 class CommandIterationUpdate : public itk::Command
 {
 public:
-  typedef  CommandIterationUpdate   Self;
-  typedef  itk::Command             Superclass;
+  typedef CommandIterationUpdate   Self;
+  typedef itk::Command             Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
   itkNewMacro( Self );
 
@@ -75,8 +74,8 @@ protected:
 
 public:
 
-  typedef itk::RegularStepGradientDescentOptimizer     OptimizerType;
-  typedef const OptimizerType                         *OptimizerPointer;
+  typedef itk::RegularStepGradientDescentOptimizer OptimizerType;
+  typedef const OptimizerType*                     OptimizerPointer;
 
   void Execute(itk::Object *caller, const itk::EventObject & event)
   {
@@ -177,7 +176,6 @@ int main( int argc, char *argv[] )
                                     FixedImageType,
                                     MovingImageType >    MetricType;
   // Software Guide : EndCodeSnippet
-
 
 
   //  Software Guide : BeginLatex
@@ -503,8 +501,8 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceBorder20.eps}
-  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceShifted13x17y.eps}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceBorder20}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceShifted13x17y}
   // \itkcaption[Fixed and Moving images in registration framework]{Fixed and
   // Moving image provided as input to the registration method.}
   // \label{fig:FixedMovingImageRegistration1}
@@ -534,7 +532,6 @@ int main( int argc, char *argv[] )
   // Software Guide : EndCodeSnippet
 
 
-
   //  Software Guide : BeginLatex
   //
   //  A resampling filter is created and the moving image is connected as
@@ -546,7 +543,6 @@ int main( int argc, char *argv[] )
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
   resampler->SetInput( movingImageReader->GetOutput() );
   // Software Guide : EndCodeSnippet
-
 
 
   //  Software Guide : BeginLatex
@@ -573,7 +569,6 @@ int main( int argc, char *argv[] )
   // Software Guide : EndCodeSnippet
 
 
-
   //  Software Guide : BeginLatex
   //
   //  As described in Section \ref{sec:ResampleImageFilter}, the
@@ -598,9 +593,9 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.32\textwidth]{ImageRegistration1Output.eps}
-  // \includegraphics[width=0.32\textwidth]{ImageRegistration1DifferenceBefore.eps}
-  // \includegraphics[width=0.32\textwidth]{ImageRegistration1DifferenceAfter.eps}
+  // \includegraphics[width=0.32\textwidth]{ImageRegistration1Output}
+  // \includegraphics[width=0.32\textwidth]{ImageRegistration1DifferenceBefore}
+  // \includegraphics[width=0.32\textwidth]{ImageRegistration1DifferenceAfter}
   // \itkcaption[HelloWorld registration output images]{Mapped moving image and its
   // difference with the fixed image before and after registration}
   // \label{fig:ImageRegistration1Output}
@@ -619,11 +614,11 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef unsigned char OutputPixelType;
+  typedef unsigned char                            OutputPixelType;
   typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
   typedef itk::CastImageFilter<
                         FixedImageType,
-                        OutputImageType > CastFilterType;
+                        OutputImageType >          CastFilterType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
   // Software Guide : EndCodeSnippet
 
@@ -662,7 +657,7 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=\textwidth]{ImageRegistration1Pipeline.eps}
+  // \includegraphics[width=\textwidth]{ImageRegistration1Pipeline}
   // \itkcaption[Pipeline structure of the registration example]{Pipeline
   // structure of the registration example.}
   // \label{fig:ImageRegistration1Pipeline}
@@ -691,7 +686,6 @@ int main( int argc, char *argv[] )
   difference->SetInput1( fixedImageReader->GetOutput() );
   difference->SetInput2( resampler->GetOutput() );
   // Software Guide : EndCodeSnippet
-
 
 
   // Software Guide : BeginLatex
@@ -752,7 +746,6 @@ int main( int argc, char *argv[] )
     }
 
 
-
   //  Software Guide : BeginLatex
   //
   //  For the purpose of comparison, the difference between the fixed image and
@@ -780,7 +773,6 @@ int main( int argc, char *argv[] )
     }
 
 
-
   //  Software Guide : BeginLatex
   //
   //  The complete pipeline structure of the current example is presented in
@@ -804,14 +796,12 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
 
-
-
   //  Software Guide : BeginLatex
   //
   // \begin{figure}
   // \center
-  // \includegraphics[height=0.44\textwidth]{ImageRegistration1TraceTranslations.eps}
-  // \includegraphics[height=0.44\textwidth]{ImageRegistration1TraceMetric.eps}
+  // \includegraphics[height=0.44\textwidth]{ImageRegistration1TraceTranslations}
+  // \includegraphics[height=0.44\textwidth]{ImageRegistration1TraceMetric}
   // \itkcaption[Trace of translations and metrics during registration]{The sequence
   // of translations and metric values at each iteration of the optimizer.}
   // \label{fig:ImageRegistration1Trace}
@@ -832,4 +822,3 @@ int main( int argc, char *argv[] )
 
   return EXIT_SUCCESS;
 }
-

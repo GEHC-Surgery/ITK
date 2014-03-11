@@ -29,21 +29,22 @@
 
 namespace itk
 {
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::SignedMaurerDistanceMapImageFilter():
   m_BackgroundValue( NumericTraits< InputPixelType >::Zero ),
+  m_Spacing(0.0),
   m_InsideIsPositive(false),
   m_UseImageSpacing(true),
   m_SquaredDistance(false)
 {}
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::~SignedMaurerDistanceMapImageFilter()
 {}
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 unsigned int
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::SplitRequestedRegion(unsigned int i, unsigned int num,
@@ -104,7 +105,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
   return maxThreadIdUsed + 1;
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::GenerateData()
@@ -174,7 +175,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -182,18 +183,14 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 {
   OutputImageType      *outputImage = this->GetOutput();
 
-  vnl_vector< unsigned int > k(InputImageDimension - 1);
-
   InputRegionType region = outputRegionForThread;
   InputSizeType   size   = region.GetSize();
   InputIndexType  startIndex = outputRegionForThread.GetIndex();
-
 
   OutputImageType      *outputPtr = this->GetOutput();
 
   // compute the number of rows first, so we can setup a progress reporter
   std::vector< InputSizeValueType > NumberOfRows;
-
   for ( unsigned int i = 0; i < InputImageDimension; i++ )
     {
     NumberOfRows.push_back(1);
@@ -222,23 +219,29 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
                            0.33f + static_cast< float >( m_CurrentDimension * progressPerDimension ),
                            progressPerDimension);
 
-  OutputIndexType idx;
-  idx.Fill(0);
-
-  k[0] = 1;
-  unsigned int count = 1;
-
-  for ( unsigned int d = m_CurrentDimension + 2;
-       d < m_CurrentDimension + InputImageDimension;
-       d++ )
+  // This variable provides the amount by which to divide the dimensionless index in order to get the index for each dimension.
+  vnl_vector< unsigned int > k(InputImageDimension - 1);
+  unsigned int count = 0;
+  k[count] = 1;
+  for ( unsigned int d = m_CurrentDimension + InputImageDimension - 1;
+         d > m_CurrentDimension + 1;
+         d-- )
     {
-    k[count] = k[count - 1] * size[d % InputImageDimension];
+    k[count+1] = k[count] * size[d % InputImageDimension];
     count++;
     }
   k.flip();
 
+  // The index is defined as the dimensionless index into the pixel.
+  // It must be divided by each dimension size in order to get the index for that dimension.
+  // The result of this division is the offsetIndex, which is the index offset relative to the region of this thread.
+  // The true pixel location (idx) is provided by the sum of the offsetIndex and the startIndex.
   InputSizeValueType index;
+  OutputIndexType offsetIndex;
+  offsetIndex.Fill(0);
   InputSizeValueType tempRow = NumberOfRows[m_CurrentDimension];
+  OutputIndexType idx;
+  idx.Fill(0);
 
   for ( InputSizeValueType n = 0; n < tempRow; n++ )
     {
@@ -247,9 +250,8 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
     for ( unsigned int d = m_CurrentDimension + 1;
          d < m_CurrentDimension + InputImageDimension; d++ )
       {
-      idx[d % InputImageDimension] =
-        static_cast< OutputIndexValueType >( static_cast< double >( index ) / static_cast< double >( k[count] ) )
-        + static_cast< OutputIndexValueType >( startIndex[d % InputImageDimension] );
+      offsetIndex[d % InputImageDimension] = static_cast< OutputIndexValueType >( static_cast< double >( index ) / static_cast< double >( k[count] ) );
+      idx[d % InputImageDimension] = offsetIndex[d % InputImageDimension] + static_cast< OutputIndexValueType >( startIndex[d % InputImageDimension] );
 
       index %= k[count];
       count++;
@@ -316,7 +318,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::Voronoi(unsigned int d, OutputIndexType idx, OutputImageType *output)
@@ -438,7 +440,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 bool
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::Remove(OutputPixelType d1, OutputPixelType d2, OutputPixelType df,
@@ -458,7 +460,7 @@ SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 /**
  * Standard "PrintSelf" method
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 SignedMaurerDistanceMapImageFilter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

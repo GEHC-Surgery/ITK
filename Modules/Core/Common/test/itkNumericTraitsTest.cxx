@@ -36,7 +36,7 @@
 #include "itkNumericTraitsVariableLengthVectorPixel.h"
 
 
-template<class T> void CheckVariableLengthArrayTraits(T t)
+template<typename T> void CheckVariableLengthArrayTraits(const T &t)
 {
   std::string name;
 #ifdef GCC_USEDEMANGLE
@@ -60,7 +60,7 @@ template<class T> void CheckVariableLengthArrayTraits(T t)
 }
 
 
-template<class T> void CheckFixedArrayTraits(T t)
+template<typename T> void CheckFixedArrayTraits(const T &t)
 {
   std::string name;
 #ifdef GCC_USEDEMANGLE
@@ -88,7 +88,7 @@ template<class T> void CheckFixedArrayTraits(T t)
 }
 
 
-template<class T> void CheckTraits(const char *name, T t)
+template<typename T> void CheckTraits(const char *name, T t)
 {
   // check std::numeric_limits members
   std::cout << "itk::NumericTraits<" << name << ">" << std::endl;
@@ -978,10 +978,18 @@ int itkNumericTraitsTest(int, char* [] )
   CheckVariableLengthArrayTraits(itk::Array<long double>(5));
 
 
-  // itk::complex
+  // std::complex
+  CheckFixedArrayTraits(std::complex<char>());
+  CheckFixedArrayTraits(std::complex<unsigned char>());
+  CheckFixedArrayTraits(std::complex<short>());
+  CheckFixedArrayTraits(std::complex<unsigned short>());
+  CheckFixedArrayTraits(std::complex<int>());
+  CheckFixedArrayTraits(std::complex<unsigned int>());
+  CheckFixedArrayTraits(std::complex<long>());
+  CheckFixedArrayTraits(std::complex<unsigned long>());
   CheckFixedArrayTraits(std::complex<float>());
   CheckFixedArrayTraits(std::complex<double>());
-  // CheckFixedArrayTraits(std::complex<long double>());
+  CheckFixedArrayTraits(std::complex<long double>());
 
 
   return EXIT_SUCCESS;

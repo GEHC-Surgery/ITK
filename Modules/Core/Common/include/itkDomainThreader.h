@@ -62,8 +62,8 @@ namespace itk
  *
  *  \ingroup ITKCommon
  */
-template< class TDomainPartitioner, class TAssociate >
-class ITK_EXPORT DomainThreader: public Object
+template< typename TDomainPartitioner, typename TAssociate >
+class DomainThreader: public Object
 {
 public:
   /** Standard class typedefs. */
@@ -89,7 +89,7 @@ public:
 
   /** Set/Get the DomainPartitioner. */
   itkSetObjectMacro(       DomainPartitioner, DomainPartitionerType );
-  itkGetConstObjectMacro(  DomainPartitioner, DomainPartitionerType );
+  itkGetModifiableObjectMacro(DomainPartitioner, DomainPartitionerType );
 
   /** Accessor for number of threads that were actually used in the last
    * ThreadedExecution. */

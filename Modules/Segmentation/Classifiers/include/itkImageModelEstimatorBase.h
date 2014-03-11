@@ -59,9 +59,9 @@ namespace itk
  * \ingroup ClassificationFilters
  * \ingroup ITKClassifiers
  */
-template< class TInputImage,
-          class TMembershipFunction >
-class ITK_EXPORT ImageModelEstimatorBase:public LightProcessObject
+template< typename TInputImage,
+          typename TMembershipFunction >
+class ImageModelEstimatorBase:public LightProcessObject
 {
 public:
   /** Standard class typedefs. */
@@ -92,11 +92,9 @@ public:
   /** Type definitions for the training image. */
   //typedef typename TTrainingImage::Pointer TrainingImagePointer;
 
-  /** Set the input image. */
+  /** Get/Set the input image. */
   itkSetObjectMacro(InputImage, InputImageType);
-
-  /** Get the input image. */
-  itkGetObjectMacro(InputImage, InputImageType);
+  itkGetModifiableObjectMacro(InputImage, InputImageType);
 
   /** Set the classified image. */
   void SetMembershipFunctions(MembershipFunctionPointerVector

@@ -25,7 +25,7 @@
 namespace
 {
 
-template<class  TInputImageType >
+template<typename  TInputImageType >
 int itkVotingBinaryImageFilterTestImp( const std::string &infname,
                                        const std::string &outfname,
                                        itk::SizeValueType radius,
@@ -133,7 +133,7 @@ int itkVotingBinaryImageFilterTest(int argc, char* argv[] )
     case itk::ImageIOBase::UINT:
       if ( dimension == 2 )
         return itkVotingBinaryImageFilterTestImp< itk::Image<unsigned int, 2> >( infname, outfname, radius, foregroundValue, backgroundValue );
-      else if ( dimension == 2 )
+      else if ( dimension == 3 )
         return itkVotingBinaryImageFilterTestImp< itk::Image<unsigned int, 3> >( infname, outfname, radius, foregroundValue, backgroundValue );
       break;
     case itk::ImageIOBase::ULONG:

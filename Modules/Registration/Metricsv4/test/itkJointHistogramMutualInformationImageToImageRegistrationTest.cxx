@@ -40,7 +40,7 @@
 
 namespace{
 
-template < class TOptimizer, class TMIMetric >
+template < typename TOptimizer, typename TMIMetric >
 /** \class JointPDFStatus
  * \brief Save the JointPDF from the metric to an image file and check to make sure
  * they are normalized properly. */
@@ -51,7 +51,7 @@ public:
   typedef itk::Command              Superclass;
   typedef itk::SmartPointer< Self > Pointer;
 
-  itkNewMacro( Self );
+  itkSimpleNewMacro( Self ); //Clone, and CreateAnother are not needed here.
 
   typedef TOptimizer OptimizerType;
   typedef TMIMetric  MIMetricType;

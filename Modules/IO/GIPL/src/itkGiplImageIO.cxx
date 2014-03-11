@@ -190,21 +190,17 @@ bool GiplImageIO::CanWriteFile(const char *name)
     return false;
     }
 
-  if ( extensionFound )
-    {
-    return true;
-    }
-  return false;
+  return true;
 }
 
 void GiplImageIO::Read(void *buffer)
 {
-  unsigned int dimensions = this->GetNumberOfDimensions();
-  unsigned int numberOfPixels = 1;
+  const uint32_t dimensions = this->GetNumberOfDimensions();
+  uint32_t numberOfPixels = 1;
 
   for ( unsigned int dim = 0; dim < dimensions; dim++ )
     {
-    numberOfPixels *= m_Dimensions[dim];
+    numberOfPixels *= static_cast<uint32_t>(m_Dimensions[dim]);
     }
 
   char *p = static_cast< char * >( buffer );
@@ -744,8 +740,7 @@ GiplImageIO
       }
     }
 
-  unsigned int i;
-  for ( i = 0; i < 4; i++ )
+  for (unsigned int i = 0; i < 4; i++ )
     {
     unsigned short value;
     if ( i < nDims )
@@ -833,7 +828,7 @@ GiplImageIO
     }
 
   /*   10   16  X,Y,Z,T pixel dimensions mm */
-  for ( i = 0; i < 4; i++ )
+  for ( unsigned int i = 0; i < 4; i++ )
     {
     if ( i < nDims )
       {
@@ -879,13 +874,13 @@ GiplImageIO
 
   char line1[80];            /*   26   80  Patient / Text field        */
 
-  for ( i = 0; i < 80; i++ )
+  for (unsigned int i = 0; i < 80; i++ )
     {
     line1[i] = 0; //initialize
     }
 
   sprintf(line1, "No Patient Information");
-  for ( i = 0; i < 80; i++ )
+  for ( unsigned int i = 0; i < 80; i++ )
     {
     if ( m_IsCompressed )
       {
@@ -898,7 +893,7 @@ GiplImageIO
     }
 
   float matrix[20];          /*  106   80                              */
-  for ( i = 0; i < 20; i++ )
+  for ( unsigned int i = 0; i < 20; i++ )
     {
     matrix[i] = 0; //write zeros
     if ( m_IsCompressed )
@@ -952,7 +947,7 @@ GiplImageIO
     }
 
   double origin[4];          /*  204   32  X,Y,Z,T offset              */
-  for ( i = 0; i < 4; i++ )
+  for ( unsigned int i = 0; i < 4; i++ )
     {
     if ( i < nDims )
       {

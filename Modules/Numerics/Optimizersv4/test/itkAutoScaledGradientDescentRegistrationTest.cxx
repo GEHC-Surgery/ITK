@@ -32,7 +32,7 @@
  *  at each iteration according to the shift of each step.
  */
 
-template< class TMovingTransform >
+template< typename TMovingTransform >
 int itkAutoScaledGradientDescentRegistrationTestTemplated(
                                             int numberOfIterations,
                                             double shiftOfStep,
@@ -168,7 +168,7 @@ int itkAutoScaledGradientDescentRegistrationTestTemplated(
   // If no learning rate estimate is performed, test with a fixed value
   // close to the result of running this test with learning rate estimation
   // for only the first step.
-  OptimizerType::InternalComputationValueType fixedLearningRate = 0.01501010101010101;
+  const OptimizerType::InternalComputationValueType fixedLearningRate = 0.01501010101010101;
   if( ! estimateLearningRateOnce && ! estimateLearningRateAtEachIteration )
     {
     optimizer->SetLearningRate( fixedLearningRate );
@@ -316,18 +316,17 @@ int itkAutoScaledGradientDescentRegistrationTest(int argc, char ** const argv)
     }
 
   const unsigned int Dimension = 2;
-  int ret1 = EXIT_SUCCESS, ret2 = EXIT_SUCCESS;
 
   std::cout << std::endl << "Optimizing translation transform with shift scales" << std::endl;
   typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
   bool usePhysicalSpaceForShift = false;
-  ret1 = itkAutoScaledGradientDescentRegistrationTestTemplated<TranslationTransformType>(
+  int ret1 = itkAutoScaledGradientDescentRegistrationTestTemplated<TranslationTransformType>(
     numberOfIterations, shiftOfStep, "shift", usePhysicalSpaceForShift,
     estimateLearningRateOnce, estimateLearningRateAtEachIteration, estimateScales);
 
   std::cout << std::endl << "Optimizing translation transform with Jacobian scales" << std::endl;
   typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
-  ret2 = itkAutoScaledGradientDescentRegistrationTestTemplated<TranslationTransformType>(
+  int ret2 = itkAutoScaledGradientDescentRegistrationTestTemplated<TranslationTransformType>(
     numberOfIterations, 0.0, "jacobian", usePhysicalSpaceForShift,
     estimateLearningRateOnce, estimateLearningRateAtEachIteration, estimateScales);
 

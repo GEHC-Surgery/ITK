@@ -20,11 +20,10 @@
 
 #include "itkNeighborhood.h"
 #include "itkNumericTraits.h"
-#include <cstring>
 
 namespace itk
 {
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 void
 Neighborhood< TPixel, VDimension, TContainer >
 ::ComputeNeighborhoodStrideTable()
@@ -44,7 +43,7 @@ Neighborhood< TPixel, VDimension, TContainer >
     }
 }
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 void Neighborhood< TPixel, VDimension, TContainer >
 ::ComputeNeighborhoodOffsetTable()
 {
@@ -72,7 +71,7 @@ void Neighborhood< TPixel, VDimension, TContainer >
     }
 }
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 void
 Neighborhood< TPixel, VDimension, TContainer >
 ::SetRadius(const SizeValueType s)
@@ -86,12 +85,12 @@ Neighborhood< TPixel, VDimension, TContainer >
   this->SetRadius(k);
 }
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 void
 Neighborhood< TPixel, VDimension, TContainer >
 ::SetRadius(const SizeType & r)
 {
-  memcpy(m_Radius.m_Size, r.m_Size, sizeof( const SizeValueType ) * VDimension);
+  this->m_Radius = r;
   this->SetSize();
 
   SizeValueType cumul = NumericTraits< SizeValueType >::One;
@@ -105,31 +104,38 @@ Neighborhood< TPixel, VDimension, TContainer >
   this->ComputeNeighborhoodOffsetTable();
 }
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 Neighborhood< TPixel, VDimension, TContainer >
 ::Neighborhood(const Self & other)
 {
   m_Radius     = other.m_Radius;
   m_Size       = other.m_Size;
   m_DataBuffer = other.m_DataBuffer;
-  ::memcpy(m_StrideTable, other.m_StrideTable, sizeof( OffsetValueType ) * VDimension);
+  std::copy(other.m_StrideTable,
+            other.m_StrideTable+VDimension,
+            m_StrideTable);
   m_OffsetTable = other.m_OffsetTable;
 }
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 Neighborhood< TPixel, VDimension, TContainer > &
 Neighborhood< TPixel, VDimension, TContainer >
 ::operator=(const Self & other)
 {
-  m_Radius     = other.m_Radius;
-  m_Size       = other.m_Size;
-  m_DataBuffer = other.m_DataBuffer;
-  ::memcpy(m_StrideTable, other.m_StrideTable, sizeof( OffsetValueType ) * VDimension);
-  m_OffsetTable = other.m_OffsetTable;
+  if(this != &other)
+    {
+    m_Radius     = other.m_Radius;
+    m_Size       = other.m_Size;
+    m_DataBuffer = other.m_DataBuffer;
+    std::copy(other.m_StrideTable,
+              other.m_StrideTable+VDimension,
+              m_StrideTable);
+    m_OffsetTable = other.m_OffsetTable;
+    }
   return *this;
 }
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 std::slice Neighborhood< TPixel, VDimension, TContainer >
 ::GetSlice(unsigned int d) const
 {
@@ -144,7 +150,7 @@ std::slice Neighborhood< TPixel, VDimension, TContainer >
                      static_cast< size_t >( t ) );
 }
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 typename Neighborhood< TPixel, VDimension, TContainer >::NeighborIndexType
 Neighborhood< TPixel, VDimension, TContainer >
 ::GetNeighborhoodIndex(const OffsetType & o) const
@@ -158,7 +164,7 @@ Neighborhood< TPixel, VDimension, TContainer >
   return idx;
 }
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 void Neighborhood< TPixel, VDimension, TContainer >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {

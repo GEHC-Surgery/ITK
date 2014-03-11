@@ -41,7 +41,7 @@ namespace itk
  */
 template< unsigned int VDimension,
           typename TLevelSetValueType,
-          class TEquationContainer >
+          typename TEquationContainer >
 class UpdateWhitakerSparseLevelSet : public Object
 {
 public:
@@ -64,6 +64,7 @@ public:
                                                        LevelSetType;
   typedef typename LevelSetType::Pointer               LevelSetPointer;
   typedef typename LevelSetType::InputType             LevelSetInputType;
+  typedef typename LevelSetType::OffsetType            LevelSetOffsetType;
 
   typedef typename LevelSetType::LabelMapType          LevelSetLabelMapType;
   typedef typename LevelSetType::LabelMapPointer       LevelSetLabelMapPointer;
@@ -95,14 +96,14 @@ public:
   typedef LabelMapToLabelImageFilter< LevelSetLabelMapType, LabelImageType >  LabelMapToLabelImageFilterType;
   typedef LabelImageToLabelMapFilter< LabelImageType, LevelSetLabelMapType >  LabelImageToLabelMapFilterType;
 
-  itkGetObjectMacro( OutputLevelSet, LevelSetType );
+  itkGetModifiableObjectMacro(OutputLevelSet, LevelSetType );
 
   /** Update function for initializing and computing the output level set */
   void Update();
 
   /** Set/Get the sparse levet set image */
   itkSetObjectMacro( InputLevelSet, LevelSetType );
-  itkGetObjectMacro( InputLevelSet, LevelSetType );
+  itkGetModifiableObjectMacro(InputLevelSet, LevelSetType );
 
   /** Set/Get the TimeStep for the update */
   itkSetMacro( TimeStep, LevelSetOutputType );
@@ -113,14 +114,14 @@ public:
 
   /** Set/Get the Equation container for computing the update */
   itkSetObjectMacro( EquationContainer, EquationContainerType );
-  itkGetObjectMacro( EquationContainer, EquationContainerType );
+  itkGetModifiableObjectMacro(EquationContainer, EquationContainerType );
 
   /** Set/Get the current level set id */
   itkSetMacro( CurrentLevelSetId, IdentifierType );
   itkGetMacro( CurrentLevelSetId, IdentifierType );
 
   /** Set the update map for all points in the zero layer */
-  void SetUpdate( const LevelSetLayerType& iUpdate );
+  void SetUpdate( const LevelSetLayerType& update );
 
 protected:
   UpdateWhitakerSparseLevelSet();
@@ -177,6 +178,8 @@ private:
   LevelSetLayerIdType m_MaxStatus;
 
   LabelImagePointer m_InternalImage;
+
+  LevelSetOffsetType m_Offset;
 
   typedef ShapedNeighborhoodIterator< LabelImageType > NeighborhoodIteratorType;
 

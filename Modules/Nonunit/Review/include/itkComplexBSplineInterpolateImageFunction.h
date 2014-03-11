@@ -40,8 +40,8 @@ namespace itk
  * \ingroup ImageInterpolators
  * \ingroup ITKReview
  */
-template< class TImageType, class TCoordRep = double, class TCoefficientType = double >
-class ITK_EXPORT ComplexBSplineInterpolateImageFunction:
+template< typename TImageType, typename TCoordRep = double, typename TCoefficientType = double >
+class ComplexBSplineInterpolateImageFunction:
   public InterpolateImageFunction< TImageType, TCoordRep >
 {
 public:

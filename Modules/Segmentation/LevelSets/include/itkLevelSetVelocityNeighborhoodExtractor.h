@@ -51,11 +51,11 @@ namespace itk
  * \ingroup ITKLevelSets
  */
 template<
-  class TLevelSet,
-  class TAuxValue,
+  typename TLevelSet,
+  typename TAuxValue,
   unsigned int VAuxDimension = 1
   >
-class ITK_EXPORT LevelSetVelocityNeighborhoodExtractor:
+class LevelSetVelocityNeighborhoodExtractor:
   public LevelSetNeighborhoodExtractor< TLevelSet >
 {
 public:
@@ -117,11 +117,11 @@ public:
 
   /** Get the container of auxiliary values associated with the inside
    *  points. */
-  itkGetObjectMacro(AuxInsideValues, AuxValueContainer);
+  itkGetModifiableObjectMacro(AuxInsideValues, AuxValueContainer);
 
   /** Get the container of auxiliary values associate with the outside
    *  points. */
-  itkGetObjectMacro(AuxOutsideValues, AuxValueContainer);
+  itkGetModifiableObjectMacro(AuxOutsideValues, AuxValueContainer);
 
 protected:
   LevelSetVelocityNeighborhoodExtractor();

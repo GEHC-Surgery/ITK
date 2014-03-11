@@ -717,7 +717,6 @@ void NrrdImageIO::ReadImageInformation()
 void NrrdImageIO::Read(void *buffer)
 {
   Nrrd *       nrrd = nrrdNew();
-  unsigned int baseDim;
   bool         nrrdAllocated;
 
   // NOTE the main reason the logic becomes complicated here is that
@@ -737,6 +736,7 @@ void NrrdImageIO::Read(void *buffer)
     // the nrrd knows the allocated data size (the axes may actually be out
     // of order in the case of non-scalar data.  Internal to nrrdLoad(), the
     // given buffer will be re-used, instead of allocating new data.
+    unsigned int baseDim;
     nrrdAllocated = false;
     nrrd->data = buffer;
     nrrd->type = this->ITKToNrrdComponentType(this->m_ComponentType);
@@ -968,7 +968,7 @@ void NrrdImageIO::Write(const void *buffer)
   std::vector< std::string >                 keys = thisDic.GetKeys();
   std::vector< std::string >::const_iterator keyIt;
   const char *                               keyField, *field;
-  for ( keyIt = keys.begin(); keyIt != keys.end(); keyIt++ )
+  for ( keyIt = keys.begin(); keyIt != keys.end(); ++keyIt )
     {
     if ( !strncmp( KEY_PREFIX, ( *keyIt ).c_str(), strlen(KEY_PREFIX) ) )
       {

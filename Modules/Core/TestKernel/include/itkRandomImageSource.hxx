@@ -38,7 +38,7 @@ namespace itk
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 RandomImageSource< TOutputImage >
 ::RandomImageSource()
 {
@@ -49,17 +49,18 @@ RandomImageSource< TOutputImage >
     m_Spacing[i] = 1.0;
     m_Origin[i] = 0.0;
     }
+  m_Direction.SetIdentity();
 
   m_Min = NumericTraits< OutputImagePixelType >::NonpositiveMin();
   m_Max = NumericTraits< OutputImagePixelType >::max();
 }
 
-template< class TOutputImage >
+template< typename TOutputImage >
 RandomImageSource< TOutputImage >
 ::~RandomImageSource()
 {}
 
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 RandomImageSource< TOutputImage >
 ::SetSize(SizeValueArrayType sizeArray)
@@ -84,7 +85,7 @@ RandomImageSource< TOutputImage >
     }
 }
 
-template< class TOutputImage >
+template< typename TOutputImage >
 const typename RandomImageSource< TOutputImage >::SizeValueType *
 RandomImageSource< TOutputImage >
 ::GetSize() const
@@ -92,7 +93,7 @@ RandomImageSource< TOutputImage >
   return this->m_Size.GetSize();
 }
 
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 RandomImageSource< TOutputImage >
 ::SetSpacing(SpacingValueArrayType spacingArray)
@@ -117,7 +118,7 @@ RandomImageSource< TOutputImage >
     }
 }
 
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 RandomImageSource< TOutputImage >
 ::SetOrigin(PointValueArrayType originArray)
@@ -142,7 +143,7 @@ RandomImageSource< TOutputImage >
     }
 }
 
-template< class TOutputImage >
+template< typename TOutputImage >
 const typename RandomImageSource< TOutputImage >::PointValueType *
 RandomImageSource< TOutputImage >
 ::GetOrigin() const
@@ -154,7 +155,7 @@ RandomImageSource< TOutputImage >
   return this->m_OriginArray;
 }
 
-template< class TOutputImage >
+template< typename TOutputImage >
 const typename RandomImageSource< TOutputImage >::SpacingValueType *
 RandomImageSource< TOutputImage >
 ::GetSpacing() const
@@ -169,7 +170,7 @@ RandomImageSource< TOutputImage >
 /**
  *
  */
-template< class TOutputImage >
+template< typename TOutputImage >
 void
 RandomImageSource< TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -230,6 +231,7 @@ RandomImageSource< TOutputImage >
 
   output->SetSpacing(m_Spacing);
   output->SetOrigin(m_Origin);
+  output->SetDirection(m_Direction);
 }
 
 //----------------------------------------------------------------------------

@@ -77,7 +77,7 @@ void DICOMImageIO2::ReadDataCallback(doublebyte,
     {
     imageBytes = len;
     }
-  memcpy(m_ImageDataBuffer, val, imageBytes);
+  std::copy(val, val + imageBytes, m_ImageDataBuffer);
 }
 
 void DICOMImageIO2::Read(void *buffer)

@@ -27,7 +27,7 @@
 // parameters
 namespace itk
 {
-template< class TOutputImage >
+template< typename TOutputImage >
 class ExampleImageSource : public GaussianImageSource< TOutputImage >
 {
 public:
@@ -198,7 +198,7 @@ int itkParametricBlindLeastSquaresDeconvolutionImageFilterTest(int argc, char* a
     writer->SetInput( deconvolutionFilter->GetOutput() );
     writer->Update();
     }
-  catch ( itk::ExceptionObject e )
+  catch ( itk::ExceptionObject & e )
     {
     std::cerr << "Unexpected exception caught when writing deconvolution image: "
               << e << std::endl;
@@ -234,7 +234,7 @@ int itkParametricBlindLeastSquaresDeconvolutionImageFilterTest(int argc, char* a
       writer->SetInput( convolutionFilter->GetOutput() );
       writer->Update();
       }
-    catch ( itk::ExceptionObject e )
+    catch ( itk::ExceptionObject & e )
       {
       std::cerr << "Unexpected exception caught when writing convolution image: "
                 << e << std::endl;

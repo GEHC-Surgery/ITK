@@ -84,14 +84,14 @@ namespace Statistics
  * \sa HistogramToTextureFeaturesFilter
  * \sa ScalarImageTextureCalculator
  *
- * \author  Zachary Pincus and Glenn Pierce
+ * \author Zachary Pincus and Glenn Pierce
  *
  * \ingroup ITKStatistics
  */
 
-template< class TImageType,
-          class THistogramFrequencyContainer = DenseFrequencyContainer2 >
-class ITK_EXPORT ScalarImageToCooccurrenceMatrixFilter:public ProcessObject
+template< typename TImageType,
+          typename THistogramFrequencyContainer = DenseFrequencyContainer2 >
+class ScalarImageToCooccurrenceMatrixFilter:public ProcessObject
 {
 public:
   /** Standard typedefs */
@@ -126,10 +126,11 @@ public:
 
   itkStaticConstMacro(DefaultBinsPerAxis, unsigned int, 256);
 
-  /** Set the offset or offsets over which the co-occurrence pairs will be computed.
+  /** Get/Set the offset or offsets over which the co-occurrence pairs will be computed.
       Calling either of these methods clears the previous offsets. */
   itkSetConstObjectMacro(Offsets, OffsetVector);
   itkGetConstObjectMacro(Offsets, OffsetVector);
+
   void SetOffset(const OffsetType offset);
 
   /** Set number of histogram bins along each axis */

@@ -27,6 +27,7 @@
  *=========================================================================*/
 #ifndef __itkVTKImageIO_h
 #define __itkVTKImageIO_h
+#include "ITKIOVTKExport.h"
 
 
 #include <fstream>
@@ -45,7 +46,7 @@ namespace itk
  *
  * \ingroup ITKIOVTK
  */
-class ITK_EXPORT VTKImageIO:
+class ITKIOVTK_EXPORT VTKImageIO:
   public StreamingImageIOBase
 {
 public:
@@ -139,6 +140,16 @@ private:
   VTKImageIO(const Self &);    //purposely not implemented
   void operator=(const Self &); //purposely not implemented
   void SetPixelTypeFromString(const std::string & pixelType);
+
+  /** Return the number of pixels in the IOregion. */
+  SizeType GetIORegionSizeInPixels() const;
+
+  /** Return the number of bytes in the IOregion. */
+  SizeType GetIORegionSizeInBytes() const;
+
+  /** Return the number of pixels times the number
+   * of components in the IOregion. */
+  SizeType GetIORegionSizeInComponents() const;
 
   SizeType m_HeaderSize;
 };

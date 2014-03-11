@@ -326,18 +326,16 @@ public:
       double value;
       this->m_Transform->SetParameters( parameters );
 
-      PointListType::const_iterator it = m_PointList.begin();
-
       value = 0;
-      while( it != m_PointList.end() )
-        {
-        PointType transformedPoint = this->m_Transform->TransformPoint(*it);
-        if( this->m_Interpolator->IsInsideBuffer( transformedPoint ) )
-          {
-          value += this->m_Interpolator->Evaluate( transformedPoint );
-          }
-        it++;
-        }
+      for(PointListType::const_iterator it = m_PointList.begin();
+                                                it != m_PointList.end(); ++it)
+         {
+         PointType transformedPoint = this->m_Transform->TransformPoint(*it);
+         if( this->m_Interpolator->IsInsideBuffer( transformedPoint ) )
+           {
+           value += this->m_Interpolator->Evaluate( transformedPoint );
+           }
+         }
       return value;
     }
   //  Software Guide : EndCodeSnippet
@@ -920,8 +918,8 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[height=0.44\textwidth]{ModelToImageRegistrationTraceAngle.eps}
-  // \includegraphics[height=0.44\textwidth]{ModelToImageRegistrationTraceTranslations.eps}
+  // \includegraphics[height=0.44\textwidth]{ModelToImageRegistrationTraceAngle}
+  // \includegraphics[height=0.44\textwidth]{ModelToImageRegistrationTraceTranslations}
   // \itkcaption[SpatialObject to Image Registration results]{Plots of the
   // angle and translation parameters for a registration process between an
   // spatial object and an image.}

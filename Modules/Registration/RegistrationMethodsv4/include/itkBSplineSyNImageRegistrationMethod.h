@@ -21,15 +21,16 @@
 #include "itkSyNImageRegistrationMethod.h"
 
 #include "itkBSplineSmoothingOnUpdateDisplacementFieldTransform.h"
+#include "itkImageMaskSpatialObject.h"
 
 namespace itk
 {
 //Forward-declare these because of module dependency conflict.
 //They will soon be moved to a different module, at which
 // time this can be removed.
-template <unsigned int VDimension, class TDataHolder>
+template <unsigned int VDimension, typename TDataHolder>
 class ImageToData;
-template <class TDataHolder>
+template <typename TDataHolder>
 class Array1DToData;
 
 /** \class BSplineSyNImageRegistrationMethod
@@ -51,7 +52,7 @@ class Array1DToData;
  */
 template<typename TFixedImage, typename TMovingImage, typename TOutputTransform =
   BSplineSmoothingOnUpdateDisplacementFieldTransform<double, TFixedImage::ImageDimension> >
-class ITK_EXPORT BSplineSyNImageRegistrationMethod
+class BSplineSyNImageRegistrationMethod
 : public SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform>
 {
 public:
@@ -84,6 +85,8 @@ public:
   typedef typename ImageMetricType::VirtualImageType                  VirtualImageType;
   typedef typename ImageMetricType::MeasureType                       MeasureType;
   typedef typename Superclass::MultiMetricType                        MultiMetricType;
+  typedef typename ImageMetricType::FixedImageMaskType                FixedImageMaskType;
+  typedef typename ImageMetricType::MovingImageMaskType               MovingImageMaskType;
 
   typedef typename Superclass::NumberOfIterationsArrayType            NumberOfIterationsArrayType;
 
@@ -99,6 +102,10 @@ public:
   typedef DisplacementFieldToBSplineImageFilter
     <DisplacementFieldType, DisplacementFieldType>                    BSplineFilterType;
   typedef typename BSplineFilterType::ArrayType                       ArrayType;
+  typedef typename BSplineFilterType::RealImageType                   WeightedMaskImageType;
+
+  typedef ImageMaskSpatialObject<ImageDimension>                      ImageMaskSpatialObjectType;
+  typedef typename ImageMaskSpatialObjectType::ImageType              MaskImageType;
 
   typedef typename Superclass::CompositeTransformType                 CompositeTransformType;
   typedef typename CompositeTransformType::TransformType              TransformBaseType;
@@ -115,8 +122,9 @@ protected:
 
   virtual void InitializeRegistrationAtEachLevel( const SizeValueType );
 
-  virtual DisplacementFieldPointer ComputeUpdateField( const FixedImagesContainerType, const TransformBaseType *, const MovingImagesContainerType, const TransformBaseType *, MeasureType & );
-  virtual DisplacementFieldPointer BSplineSmoothDisplacementField( const DisplacementFieldType *, const ArrayType & );
+  virtual DisplacementFieldPointer ComputeUpdateField( const FixedImagesContainerType, const TransformBaseType *,
+    const MovingImagesContainerType, const TransformBaseType *, const FixedImageMaskType *, MeasureType & );
+  virtual DisplacementFieldPointer BSplineSmoothDisplacementField( const DisplacementFieldType *, const ArrayType &, const WeightedMaskImageType * );
 
 private:
   BSplineSyNImageRegistrationMethod( const Self & );   //purposely not implemented

@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkMeshIOBase_h
 #define __itkMeshIOBase_h
+#include "ITKIOMeshExport.h"
 
 #include "itkByteSwapper.h"
 #include "itkCellInterface.h"
@@ -31,6 +32,7 @@
 #include "itkVariableLengthVector.h"
 #include "itkVariableSizeMatrix.h"
 #include "itkVector.h"
+#include "itkNumberToString.h"
 
 #include <string>
 #include <complex>
@@ -64,7 +66,7 @@ namespace itk
  *
  */
 
-class ITK_EXPORT MeshIOBase:public LightProcessObject
+class ITKIOMesh_EXPORT MeshIOBase:public LightProcessObject
 {
 public:
   /** Standard class typedefs. */
@@ -522,7 +524,7 @@ protected:
   void AddSupportedWriteExtension(const char *extension);
 
   /** Read data from input file stream to buffer with ascii style */
-  template< class T >
+  template< typename T >
   void ReadBufferAsAscii(T *buffer, std::ifstream & inputFile, SizeValueType numberOfComponents)
   {
     for ( SizeValueType i = 0; i < numberOfComponents; i++ )
@@ -532,7 +534,7 @@ protected:
   }
 
   /** Read data from input file to buffer with binary style */
-  template< class T >
+  template< typename T >
   void ReadBufferAsBinary(T *buffer, std::ifstream & inputFile, SizeValueType numberOfComponents)
   {
     inputFile.read( reinterpret_cast< char * >( buffer ), numberOfComponents * sizeof( T ) );
@@ -554,21 +556,22 @@ protected:
   }
 
   /** Write buffer to output file stream with ascii style */
-  template< class T >
+  template< typename T >
   void WriteBufferAsAscii(T *buffer, std::ofstream & outputFile, SizeValueType numberOfLines, SizeValueType numberOfComponents)
   {
+    NumberToString<T> convert;
     for ( SizeValueType ii = 0; ii < numberOfLines; ii++ )
       {
       for ( SizeValueType jj = 0; jj < numberOfComponents; jj++ )
         {
-        outputFile << buffer[ii * numberOfComponents + jj] << "  ";
+        outputFile << convert(buffer[ii * numberOfComponents + jj]) << "  ";
         }
       outputFile << '\n';
       }
   }
 
   /** Write buffer to output file stream with binary style */
-  template< class TOutput, class TInput >
+  template< typename TOutput, typename TInput >
   void WriteBufferAsBinary(TInput *buffer, std::ofstream & outputFile, SizeValueType numberOfComponents)
   {
     if ( typeid( TInput ) == typeid( TOutput ) )
@@ -602,13 +605,14 @@ protected:
         }
 
       outputFile.write(reinterpret_cast< char * >( data ), numberOfComponents);
+      delete[] data;
       }
   }
 
   /** Read cells from a data buffer, used when writting cells. This function
     write all kind of cells as it is stored in cells container. It is used when
     cells container have only one kind of cells */
-  template< class TInput, class TOutput >
+  template< typename TInput, typename TOutput >
   void ReadCellsBuffer(TInput *input, TOutput *output)
   {
     if ( input && output )
@@ -630,7 +634,7 @@ protected:
   /** Read cells from input buffer, used when Writting cells. This function only
     write specified type of cells(used when input cells container composes
     multiple type of cells and only want to write a specified cell type */
-  template< class TInput, class TOutput >
+  template< typename TInput, typename TOutput >
   void ReadCellsBuffer(TInput *input, TOutput *output, MeshIOBase::CellGeometryType type)
   {
     if ( input && output )
@@ -660,7 +664,7 @@ protected:
 
   /** Write cells to a data buffer, used when readding mesh, used for cellType
     with constant number of points */
-  template< class TInput, class TOutput >
+  template< typename TInput, typename TOutput >
   void WriteCellsBuffer(TInput *input, TOutput *output, CellGeometryType cellType, unsigned int numberOfPoints, SizeValueType numberOfCells)
   {
     if ( input && output )
@@ -681,7 +685,7 @@ protected:
 
   /** Write cells to a data buffer, used when readding mesh, used for cellType
     with non-constant number of points */
-  template< class TInput, class TOutput >
+  template< typename TInput, typename TOutput >
   void WriteCellsBuffer(TInput *input, TOutput *output, CellGeometryType cellType, SizeValueType numberOfCells)
   {
     if ( input && output )

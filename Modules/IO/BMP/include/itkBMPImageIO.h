@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkBMPImageIO_h
 #define __itkBMPImageIO_h
+#include "ITKIOBMPExport.h"
 
 
 #include <fstream>
@@ -34,7 +35,7 @@ namespace itk
  *
  * \ingroup ITKIOBMP
  */
-class ITK_EXPORT BMPImageIO:public ImageIOBase
+class ITKIOBMP_EXPORT BMPImageIO:public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -48,6 +49,12 @@ public:
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(BMPImageIO, Superclass);
+
+  /** Getter for the FileLowerLeft attribute. */
+  itkGetConstMacro(FileLowerLeft, bool);
+
+  /** Getter for the BMPCompression attribute. */
+  itkGetConstMacro(BMPCompression, long);
 
   /*-------- This part of the interfaces deals with reading data. ----- */
 
@@ -88,6 +95,8 @@ private:
   void Write32BitsInteger(unsigned int value);
 
   void Write16BitsInteger(unsigned short value);
+
+  RGBPixelType GetColorPaletteEntry(const unsigned char entry) const;
 
   std::ifstream               m_Ifstream;
   std::ofstream               m_Ofstream;

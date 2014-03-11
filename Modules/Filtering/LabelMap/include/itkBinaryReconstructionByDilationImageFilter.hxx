@@ -24,17 +24,52 @@
 
 namespace itk {
 
-template<class TInputImage>
+template<typename TInputImage>
 BinaryReconstructionByDilationImageFilter<TInputImage>
 ::BinaryReconstructionByDilationImageFilter()
 {
   m_BackgroundValue = NumericTraits<OutputImagePixelType>::NonpositiveMin();
   m_ForegroundValue = NumericTraits<OutputImagePixelType>::max();
   m_FullyConnected = false;
-  this->SetNumberOfRequiredInputs(2);
+  this->SetPrimaryInputName( "MarkerImage" );
+  this->AddRequiredInputName( "MaskImage", 1 );
 }
 
-template<class TInputImage>
+template<typename TInputImage>
+void
+BinaryReconstructionByDilationImageFilter<TInputImage>
+::SetMarkerImage( const InputImageType * input )
+{
+  // Process object is not const-correct, so the const casting is required.
+  this->ProcessObject::SetInput( "MarkerImage", const_cast< InputImageType * >( input ));
+}
+
+template<typename TInputImage>
+typename BinaryReconstructionByDilationImageFilter<TInputImage>::InputImageType *
+BinaryReconstructionByDilationImageFilter<TInputImage>
+::GetMarkerImage()
+{
+  return static_cast<InputImageType*>(const_cast<DataObject *>(this->ProcessObject::GetInput( "MarkerImage" )));
+}
+
+template<typename TInputImage>
+void
+BinaryReconstructionByDilationImageFilter<TInputImage>
+::SetMaskImage( const InputImageType * input )
+{
+  // Process object is not const-correct, so the const casting is required.
+  this->ProcessObject::SetInput( "MaskImage", const_cast< InputImageType * >( input ));
+}
+
+template<typename TInputImage>
+typename BinaryReconstructionByDilationImageFilter<TInputImage>::InputImageType *
+BinaryReconstructionByDilationImageFilter<TInputImage>
+::GetMaskImage()
+{
+  return static_cast<InputImageType*>(const_cast<DataObject *>(this->ProcessObject::GetInput( "MaskImage" )));
+}
+
+template<typename TInputImage>
 void
 BinaryReconstructionByDilationImageFilter<TInputImage>
 ::GenerateInputRequestedRegion()
@@ -57,7 +92,7 @@ BinaryReconstructionByDilationImageFilter<TInputImage>
 }
 
 
-template<class TInputImage>
+template<typename TInputImage>
 void
 BinaryReconstructionByDilationImageFilter<TInputImage>
 ::EnlargeOutputRequestedRegion(DataObject *)
@@ -67,7 +102,7 @@ BinaryReconstructionByDilationImageFilter<TInputImage>
 }
 
 
-template<class TInputImage>
+template<typename TInputImage>
 void
 BinaryReconstructionByDilationImageFilter<TInputImage>
 ::GenerateData()
@@ -114,7 +149,7 @@ BinaryReconstructionByDilationImageFilter<TInputImage>
 }
 
 
-template<class TInputImage>
+template<typename TInputImage>
 void
 BinaryReconstructionByDilationImageFilter<TInputImage>
 ::PrintSelf(std::ostream &os, Indent indent) const

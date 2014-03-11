@@ -69,8 +69,8 @@ namespace itk
  * are provided to facilitate a very simple implementation, and as an example.
  * \ingroup ITKCommon
  */
-template< class MetaDataObjectType >
-class ITK_EXPORT MetaDataObject:public MetaDataObjectBase
+template< typename MetaDataObjectType >
+class MetaDataObject:public MetaDataObjectBase
 {
 public:
   /** Smart pointer typedef support. */
@@ -86,52 +86,51 @@ public:
   itkTypeMacro(MetaDataObject, MetaDataObjectBase);
 
   /**
-   * \author Hans J. Johnson
    * Default constructor with no initialization.
+   * \author Hans J. Johnson
    */
   MetaDataObject(void);
-  /** \author Hans J. Johnson
+  /**
    * Default virtual Destructor
+   * \author Hans J. Johnson
    */
   virtual ~MetaDataObject(void);
   /**
-   * \author Hans J. Johnson
    * Initializer constructor that sets m_MetaDataObjectValue to InitializerValue
+   * \author Hans J. Johnson
    */
   MetaDataObject(const MetaDataObjectType InitializerValue);
   /**
-   * \author Hans J. Johnson
    * Copy constructor that sets m_MetaDataObjectValue to TemplateObject.m_MetaDataObjectValue
+   * \author Hans J. Johnson
    */
   MetaDataObject(const MetaDataObject< MetaDataObjectType > & TemplateObject);
   /**
-   * \author Hans J. Johnson
-   *
    * The definition of this function is necessary to fulfill
    * the interface of the MetaDataObjectBase
+   * \author Hans J. Johnson
    * \return A pointer to a const char array containing the unique type name.
    */
   virtual const char * GetMetaDataObjectTypeName(void) const;
 
   /**
-   * \author Hans J. Johnson
-   *
    * The definition of this function is necessary to fulfill
    * the interface of the MetaDataObjectBase
+   * \author Hans J. Johnson
    * \return A constant reference to a std::type_info object
    */
   virtual const std::type_info & GetMetaDataObjectTypeInfo(void) const;
 
   /**
-   * \author Hans J. Johnson
    * Function to return the stored value of type MetaDataObjectType.
+   * \author Hans J. Johnson
    * \return a constant reference to a MetaDataObjectType
    */
   const MetaDataObjectType & GetMetaDataObjectValue(void) const;
 
   /**
-   * \author Hans J. Johnson
    * Function to set the stored value of type MetaDataObjectType.
+   * \author Hans J. Johnson
    * \param NewValue A constant reference to at MetaDataObjectType.
    */
   void SetMetaDataObjectValue(const MetaDataObjectType & NewValue);
@@ -143,12 +142,13 @@ public:
   virtual void Print(std::ostream & os) const;
 
 private:
-  //This is made private to force the use of the
+  // This is made private to force the use of the
   // MetaDataObject<MetaDataObjectType>::New() operator!
   //void * operator new(SizeValueType nothing) {};//purposefully not implemented
+
   /**
-   * \author Hans J. Johnson
    * A variable to store this derived type.
+   * \author Hans J. Johnson
    */
   MetaDataObjectType m_MetaDataObjectValue;
 };
@@ -162,7 +162,7 @@ private:
  * \return A smartpointer ot a MetaDataObject that is suitable for
  * insertion into a MetaDataDictionary.
  */
-template< class T >
+template< typename T >
 inline void EncapsulateMetaData(MetaDataDictionary & Dictionary, const std::string & key, const T & invalue)
 {
   typename MetaDataObject< T >::Pointer temp = MetaDataObject< T >::New();
@@ -170,7 +170,7 @@ inline void EncapsulateMetaData(MetaDataDictionary & Dictionary, const std::stri
   Dictionary[key] = temp;
 }
 
-template< class T >
+template< typename T >
 inline void EncapsulateMetaData(MetaDataDictionary & Dictionary, const char *key, const T & invalue)
 {
   EncapsulateMetaData(Dictionary, std::string(key), invalue);
@@ -185,22 +185,23 @@ inline void EncapsulateMetaData(MetaDataDictionary & Dictionary, const char *key
  * \param key -- string identifier for this object
  * \param outval -- where to store value found in table.
  */
-template< class T >
-inline bool ExposeMetaData(MetaDataDictionary & Dictionary, const std::string key, T & outval)
+template< typename T >
+inline bool ExposeMetaData(const MetaDataDictionary & Dictionary, const std::string key, T & outval)
 {
   if ( !Dictionary.HasKey(key) )
     {
     return false;
     }
 
-  MetaDataObjectBase::Pointer baseObjectSmartPointer = Dictionary[key];
+  const MetaDataObjectBase::ConstPointer baseObjectSmartPointer = Dictionary[key];
 
-  if ( strcmp( typeid( T ).name(), baseObjectSmartPointer->GetMetaDataObjectTypeName() ) != 0 )
+  if ( baseObjectSmartPointer.IsNull() || strcmp( typeid( T ).name(), baseObjectSmartPointer->GetMetaDataObjectTypeName() ) != 0 )
     {
     return false;
     }
     {
-    if ( MetaDataObject< T > *TempMetaDataObject = dynamic_cast< MetaDataObject< T > * >( Dictionary[key].GetPointer() ) )
+    MetaDataObject< T > const * const TempMetaDataObject = dynamic_cast< MetaDataObject< T > const * >( baseObjectSmartPointer.GetPointer() );
+    if ( TempMetaDataObject != NULL )
       {
       outval = TempMetaDataObject->GetMetaDataObjectValue();
       }
@@ -210,33 +211,6 @@ inline bool ExposeMetaData(MetaDataDictionary & Dictionary, const std::string ke
       }
     }
   return true;
-}
-
-// This should not change the behavior, it just adds an extra level of complexity
-// to using the ExposeMetaData with const char * keys.
-template< class T >
-inline bool ExposeMetaData(MetaDataDictionary & Dictionary, const char *const key, T & outval)
-{
-  return ExposeMetaData(Dictionary, std::string(key), outval);
-}
-
-// const versions of ExposeMetaData just to make life easier for enduser
-// programmers, and to maintain backwards compatibility.
-// The other option is to cast away constness in the main function.
-template< class T >
-inline bool ExposeMetaData(const MetaDataDictionary & Dictionary, const std::string key, T & outval)
-{
-  MetaDataDictionary NonConstVersion = Dictionary;
-
-  return ExposeMetaData(NonConstVersion, key, outval);
-}
-
-template< class T >
-inline bool ExposeMetaData(const MetaDataDictionary & Dictionary, const char *const key, T & outval)
-{
-  MetaDataDictionary NonConstVersion = Dictionary;
-
-  return ExposeMetaData(Dictionary, std::string(key), outval);
 }
 } // end namespace itk
 

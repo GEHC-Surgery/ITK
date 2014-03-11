@@ -39,8 +39,8 @@ namespace fem
  * \ingroup ITKFEM
  */
 
-template <class TInputImage>
-class ITK_EXPORT ImageToRectilinearFEMObjectFilter : public ProcessObject
+template <typename TInputImage>
+class ImageToRectilinearFEMObjectFilter : public ProcessObject
 {
 public:
   /** Standard class typedefs. */
@@ -81,10 +81,10 @@ public:
   typedef itk::fem::Element::ConstPointer ElementBasePointerType;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
 //  itkConceptMacro(SameDimensionOrMinusOne,
 //    (Concept::SameDimensionOrMinusOne<NDimensions, 3>));
-/** End concept checking */
+// End concept checking
 #endif
 
   /**Get/Set the number of voxels/pixels in each dimension used

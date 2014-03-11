@@ -71,7 +71,7 @@
 //
 // \begin{figure}
 // \center
-// \includegraphics[width=\textwidth]{MultiResRegistrationConcept.eps}
+// \includegraphics[width=\textwidth]{MultiResRegistrationConcept}
 // \itkcaption[Conceptual representation of Multi-Resolution
 // registration]{Conceptual representation of the multi-resolution registration process.}
 // \label{fig:MultiResRegistrationConcept}
@@ -213,7 +213,7 @@ public:
     // Software Guide : EndLatex
     // Software Guide : BeginCodeSnippet
     OptimizerPointer optimizer = dynamic_cast< OptimizerPointer >(
-                       registration->GetOptimizer() );
+                       registration->GetModifiableOptimizer() );
 
     std::cout << "-------------------------------------" << std::endl;
     std::cout << "MultiResolution Level : "
@@ -227,8 +227,10 @@ public:
       }
     else
       {
-      optimizer->SetMaximumStepLength( optimizer->GetMaximumStepLength() / 4.0 );
-      optimizer->SetMinimumStepLength( optimizer->GetMinimumStepLength() / 10.0 );
+      optimizer->SetMaximumStepLength(
+                                   optimizer->GetMaximumStepLength() * 0.25 );
+      optimizer->SetMinimumStepLength(
+                                    optimizer->GetMinimumStepLength() * 0.1 );
       }
   }
   // Software Guide : EndCodeSnippet
@@ -285,7 +287,7 @@ public:
 };
 
 
-int main( int argc, char *argv[] )
+int main( int argc, const char *argv[] )
 {
   if( argc < 4 )
     {
@@ -362,11 +364,9 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
   typedef itk::MultiResolutionPyramidImageFilter<
-                                    InternalImageType,
-                                    InternalImageType >   FixedImagePyramidType;
+            InternalImageType, InternalImageType >   FixedImagePyramidType;
   typedef itk::MultiResolutionPyramidImageFilter<
-                                    InternalImageType,
-                                    InternalImageType >   MovingImagePyramidType;
+            InternalImageType, InternalImageType >   MovingImagePyramidType;
   // Software Guide: EndCodeSnippet
 
 
@@ -398,8 +398,8 @@ int main( int argc, char *argv[] )
   FixedImageReaderType::Pointer  fixedImageReader  = FixedImageReaderType::New();
   MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
 
-  fixedImageReader->SetFileName(  argv[1] );
-  movingImageReader->SetFileName( argv[2] );
+  fixedImageReader->SetFileName(  fixedImageFile );
+  movingImageReader->SetFileName( movingImageFile );
 
 
   //  Software Guide : BeginLatex
@@ -411,9 +411,9 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
   // Software Guide : BeginCodeSnippet
   typedef itk::CastImageFilter<
-                        FixedImageType, InternalImageType > FixedCastFilterType;
+            FixedImageType, InternalImageType >  FixedCastFilterType;
   typedef itk::CastImageFilter<
-                        MovingImageType, InternalImageType > MovingCastFilterType;
+            MovingImageType, InternalImageType > MovingCastFilterType;
 
   FixedCastFilterType::Pointer fixedCaster   = FixedCastFilterType::New();
   MovingCastFilterType::Pointer movingCaster = MovingCastFilterType::New();
@@ -644,7 +644,7 @@ int main( int argc, char *argv[] )
   CastFilterType::Pointer  caster =  CastFilterType::New();
 
 
-  writer->SetFileName( argv[3] );
+  writer->SetFileName( outImagefile );
 
 
   caster->SetInput( resample->GetOutput() );
@@ -694,9 +694,9 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration1Output.eps}
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration1CheckerboardBefore.eps}
-  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration1CheckerboardAfter.eps}
+  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration1Output}
+  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration1CheckerboardBefore}
+  // \includegraphics[width=0.32\textwidth]{MultiResImageRegistration1CheckerboardAfter}
   // \itkcaption[Multi-Resolution registration input images]{Mapped moving image
   // (left) and composition of fixed and moving images before (center) and
   // after (right) registration.}
@@ -714,8 +714,8 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[height=0.44\textwidth]{MultiResImageRegistration1TraceTranslations.eps}
-  // \includegraphics[height=0.44\textwidth]{MultiResImageRegistration1TraceMetric.eps}
+  // \includegraphics[height=0.44\textwidth]{MultiResImageRegistration1TraceTranslations}
+  // \includegraphics[height=0.44\textwidth]{MultiResImageRegistration1TraceMetric}
   // \itkcaption[Multi-Resolution registration output images]{Sequence of
   // translations and metric values at each iteration of the optimizer.}
   // \label{fig:MultiResImageRegistration1Trace}

@@ -1,6 +1,8 @@
 itk_module_test()
 set(ITKImageGridTests
 itkBasicArchitectureTest.cxx
+itkBinShrinkImageFilterTest1.cxx
+itkBinShrinkImageFilterTest2.cxx
 itkBSplineScatteredDataPointSetToImageFilterTest.cxx
 itkBSplineScatteredDataPointSetToImageFilterTest2.cxx
 itkBSplineScatteredDataPointSetToImageFilterTest3.cxx
@@ -48,7 +50,6 @@ itkResampleImageTest5.cxx
 itkResampleImageTest6.cxx
 itkResamplePhasedArray3DSpecialCoordinatesImageTest.cxx
 itkPushPopTileImageFilterTest.cxx
-itkShrinkImagePreserveObjectPhysicalLocations.cxx
 itkShrinkImageStreamingTest.cxx
 itkShrinkImageTest.cxx
 itkZeroFluxNeumannPadImageFilterTest.cxx
@@ -60,6 +61,10 @@ CreateTestDriver(ITKImageGrid  "${ITKImageGrid-Test_LIBRARIES}" "${ITKImageGridT
 
 itk_add_test(NAME itkBasicArchitectureTest
       COMMAND ITKImageGridTestDriver itkBasicArchitectureTest)
+itk_add_test(NAME itkBinShrinkImageFilterTest1
+  COMMAND ${itk-module}TestDriver  itkBinShrinkImageFilterTest1 )
+itk_add_test(NAME itkBinShrinkImageFilterTest2
+  COMMAND ${itk-module}TestDriver  itkBinShrinkImageFilterTest2 )
 itk_add_test(NAME itkBSplineScatteredDataPointSetToImageFilterTest01
       COMMAND ITKImageGridTestDriver
     --compare DATA{${ITK_DATA_ROOT}/Baseline/Review/itkBSplineScatteredDataPointSetToImageFilterTest01.mha}
@@ -230,8 +235,6 @@ itk_add_test(NAME itkPushPopTileImageFilterTest
     --compare DATA{${ITK_DATA_ROOT}/Baseline/BasicFilters/PushPopTileImageFilterTest.png}
               ${ITK_TEST_OUTPUT_DIR}/PushPopTileImageFilterTest.png
     itkPushPopTileImageFilterTest DATA{${ITK_DATA_ROOT}/Input/Shapes.png} DATA{${ITK_DATA_ROOT}/Input/VisibleWomanEyeSlice.png} DATA{${ITK_DATA_ROOT}/Input/cake_easy.png} DATA{${ITK_DATA_ROOT}/Input/cthead1.png} ${ITK_TEST_OUTPUT_DIR}/PushPopTileImageFilterTest.png)
-itk_add_test(NAME itkShrinkImagePreserveObjectPhysicalLocations
-      COMMAND ITKImageGridTestDriver itkShrinkImagePreserveObjectPhysicalLocations)
 itk_add_test(NAME itkShrinkImageStreamingTest
       COMMAND ITKImageGridTestDriver itkShrinkImageStreamingTest)
 itk_add_test(NAME itkShrinkImageTest

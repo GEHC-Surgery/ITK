@@ -114,7 +114,7 @@ namespace itk
  * \ingroup ITKLabelVoting
  */
 template <typename TInputImage, typename TOutputImage = TInputImage, typename TWeights = float >
-class ITK_EXPORT MultiLabelSTAPLEImageFilter :
+class MultiLabelSTAPLEImageFilter :
     public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -282,7 +282,7 @@ private:
   MultiLabelSTAPLEImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  InputPixelType m_TotalLabelCount;
+  size_t m_TotalLabelCount;
 
   OutputPixelType    m_LabelForUndecidedPixels;
   bool               m_HasLabelForUndecidedPixels;

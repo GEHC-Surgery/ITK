@@ -81,8 +81,6 @@ FreeSurferBinaryMeshIO
     {
     itkExceptionMacro("Unable to open file inputFile " << this->m_FileName);
     }
-
-  return;
 }
 
 void
@@ -103,7 +101,6 @@ FreeSurferBinaryMeshIO
   OpenFile();
 
   // Define required variables
-  const unsigned int numberOfCellPoints = 3;
   const unsigned int fileTypeIdLength = 3;
   unsigned char      fileTypeId[fileTypeIdLength];
   this->m_FileType = BINARY;
@@ -124,6 +121,7 @@ FreeSurferBinaryMeshIO
   // If input file is freesurfer binary surface file
   if ( m_FileTypeIdentifier == ( -2 & 0x00ffffff ) )
     {
+    const unsigned int numberOfCellPoints = 3;
     // Read input commend
     char byte;
 
@@ -223,7 +221,6 @@ FreeSurferBinaryMeshIO
   this->m_CellPixelType  = SCALAR;
 
   CloseFile();
-  return;
 }
 
 void
@@ -238,8 +235,6 @@ FreeSurferBinaryMeshIO
 
   m_InputFile.read( static_cast< char * >( buffer ), this->m_NumberOfPoints * this->m_PointDimension * sizeof( float ) );
   itk::ByteSwapper< float >::SwapRangeFromSystemToBigEndian(data, this->m_NumberOfPoints * this->m_PointDimension);
-
-  return;
 }
 
 void
@@ -256,8 +251,6 @@ FreeSurferBinaryMeshIO
   delete[] data;
 
   CloseFile();
-
-  return;
 }
 
 void
@@ -273,14 +266,12 @@ FreeSurferBinaryMeshIO
   itk::ByteSwapper< float >::SwapRangeFromSystemToBigEndian(data, this->m_NumberOfPointPixels);
 
   CloseFile();
-  return;
 }
 
 void
 FreeSurferBinaryMeshIO
 ::ReadCellData(void * itkNotUsed( buffer) )
 {
-  return;
 }
 
 void
@@ -307,23 +298,10 @@ FreeSurferBinaryMeshIO
 
   if ( this->m_UpdatePoints && this->m_UpdateCells )
     {
-    itk::uint32_t MAGIC_NUMBER = 16777214;
-    char *        pv = reinterpret_cast< char * >( &MAGIC_NUMBER );
-    char          buffer[3];
-
-    if ( itk::ByteSwapper< itk::uint32_t >::SystemIsBigEndian() )
-      {
-      buffer[0] = pv[0];
-      buffer[1] = pv[1];
-      buffer[2] = pv[2];
-      }
-    else
-      {
-      buffer[0] = pv[2];
-      buffer[1] = pv[1];
-      buffer[2] = pv[0];
-      }
-
+    // MAGIC_NUMBER = 16777214 ( little endian )
+    const char buffer[3] = { static_cast<char>(255),
+                             static_cast<char>(255),
+                             static_cast<char>(254) };
     outputFile.write(buffer, 3);
 
     std::string creator = "Created by ITK  \n\n";
@@ -336,24 +314,12 @@ FreeSurferBinaryMeshIO
     }
   else if ( this->m_UpdatePointData && ( !this->m_UpdatePoints && !this->m_UpdateCells ) )
     {
-    itk::uint32_t MAGIC_NUMBER = 16777215;
-    char *        pv = reinterpret_cast< char * >( &MAGIC_NUMBER );
-    char          buffer[3];
-
-    if ( itk::ByteSwapper< itk::uint32_t >::SystemIsBigEndian() )
-      {
-      buffer[0] = pv[0];
-      buffer[1] = pv[1];
-      buffer[2] = pv[2];
-      }
-    else
-      {
-      buffer[0] = pv[2];
-      buffer[1] = pv[1];
-      buffer[2] = pv[0];
-      }
-
+    // MAGIC_NUMBER = 16777215 ( little endian )
+    const char buffer[3] = { static_cast<char>(255),
+                             static_cast<char>(255),
+                             static_cast<char>(255) };
     outputFile.write(buffer, 3);
+
     itk::uint32_t numberOfPoints = static_cast<itk::uint32_t>(this->m_NumberOfPointPixels);
     itk::uint32_t numberOfCells = static_cast<itk::uint32_t>(this->m_NumberOfCells);
     itk::uint32_t numberOfValuesPerPoint = 1;
@@ -473,7 +439,6 @@ FreeSurferBinaryMeshIO
     }
 
   outputFile.close();
-  return;
 }
 
 void
@@ -572,8 +537,6 @@ FreeSurferBinaryMeshIO
     }
 
   outputFile.close();
-
-  return;
 }
 
 void
@@ -684,21 +647,18 @@ FreeSurferBinaryMeshIO
     }
 
   outputFile.close();
-  return;
 }
 
 void
 FreeSurferBinaryMeshIO
 ::WriteCellData(void * itkNotUsed( buffer) )
 {
-  return;
 }
 
 void
 FreeSurferBinaryMeshIO
 ::Write()
 {
-  return;
 }
 
 void

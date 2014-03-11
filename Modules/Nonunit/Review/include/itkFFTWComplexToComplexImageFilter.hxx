@@ -40,7 +40,7 @@
 namespace itk
 {
 
-template< class TImage >
+template< typename TImage >
 void
 FFTWComplexToComplexImageFilter< TImage >::
 BeforeThreadedGenerateData()
@@ -110,13 +110,13 @@ BeforeThreadedGenerateData()
                                     transformDirection,
                                     flags,
                                     this->GetNumberOfThreads());
-  delete [] sizes;
+  delete[] sizes;
 
   FFTWProxyType::Execute(plan);
   FFTWProxyType::DestroyPlan(plan);
 }
 
-template <class TImage>
+template <typename TImage>
 void
 FFTWComplexToComplexImageFilter< TImage >::
 ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType itkNotUsed(threadId) )
@@ -139,7 +139,7 @@ ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadI
     }
 }
 
-template< class TImage >
+template< typename TImage >
 bool
 FFTWComplexToComplexImageFilter< TImage >::FullMatrix()
 {
@@ -147,7 +147,7 @@ FFTWComplexToComplexImageFilter< TImage >::FullMatrix()
 }
 
 
-template< class TImage >
+template< typename TImage >
 void
 FFTWComplexToComplexImageFilter< TImage >::
 UpdateOutputData(DataObject * output)
@@ -159,7 +159,7 @@ UpdateOutputData(DataObject * output)
   Superclass::UpdateOutputData( output );
 }
 
-template< class TImage >
+template< typename TImage >
 void
 FFTWComplexToComplexImageFilter< TImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

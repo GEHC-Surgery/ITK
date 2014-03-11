@@ -23,7 +23,7 @@
 
 int itkImportContainerTest(int , char * [] )
 {
-  typedef float PixelType;
+  typedef float                                               PixelType;
   typedef itk::ImportImageContainer<unsigned long, PixelType> ContainerType;
 
   itk::OutputWindow::SetInstance(itk::TextOutput::New());
@@ -249,8 +249,8 @@ int itkImportContainerTest(int , char * [] )
 #endif
 
   // We must delete the memory we said we would manage
-  delete [] ptr1;
-  delete [] myPtr;
+  delete[] ptr1;
+  delete[] myPtr;
 
 #if (defined(NDEBUG))
   if (!caughtException && (sizeof(void *) != 8))

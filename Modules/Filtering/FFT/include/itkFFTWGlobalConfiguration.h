@@ -20,8 +20,8 @@
 
 #include "itkObject.h"
 //NOTE:  Need to have at least one itk include before
-//       the next defines in order to have USE_FFTWF,USE_FFTWD defined
-#if defined(USE_FFTWF) || defined(USE_FFTWD)
+//       the next defines in order to have ITK_USE_FFTWF,ITK_USE_FFTWD defined
+#if defined(ITK_USE_FFTWF) || defined(ITK_USE_FFTWD)
 
 #include "itkSimpleFastMutexLock.h"
 
@@ -65,7 +65,7 @@ namespace itk
 #define FFTWPathSep "/"
 #endif
 
-class ITK_EXPORT WisdomFilenameGeneratorBase
+class WisdomFilenameGeneratorBase
 {
   public:
     //The baseCacheDirectory from which to build the cache hierarchy
@@ -75,7 +75,7 @@ class ITK_EXPORT WisdomFilenameGeneratorBase
   private:
 };
 
-class ITK_EXPORT ManualWisdomFilenameGenerator: public WisdomFilenameGeneratorBase
+class ManualWisdomFilenameGenerator: public WisdomFilenameGeneratorBase
 {
   public:
     ManualWisdomFilenameGenerator(const std::string wfn): m_WisdomFilename(wfn) { };
@@ -91,7 +91,7 @@ class ITK_EXPORT ManualWisdomFilenameGenerator: public WisdomFilenameGeneratorBa
     std::string m_WisdomFilename;
 };
 
-class ITK_EXPORT SimpleWisdomFilenameGenerator: public WisdomFilenameGeneratorBase
+class SimpleWisdomFilenameGenerator: public WisdomFilenameGeneratorBase
 {
   public:
     virtual std::string GenerateWisdomFilename(const std::string baseCacheDirectory) const
@@ -100,7 +100,7 @@ class ITK_EXPORT SimpleWisdomFilenameGenerator: public WisdomFilenameGeneratorBa
       }
 };
 
-class ITK_EXPORT HostnameWisdomFilenameGenerator: public WisdomFilenameGeneratorBase
+class HostnameWisdomFilenameGenerator: public WisdomFilenameGeneratorBase
 {
   public:
     virtual std::string GenerateWisdomFilename(const std::string baseCacheDirectory) const
@@ -112,7 +112,7 @@ class ITK_EXPORT HostnameWisdomFilenameGenerator: public WisdomFilenameGenerator
       }
 };
 
-class ITK_EXPORT HardwareWisdomFilenameGenerator: public WisdomFilenameGeneratorBase
+class HardwareWisdomFilenameGenerator: public WisdomFilenameGeneratorBase
 {
 public:
     HardwareWisdomFilenameGenerator():
@@ -251,7 +251,7 @@ private:
  *
  * \ingroup ITKFFT
  */
-class ITK_EXPORT FFTWGlobalConfiguration: public Object
+class FFTWGlobalConfiguration: public Object
 {
 public:
   /** Standard class typedefs. */

@@ -22,7 +22,7 @@
 const double epsilon = 1e-20;
 
 // function for comparing matrices
-template <class T>
+template <typename T>
 bool testArray(const itk::Array2D<T> & m1, const itk::Array2D<T> & m2)
 {
   bool pass = true;
@@ -152,8 +152,7 @@ int itkCSVFileReaderWriterTest_Func(int argc, char *argv[], bool headers)
   reader->Print(std::cout);
 
   typedef itk::CSVArray2DDataObject<double> DataFrameObjectType;
-  DataFrameObjectType::Pointer dfo = DataFrameObjectType::New();
-  dfo = reader->GetOutput();
+  DataFrameObjectType::Pointer dfo = reader->GetOutput();
   MatrixType test_matrix = dfo->GetMatrix();
 
   std::cout << "Actual array: " << std::endl;

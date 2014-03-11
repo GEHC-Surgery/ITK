@@ -22,11 +22,10 @@
 
 namespace itk
 {
-template< class TImage >
+template< typename TImage >
 LineConstIterator< TImage >
 ::LineConstIterator(const ImageType *imagePtr, const IndexType & firstIndex, const IndexType & lastIndex)
 {
-  unsigned int i;
 
   m_Image = imagePtr;
 
@@ -34,14 +33,14 @@ LineConstIterator< TImage >
   m_LastIndex = lastIndex;
 
   IndexType difference;
-  for ( i = 0; i < TImage::ImageDimension; ++i )
+  for ( unsigned int i = 0; i < TImage::ImageDimension; ++i )
     {
     difference[i] = lastIndex[i] - firstIndex[i];
     }
 
   IndexValueType maxDistance = 0;
-  int            maxDistanceDimension = 0;
-  for ( i = 0; i < TImage::ImageDimension; ++i )
+  unsigned int maxDistanceDimension = 0;
+  for ( unsigned int i = 0; i < TImage::ImageDimension; ++i )
     {
     IndexValueType distance = vnl_math_abs(difference[i]);
     if ( distance > maxDistance )
@@ -67,7 +66,7 @@ LineConstIterator< TImage >
   // to be incremented and keep the remaining indices to be same as
   // LastIndex. Then in the test for IsAtEnd, we just check the
   // MainDirection component of the index.
-  for ( i = 0; i < TImage::ImageDimension; ++i )
+  for ( unsigned int i = 0; i < TImage::ImageDimension; ++i )
     {
     if ( i == m_MainDirection )
       {
@@ -84,29 +83,31 @@ LineConstIterator< TImage >
   this->GoToBegin();
 }
 
-template< class TImage >
+template< typename TImage >
 LineConstIterator< TImage > &
 LineConstIterator< TImage >
 ::operator=(const Self & it)
 {
-  m_Image  = it.m_Image;  // copy the smart pointer
-  m_Region = it.m_Region;
-  m_IsAtEnd = it.m_IsAtEnd;
-  m_CurrentImageIndex   = it.m_CurrentImageIndex;
-  m_StartIndex = it.m_StartIndex;
-  m_LastIndex = it.m_LastIndex;
-  m_EndIndex = it.m_EndIndex;
-  m_MainDirection = it.m_MainDirection;
-  m_AccumulateError = it.m_AccumulateError;
-  m_IncrementError = it.m_IncrementError;
-  m_MaximalError = it.m_MaximalError;
-  m_OverflowIncrement = it.m_OverflowIncrement;
-  m_ReduceErrorAfterIncrement = it.m_ReduceErrorAfterIncrement;
-
+  if(this != &it)
+    {
+    m_Image  = it.m_Image;  // copy the smart pointer
+    m_Region = it.m_Region;
+    m_IsAtEnd = it.m_IsAtEnd;
+    m_CurrentImageIndex   = it.m_CurrentImageIndex;
+    m_StartIndex = it.m_StartIndex;
+    m_LastIndex = it.m_LastIndex;
+    m_EndIndex = it.m_EndIndex;
+    m_MainDirection = it.m_MainDirection;
+    m_AccumulateError = it.m_AccumulateError;
+    m_IncrementError = it.m_IncrementError;
+    m_MaximalError = it.m_MaximalError;
+    m_OverflowIncrement = it.m_OverflowIncrement;
+    m_ReduceErrorAfterIncrement = it.m_ReduceErrorAfterIncrement;
+    }
   return *this;
 }
 
-template< class TImage >
+template< typename TImage >
 void
 LineConstIterator< TImage >
 ::GoToBegin()
@@ -116,7 +117,7 @@ LineConstIterator< TImage >
   m_IsAtEnd = ( m_StartIndex[m_MainDirection] == m_EndIndex[m_MainDirection] );
 }
 
-template< class TImage >
+template< typename TImage >
 void
 LineConstIterator< TImage >
 ::operator++()

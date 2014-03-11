@@ -80,10 +80,7 @@ template< typename TValueType >
 OptimizerParameters< TValueType >
 ::~OptimizerParameters()
 {
-  if( this->m_Helper )
-    {
-    delete this->m_Helper;
-    }
+  delete this->m_Helper;
 }
 
 template< typename TValueType >
@@ -91,10 +88,7 @@ void
 OptimizerParameters< TValueType >
 ::SetHelper( OptimizerParametersHelperType* helper )
 {
-  if( this->m_Helper )
-    {
-    delete this->m_Helper;
-    }
+  delete this->m_Helper;
   this->m_Helper = helper;
 }
 
@@ -106,12 +100,8 @@ OptimizerParameters< TValueType >
 ::operator=(const Self & rhs)
 {
   //Note: there's no need to copy the OptimizerParametersHelper.
-
-  if ( this == &rhs ) { return *this; }
-
   // Call the superclass implementation.
   this->ArrayType::operator=(rhs);
-
   return *this;
 }
 
@@ -121,11 +111,8 @@ const typename OptimizerParameters< TValueType >
 OptimizerParameters< TValueType >
 ::operator=(const ArrayType & rhs)
 {
-  if ( this == &rhs ) { return *this; }
-
   // Call the superclass implementation
   this->ArrayType::operator=(rhs);
-
   return *this;
 }
 
@@ -135,11 +122,8 @@ const typename OptimizerParameters< TValueType >
 OptimizerParameters< TValueType >
 ::operator=(const VnlVectorType & rhs)
 {
-  if ( this == &rhs ) { return *this; }
-
   // Call the superclass implementation
   this->ArrayType::operator=(rhs);
-
   return *this;
 }
 

@@ -24,8 +24,8 @@
  * TODO Finish exercising all methods.
  */
 
-template< class TFixedObject,  class TMovingObject >
-class ITK_EXPORT ObjectToObjectMetricTestMetric:
+template< typename TFixedObject,  typename TMovingObject >
+class ObjectToObjectMetricTestMetric:
   public itk::ObjectToObjectMetricBase
 {
 public:

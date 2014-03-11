@@ -1,10 +1,6 @@
 set(ITKIOTransformBase_SRC
-itkTransformFileReader.cxx
-itkTransformFileWriter.cxx
-itkTransformIOBase.cxx
-itkTransformIOFactory.cxx
-itkCompositeTransformIOHelper.cxx
 itkTransformFactoryBase.cxx
+itkTransformFileWriterSpecializations.cxx
 )
 
 add_library(ITKIOTransformBase ${ITKIOTransformBase_SRC})

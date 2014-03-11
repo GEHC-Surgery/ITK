@@ -83,7 +83,7 @@ VariableLengthVector< TValueType >
 ::~VariableLengthVector()
 {
   // if data exists and we are responsible for its memory, get rid of it..
-  if ( m_LetArrayManageMemory && m_Data )
+  if ( m_LetArrayManageMemory )
     {
     delete[] m_Data;
     }
@@ -100,7 +100,9 @@ void VariableLengthVector< TValueType >
       {
       TValueType *temp = this->AllocateElements(size);
       // only copy the portion of the data used in the old buffer
-      memcpy( temp, m_Data, m_NumElements * sizeof( TValueType ) );
+      std::copy(m_Data,
+                m_Data+m_NumElements,
+                temp);
       if ( m_LetArrayManageMemory )
         {
         delete[] m_Data;
@@ -153,7 +155,7 @@ VariableLengthVector< TValueType >
 ::SetData(TValueType *datain, bool LetArrayManageMemory)
 {
   // Free any existing data if we manage its memory
-  if ( m_LetArrayManageMemory && m_Data )
+  if ( m_LetArrayManageMemory )
     {
     delete[] m_Data;
     }
@@ -177,7 +179,7 @@ VariableLengthVector< TValueType >
 ::SetData(TValueType *datain, unsigned int sz, bool LetArrayManageMemory)
 {
   // Free any existing data if we manage its memory
-  if ( m_LetArrayManageMemory && m_Data )
+  if ( m_LetArrayManageMemory )
     {
     delete[] m_Data;
     }
@@ -233,12 +235,16 @@ void VariableLengthVector< TValueType >
   if ( sz > m_NumElements )
     {
     // only copy the portion of the data used in the old buffer
-    memcpy( temp, m_Data, m_NumElements * sizeof( TValueType ) );
+    std::copy(m_Data,
+              m_Data+m_NumElements,
+              temp);
     }
   else
     {
     // only copy elements 0...size-1
-    memcpy( temp, m_Data, sz * sizeof( TValueType ) );
+    std::copy(m_Data,
+              m_Data+sz,
+              temp);
     }
 
   if ( m_LetArrayManageMemory )
@@ -268,14 +274,13 @@ const VariableLengthVector< TValueType > &
 VariableLengthVector< TValueType >
 ::operator=(const Self & v)
 {
-  if ( this == &v )
+  if ( this != &v )
     {
-    return *this;
-    }
-  this->SetSize( v.Size() );
-  for ( ElementIdentifier i = 0; i < v.Size(); i++ )
-    {
-    this->m_Data[i] = v[i];
+    this->SetSize( v.Size() );
+    for ( ElementIdentifier i = 0; i < v.Size(); i++ )
+      {
+      this->m_Data[i] = v[i];
+      }
     }
   return *this;
 }

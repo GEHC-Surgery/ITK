@@ -73,8 +73,8 @@ namespace itk
  * \wikiexample{SimpleOperations/ScalarToRGBColormapImageFilter,Apply a color map to an image}
  * \endwiki
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT ScalarToRGBColormapImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class ScalarToRGBColormapImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -107,7 +107,7 @@ public:
    * Set/Get the colormap object.
    */
   itkSetObjectMacro(Colormap, ColormapType);
-  itkGetObjectMacro(Colormap, ColormapType);
+  itkGetModifiableObjectMacro(Colormap, ColormapType);
 
   /**
    * Enum type that provides for an easy interface to existing colormaps.

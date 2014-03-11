@@ -66,7 +66,7 @@ class ImageBase;
  * \endwiki
  */
 template< unsigned int VImageDimension >
-class ITK_EXPORT ImageRegion:public Region
+class ImageRegion:public Region
 {
 public:
   /** Standard class typedefs. */
@@ -133,15 +133,15 @@ public:
   /** operator=. ImageRegion is a lightweight object that is not reference
    * counted, so operator= is public. */
   void operator=(const Self & region)
-  { m_Index = region.m_Index;  m_Size = region.m_Size; }
+    { m_Index = region.m_Index;m_Size = region.m_Size; }
 
   /** Set the index defining the corner of the region. */
   void SetIndex(const IndexType & index)
   { m_Index = index; }
 
   /** Get index defining the corner of the region. */
-  const IndexType & GetIndex() const
-  { return m_Index; }
+  const IndexType & GetIndex() const { return m_Index; }
+  IndexType & GetModifiableIndex() { return m_Index; }
 
   /** Set the size of the region. This plus the index determines the
    * rectangular shape, or extent, of the region. */
@@ -149,21 +149,21 @@ public:
   { m_Size = size; }
 
   /** Get the size of the region. */
-  const SizeType & GetSize() const
-  { return m_Size; }
+  const SizeType & GetSize() const { return m_Size; }
+  SizeType & GetModifiableSize() { return m_Size; }
 
   /** Convenience methods to get and set the size of the particular dimension i.
     */
-  void SetSize(unsigned long i, SizeValueType sze)
+  void SetSize(unsigned int i, SizeValueType sze)
   { m_Size[i] = sze; }
-  SizeValueType GetSize(unsigned long i) const
+  SizeValueType GetSize(unsigned int i) const
   { return m_Size[i]; }
 
   /** Convenience methods to get and set the index of the particular dimension
     i. */
-  void SetIndex(unsigned long i, IndexValueType sze)
+  void SetIndex(unsigned int i, IndexValueType sze)
   { m_Index[i] = sze; }
-  IndexValueType GetIndex(unsigned long i) const
+  IndexValueType GetIndex(unsigned int i) const
   { return m_Index[i]; }
 
   /** Get index defining the upper corner of the region. */
@@ -179,9 +179,7 @@ public:
   bool
   operator==(const Self & region) const
   {
-    bool same = 1;
-
-    same = ( m_Index == region.m_Index );
+    bool same = ( m_Index == region.m_Index );
     same = same && ( m_Size == region.m_Size );
     return same;
   }
@@ -190,9 +188,7 @@ public:
   bool
   operator!=(const Self & region) const
   {
-    bool same = 1;
-
-    same = ( m_Index == region.m_Index );
+    bool same = ( m_Index == region.m_Index );
     same = same && ( m_Size == region.m_Size );
     return !same;
   }
@@ -305,7 +301,7 @@ public:
   /** Slice a region, producing a region that is one dimension lower
    * than the current region. Parameter "dim" specifies which dimension
    * to remove. */
-  SliceRegion Slice(const unsigned long dim) const;
+  SliceRegion Slice(const unsigned int dim) const;
 
 protected:
   /** Methods invoked by Print() to print information about the object

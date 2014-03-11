@@ -29,7 +29,7 @@
 #include "itkCompositeTransform.h"
 #include "itkVector.h"
 
-template<class TFilter>
+template<typename TFilter>
 class CommandIterationUpdate : public itk::Command
 {
 public:
@@ -56,13 +56,13 @@ public:
       { return; }
 
     unsigned int currentLevel = filter->GetCurrentLevel();
-    typename TFilter::ShrinkFactorsArrayType shrinkFactors = filter->GetShrinkFactorsPerLevel();
+    typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
     typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
     typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
 
     std::cout << "  Current level = " << currentLevel << std::endl;
-    std::cout << "    shrink factor = " << shrinkFactors[currentLevel] << std::endl;
-    std::cout << "    smoothing variance = " << smoothingSigmas[currentLevel] << std::endl;
+    std::cout << "    shrink factor = " << shrinkFactors << std::endl;
+    std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
     std::cout << "    required fixed parameters = " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
     }
 };
@@ -111,7 +111,11 @@ int PerformBSplineSyNImageRegistration( int itkNotUsed( argc ), char *argv[] )
   typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
   GradientDescentOptimizerv4Type * optimizer = reinterpret_cast<GradientDescentOptimizerv4Type *>(
     const_cast<typename AffineRegistrationType::OptimizerType *>( affineSimple->GetOptimizer() ) );
+#ifdef NDEBUG
   optimizer->SetNumberOfIterations( 100 );
+#else
+  optimizer->SetNumberOfIterations( 1 );
+#endif
 
   typedef CommandIterationUpdate<AffineRegistrationType> AffineCommandType;
   typename AffineCommandType::Pointer affineObserver = AffineCommandType::New();
@@ -178,6 +182,12 @@ int PerformBSplineSyNImageRegistration( int itkNotUsed( argc ), char *argv[] )
   typedef itk::BSplineSyNImageRegistrationMethod<FixedImageType, MovingImageType> DisplacementFieldRegistrationType;
   typename DisplacementFieldRegistrationType::Pointer displacementFieldRegistration = DisplacementFieldRegistrationType::New();
 
+  typename DisplacementFieldRegistrationType::OptimizerWeightsType optimizerWeights;
+  optimizerWeights.SetSize( TDimension );
+  optimizerWeights.Fill( 0.995 );
+
+  displacementFieldRegistration->SetOptimizerWeights( optimizerWeights );
+
   typedef typename DisplacementFieldRegistrationType::OutputTransformType OutputTransformType;
   typename OutputTransformType::Pointer outputTransform = const_cast<OutputTransformType *>( displacementFieldRegistration->GetOutput()->Get() );
   outputTransform->SetDisplacementField( displacementField );
@@ -198,10 +208,15 @@ int PerformBSplineSyNImageRegistration( int itkNotUsed( argc ), char *argv[] )
 
   typename DisplacementFieldRegistrationType::NumberOfIterationsArrayType numberOfIterationsPerLevel;
   numberOfIterationsPerLevel.SetSize( 3 );
+#ifdef NDEBUG
   numberOfIterationsPerLevel[0] = atoi( argv[5] );
   numberOfIterationsPerLevel[1] = 2;
   numberOfIterationsPerLevel[2] = 1;
-
+#else
+  numberOfIterationsPerLevel[0] = 1;
+  numberOfIterationsPerLevel[1] = 1;
+  numberOfIterationsPerLevel[2] = 1;
+#endif
   typename DisplacementFieldRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
   shrinkFactorsPerLevel.SetSize( 3 );
   shrinkFactorsPerLevel[0] = 3;
@@ -273,6 +288,9 @@ int PerformBSplineSyNImageRegistration( int itkNotUsed( argc ), char *argv[] )
   displacementFieldRegistration->SetLearningRate( atof( argv[6] ) );
   displacementFieldRegistration->SetNumberOfIterationsPerLevel( numberOfIterationsPerLevel );
   displacementFieldRegistration->SetTransformParametersAdaptorsPerLevel( adaptors );
+
+  std::cout << displacementFieldRegistration->GetOptimizerWeights() << std::endl;
+
   outputTransform->SetDisplacementField( displacementField );
   outputTransform->SetInverseDisplacementField( inverseDisplacementField );
 

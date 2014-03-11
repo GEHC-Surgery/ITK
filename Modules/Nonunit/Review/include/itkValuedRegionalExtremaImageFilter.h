@@ -72,9 +72,9 @@ namespace itk
  * \ingroup ITKReview
  */
 
-template< class TInputImage, class TOutputImage,
-          class TFunction1, class TFunction2 >
-class ITK_EXPORT ValuedRegionalExtremaImageFilter:
+template< typename TInputImage, typename TOutputImage,
+          typename TFunction1, typename TFunction2 >
+class ValuedRegionalExtremaImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -135,12 +135,12 @@ public:
   itkGetConstMacro(Flat, bool);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasPixelTraitsCheck,
                    ( Concept::HasPixelTraits< InputImagePixelType > ) );
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputImagePixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

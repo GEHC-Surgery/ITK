@@ -42,10 +42,10 @@
 #include "itksys/ios/sstream"
 
 /**
- * An example filter.
+ * \class An example filter.
  */
 template <typename TInputImage, typename TOutputImage>
-class ITK_EXPORT ExampleImageFilter:
+class ExampleImageFilter:
   public itk::ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
@@ -62,10 +62,10 @@ public:
   /**
    * Smart pointer typedef support
    */
-  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<Self>       Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
 
-  typedef TInputImage InputImageType;
+  typedef TInputImage  InputImageType;
   typedef TOutputImage OutputImageType;
   enum { ImageDimension = InputImageType::ImageDimension };
 
@@ -93,7 +93,7 @@ private:
    * Dispatch control class simply holds information in its template
    * parameter(s) that is used to control which Execute() method is chosen.
    */
-  template <unsigned long>
+  template <unsigned long V>
   struct Dispatch: public DispatchBase {};
 
   void Execute(const DispatchBase&);
@@ -243,7 +243,7 @@ int itkFilterDispatchTest(int, char* [] )
     std::cout << "Executing 5-d filter: ";
     filter5d->Update();
     }
-  catch (std::string err)
+  catch (std::string & err)
     {
     std::cout << err;
     passed = false;

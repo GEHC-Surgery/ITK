@@ -79,7 +79,7 @@ namespace itk
  * \ingroup ITKQuadEdgeMesh
  */
 template< typename TQuadEdge >
-class ITK_EXPORT QuadEdgeMeshBaseIterator
+class QuadEdgeMeshBaseIterator
 {
 public:
   // Hierarchy typedefs & values.
@@ -115,10 +115,13 @@ public:
 
   Self & operator=(const Self & r)
   {
-    m_StartEdge = r.m_StartEdge;
-    m_Iterator = r.m_Iterator;
-    m_OpType = r.m_OpType;
-    m_Start = r.m_Start;
+    if(this != &r)
+      {
+      m_StartEdge = r.m_StartEdge;
+      m_Iterator = r.m_Iterator;
+      m_OpType = r.m_OpType;
+      m_Start = r.m_Start;
+      }
     return ( *this );
   }
 
@@ -239,7 +242,7 @@ protected:
  * \ingroup ITKQuadEdgeMesh
  */
 template< typename TQuadEdge >
-class ITK_EXPORT QuadEdgeMeshIterator:
+class QuadEdgeMeshIterator:
   public QuadEdgeMeshBaseIterator< TQuadEdge >
 {
 public:
@@ -268,7 +271,7 @@ public:
  * \ingroup ITKQuadEdgeMesh
  */
 template< typename TGeometricalQuadEdge >
-class ITK_EXPORT QuadEdgeMeshIteratorGeom:
+class QuadEdgeMeshIteratorGeom:
   public QuadEdgeMeshIterator< TGeometricalQuadEdge >
 {
 public:
@@ -294,7 +297,7 @@ public:
  * \ingroup ITKQuadEdgeMesh
  */
 template< typename TQuadEdge >
-class ITK_EXPORT QuadEdgeMeshConstIterator:
+class QuadEdgeMeshConstIterator:
   public QuadEdgeMeshBaseIterator< TQuadEdge >
 {
 public:
@@ -332,7 +335,7 @@ public:
  * \ingroup ITKQuadEdgeMesh
  */
 template< typename TGeometricalQuadEdge >
-class ITK_EXPORT QuadEdgeMeshConstIteratorGeom:
+class QuadEdgeMeshConstIteratorGeom:
   public QuadEdgeMeshConstIterator< TGeometricalQuadEdge >
 {
 public:

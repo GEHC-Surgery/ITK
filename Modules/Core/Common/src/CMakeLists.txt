@@ -35,6 +35,12 @@ itkLightObject.cxx
 itkStdStreamLogOutput.cxx
 itkLightProcessObject.cxx
 itkRegion.cxx
+itkImageIORegion.cxx
+itkImageSource.cxx
+itkImageRegionSplitterBase.cxx
+itkImageRegionSplitterSlowDimension.cxx
+itkImageRegionSplitterDirection.cxx
+itkImageRegionSplitterMultidimensional.cxx
 itkFastMutexLock.cxx
 itkVersion.cxx
 itkNumericTraitsRGBAPixel.cxx
@@ -70,6 +76,8 @@ itkEquivalencyTable.cxx
 itkXMLFileOutputWindow.cxx
 itkStoppingCriterionBase.cxx
 itkCompensatedSummation.cxx
+itkArrayOutputSpecialization.cxx
+itkNumberToString.cxx
 )
 
 if(WIN32)
@@ -99,17 +107,11 @@ endif()
 
 ### generating libraries
 add_library( ITKCommon ${ITK_LIBRARY_BUILD_TYPE} ${ITKCommon_SRCS})
-if(NOT WIN32 AND CMAKE_COMPILER_IS_GNUCXX AND BUILD_SHARED_LIBS)
-  set(ITKCommon_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden")
-  ITK_CHECK_CXX_COMPILER_FLAG(${ITKCommon_CXX_FLAGS} ITKCommon_HAS_GCC_VISIBILITY_FLAGS)
-  if(ITKCommon_HAS_GCC_VISIBILITY_FLAGS)
-    set_target_properties(ITKCommon PROPERTIES
-      COMPILE_FLAGS "${ITKCommon_CXX_FLAGS}"
-    )
-  endif()
-endif()
 
-target_link_libraries(ITKCommon itksys ITKVNLInstantiation)
+target_link_libraries(ITKCommon
+  itksys
+  ITKVNLInstantiation
+  ${ITKDoubleConversion_LIBRARIES})
 
 if(UNIX)
   target_link_libraries(ITKCommon ${CMAKE_THREAD_LIBS} ${CMAKE_DL_LIBS} -lm)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE Change SYSTEM "http://ij.itk.org/itkfaq/ITKMigration.dtd">
+<!DOCTYPE Change SYSTEM "http://itk.org/migrationv4/ITKMigration.dtd">
 
 <!--**
 **
@@ -51,7 +51,7 @@
       <Old>
         <![CDATA[
         typedef double WorkPixelType;
-	const unsigned int Dimension = 3;
+        const unsigned int Dimension = 3;
         typedef itk::VnlFFTRealToComplexConjugateImageFilter< WorkPixelType, Dimension >
           FFTFilterType;
         typedef itk::VnlFFTComplexConjugateToRealImageFilter< WorkPixelType, Dimension >

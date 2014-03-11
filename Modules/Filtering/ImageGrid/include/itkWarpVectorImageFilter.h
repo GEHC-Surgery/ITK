@@ -85,11 +85,11 @@ namespace itk
  * \ingroup ITKImageGrid
  */
 template<
-  class TInputImage,
-  class TOutputImage,
-  class TDisplacementField
+  typename TInputImage,
+  typename TOutputImage,
+  typename TDisplacementField
   >
-class ITK_EXPORT WarpVectorImageFilter:
+class WarpVectorImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -179,11 +179,9 @@ public:
   }
 #endif
 
-  /** Set the interpolator function. */
+  /** Get/Set the interpolator function. */
   itkSetObjectMacro(Interpolator, InterpolatorType);
-
-  /** Get a pointer to the interpolator function. */
-  itkGetObjectMacro(Interpolator, InterpolatorType);
+  itkGetModifiableObjectMacro(Interpolator, InterpolatorType);
 
   /** Set the output image spacing. */
   itkSetMacro(OutputSpacing, SpacingType);
@@ -229,14 +227,14 @@ public:
   virtual void BeforeThreadedGenerateData();
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename TInputImage::PixelType::ValueType > ) );
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< ValueType > ) );
   itkConceptMacro( DisplacementFieldHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename TDisplacementField::PixelType::ValueType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

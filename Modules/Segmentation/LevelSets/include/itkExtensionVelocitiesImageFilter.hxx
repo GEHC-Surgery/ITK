@@ -27,7 +27,7 @@ namespace itk
 /**
  *
  */
-template< class TLevelSet, class TAuxValue, unsigned int VAuxDimension >
+template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension >
 ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 ::ExtensionVelocitiesImageFilter()
 {
@@ -48,7 +48,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 /**
  *
  */
-template< class TLevelSet, class TAuxValue, unsigned int VAuxDimension >
+template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension >
 void
 ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 ::SetInputVelocityImage(
@@ -66,7 +66,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 /**
  *
  */
-template< class TLevelSet, class TAuxValue, unsigned int VAuxDimension >
+template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension >
 const typename ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 ::AuxImageType *
 ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
@@ -84,7 +84,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 /**
  *
  */
-template< class TLevelSet, class TAuxValue, unsigned int VAuxDimension >
+template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension >
 typename ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 ::AuxImageType *
 ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
@@ -101,7 +101,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 /**
  *
  */
-template< class TLevelSet, class TAuxValue, unsigned int VAuxDimension >
+template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension >
 void
 ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 ::EnlargeOutputRequestedRegion( DataObject *itkNotUsed(output) )
@@ -119,7 +119,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 /**
  *
  */
-template< class TLevelSet, class TAuxValue, unsigned int VAuxDimension >
+template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension >
 void
 ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 ::AllocateOutput()
@@ -143,7 +143,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 /**
  *
  */
-template< class TLevelSet, class TAuxValue, unsigned int VAuxDimension >
+template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension >
 void
 ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 ::GenerateDataFull()
@@ -194,7 +194,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 
   // march outward
   m_Marcher->SetTrialPoints( m_Locator->GetOutsidePoints() );
-  m_Marcher->SetAuxiliaryTrialValues( m_Locator->GetAuxOutsideValues() );
+  m_Marcher->SetAuxiliaryTrialValues( m_Locator->GetModifiableAuxOutsideValues() );
   m_Marcher->Update();
 
   tempIt = IteratorType( tempLevelSet,
@@ -246,7 +246,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 
   // march inward
   m_Marcher->SetTrialPoints( m_Locator->GetInsidePoints() );
-  m_Marcher->SetAuxiliaryTrialValues( m_Locator->GetAuxInsideValues() );
+  m_Marcher->SetAuxiliaryTrialValues( m_Locator->GetModifiableAuxInsideValues() );
   m_Marcher->Update();
 
   inputIt.GoToBegin();
@@ -286,7 +286,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 /**
  *
  */
-template< class TLevelSet, class TAuxValue, unsigned int VAuxDimension >
+template< typename TLevelSet, typename TAuxValue, unsigned int VAuxDimension >
 void
 ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 ::GenerateDataNarrowBand()
@@ -406,7 +406,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
   m_Marcher->SetStoppingValue(stoppingValue);
   m_Marcher->CollectPointsOn();
   m_Marcher->SetTrialPoints( m_Locator->GetOutsidePoints() );
-  m_Marcher->SetAuxiliaryTrialValues( m_Locator->GetAuxOutsideValues() );
+  m_Marcher->SetAuxiliaryTrialValues( m_Locator->GetModifiableAuxOutsideValues() );
   m_Marcher->Update();
 
   NodeContainerPointer procPoints = m_Marcher->GetProcessedPoints();
@@ -444,7 +444,7 @@ ExtensionVelocitiesImageFilter< TLevelSet, TAuxValue, VAuxDimension >
 
   // march inward
   m_Marcher->SetTrialPoints( m_Locator->GetInsidePoints() );
-  m_Marcher->SetAuxiliaryTrialValues( m_Locator->GetAuxInsideValues() );
+  m_Marcher->SetAuxiliaryTrialValues( m_Locator->GetModifiableAuxInsideValues() );
   m_Marcher->Update();
 
   procPoints = m_Marcher->GetProcessedPoints();

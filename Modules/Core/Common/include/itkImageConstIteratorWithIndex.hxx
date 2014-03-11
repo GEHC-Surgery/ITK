@@ -19,14 +19,13 @@
 #define __itkImageConstIteratorWithIndex_hxx
 
 #include "itkImageConstIteratorWithIndex.h"
-#include <cstring>
 
 namespace itk
 {
 //----------------------------------------------------------------------
 //  Constructor
 //----------------------------------------------------------------------
-template< class TImage >
+template< typename TImage >
 ImageConstIteratorWithIndex< TImage >
 ::ImageConstIteratorWithIndex()
 {
@@ -39,7 +38,7 @@ ImageConstIteratorWithIndex< TImage >
 //----------------------------------------------------------------------
 //  Constructor
 //----------------------------------------------------------------------
-template< class TImage >
+template< typename TImage >
 ImageConstIteratorWithIndex< TImage >
 ::ImageConstIteratorWithIndex(const Self & it)
 {
@@ -50,7 +49,9 @@ ImageConstIteratorWithIndex< TImage >
   m_EndIndex          = it.m_EndIndex;
   m_Region            = it.m_Region;
 
-  memcpy( m_OffsetTable, it.m_OffsetTable, sizeof( m_OffsetTable ) );
+  std::copy(it.m_OffsetTable,
+            it.m_OffsetTable+ImageDimension + 1,
+            m_OffsetTable);
 
   m_Position    = it.m_Position;
   m_Begin       = it.m_Begin;
@@ -65,7 +66,7 @@ ImageConstIteratorWithIndex< TImage >
 //----------------------------------------------------------------------
 //  Constructor
 //----------------------------------------------------------------------
-template< class TImage >
+template< typename TImage >
 ImageConstIteratorWithIndex< TImage >
 ::ImageConstIteratorWithIndex(const TImage *ptr,
                               const RegionType & region)
@@ -85,7 +86,9 @@ ImageConstIteratorWithIndex< TImage >
                            "Region " << m_Region << " is outside of buffered region " << bufferedRegion );
     }
 
-  memcpy( m_OffsetTable, m_Image->GetOffsetTable(), sizeof( m_OffsetTable ) );
+  std::copy(m_Image->GetOffsetTable(),
+            m_Image->GetOffsetTable()+ImageDimension + 1 ,
+            m_OffsetTable);
 
   // Compute the start position
   OffsetValueType offs =  m_Image->ComputeOffset(m_BeginIndex);
@@ -117,36 +120,40 @@ ImageConstIteratorWithIndex< TImage >
 //----------------------------------------------------------------------
 //    Assignment Operator
 //----------------------------------------------------------------------
-template< class TImage >
+template< typename TImage >
 ImageConstIteratorWithIndex< TImage > &
 ImageConstIteratorWithIndex< TImage >
 ::operator=(const Self & it)
 {
-  m_Image = it.m_Image;     // copy the smart pointer
+  if(this != &it)
+    {
+    m_Image = it.m_Image;     // copy the smart pointer
 
-  m_BeginIndex        = it.m_BeginIndex;
-  m_EndIndex          = it.m_EndIndex;
-  m_PositionIndex     = it.m_PositionIndex;
-  m_Region            = it.m_Region;
+    m_BeginIndex        = it.m_BeginIndex;
+    m_EndIndex          = it.m_EndIndex;
+    m_PositionIndex     = it.m_PositionIndex;
+    m_Region            = it.m_Region;
 
-  memcpy( m_OffsetTable, it.m_OffsetTable, sizeof( m_OffsetTable ) );
+    std::copy(it.m_OffsetTable,
+              it.m_OffsetTable+ImageDimension + 1,
+              m_OffsetTable);
 
-  m_Position    = it.m_Position;
-  m_Begin       = it.m_Begin;
-  m_End         = it.m_End;
-  m_Remaining   = it.m_Remaining;
+    m_Position    = it.m_Position;
+    m_Begin       = it.m_Begin;
+    m_End         = it.m_End;
+    m_Remaining   = it.m_Remaining;
 
-  m_PixelAccessor = it.m_PixelAccessor;
-  m_PixelAccessorFunctor = it.m_PixelAccessorFunctor;
-  m_PixelAccessorFunctor.SetBegin( m_Image->GetBufferPointer() );
-
+    m_PixelAccessor = it.m_PixelAccessor;
+    m_PixelAccessorFunctor = it.m_PixelAccessorFunctor;
+    m_PixelAccessorFunctor.SetBegin( m_Image->GetBufferPointer() );
+    }
   return *this;
 }
 
 //----------------------------------------------------------------------------
 // GoToBegin() is the first pixel in the region.
 //----------------------------------------------------------------------------
-template< class TImage >
+template< typename TImage >
 void
 ImageConstIteratorWithIndex< TImage >
 ::GoToBegin()
@@ -169,7 +176,7 @@ ImageConstIteratorWithIndex< TImage >
 //----------------------------------------------------------------------------
 // GoToReverseBegin() is the last pixel in the region.
 //----------------------------------------------------------------------------
-template< class TImage >
+template< typename TImage >
 void
 ImageConstIteratorWithIndex< TImage >
 ::GoToReverseBegin()
@@ -198,7 +205,7 @@ ImageConstIteratorWithIndex< TImage >
 //----------------------------------------------------------------------------
 // Begin() is the first pixel in the region.
 //----------------------------------------------------------------------------
-template< class TImage >
+template< typename TImage >
 ImageConstIteratorWithIndex< TImage >
 ImageConstIteratorWithIndex< TImage >
 ::Begin() const
@@ -212,7 +219,7 @@ ImageConstIteratorWithIndex< TImage >
 //----------------------------------------------------------------------------
 // End() is the last pixel in the region.  DEPRECATED
 //----------------------------------------------------------------------------
-template< class TImage >
+template< typename TImage >
 ImageConstIteratorWithIndex< TImage >
 ImageConstIteratorWithIndex< TImage >
 ::End() const

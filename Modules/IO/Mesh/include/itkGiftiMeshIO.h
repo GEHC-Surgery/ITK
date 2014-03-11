@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkGiftiMeshIO_h
 #define __itkGiftiMeshIO_h
+#include "ITKIOMeshExport.h"
 
 #include "itkMapContainer.h"
 #include "itkMatrix.h"
@@ -36,7 +37,7 @@ namespace itk
  * \ingroup ITKIOMesh
  */
 
-class ITK_EXPORT GiftiMeshIO:public MeshIOBase
+class ITKIOMesh_EXPORT GiftiMeshIO:public MeshIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -63,7 +64,7 @@ public:
   itkSetMacro(ReadPointData, bool);
   itkBooleanMacro(ReadPointData);
 
-  void SetDirection(const DirectionType direction);
+  void SetDirection(const DirectionType & direction);
 
   itkGetConstReferenceMacro(Direction, DirectionType);
 
@@ -123,7 +124,7 @@ protected:
 
   void PrintSelf(std::ostream & os, Indent indent) const;
 
-  template< class TInput, class TOutput >
+  template< typename TInput, typename TOutput >
   void ConvertBuffer(TInput *input, TOutput *output, SizeValueType numberOfElements)
   {
     if ( input && output )

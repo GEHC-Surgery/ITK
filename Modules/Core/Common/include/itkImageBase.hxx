@@ -107,9 +107,7 @@ void
 ImageBase< VImageDimension >
 ::SetSpacing(const double spacing[VImageDimension])
 {
-  SpacingType s(spacing);
-
-  this->SetSpacing(s);
+  this->InternalSetSpacing(spacing);
 }
 
 //----------------------------------------------------------------------------
@@ -118,10 +116,7 @@ void
 ImageBase< VImageDimension >
 ::SetSpacing(const float spacing[VImageDimension])
 {
-  Vector< float, VImageDimension > sf(spacing);
-  SpacingType                      s;
-  s.CastFrom(sf);
-  this->SetSpacing(s);
+  this->InternalSetSpacing(spacing);
 }
 
 //----------------------------------------------------------------------------
@@ -151,7 +146,7 @@ ImageBase< VImageDimension >
 template< unsigned int VImageDimension >
 void
 ImageBase< VImageDimension >
-::SetDirection(const DirectionType direction)
+::SetDirection(const DirectionType & direction)
 {
   bool modified = false;
 
@@ -545,13 +540,13 @@ ImageBase< VImageDimension >
   os << indent << "Direction: " << std::endl << this->GetDirection() << std::endl;
 
   os << indent << "IndexToPointMatrix: " << std::endl;
-  os << indent << this->m_IndexToPhysicalPoint << std::endl;
+  os << this->m_IndexToPhysicalPoint << std::endl;
 
   os << indent << "PointToIndexMatrix: " << std::endl;
-  os << indent << this->m_PhysicalPointToIndex << std::endl;
+  os << this->m_PhysicalPointToIndex << std::endl;
 
   os << indent << "Inverse Direction: " << std::endl;
-  os << indent << this->GetInverseDirection() << std::endl;
+  os << this->GetInverseDirection() << std::endl;
 }
 } // end namespace itk
 

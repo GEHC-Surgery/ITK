@@ -18,9 +18,10 @@
 
 #ifndef __itkOBJMeshIO_h
 #define __itkOBJMeshIO_h
+#include "ITKIOMeshExport.h"
 
 #include "itkMeshIOBase.h"
-
+#include "itkNumberToString.h"
 #include <fstream>
 
 namespace itk
@@ -31,7 +32,7 @@ namespace itk
  * \ingroup ITKIOMesh
  */
 
-class ITK_EXPORT OBJMeshIO:public MeshIOBase
+class ITKIOMesh_EXPORT OBJMeshIO:public MeshIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -98,6 +99,7 @@ protected:
   template< typename T >
   void WritePoints(T *buffer, std::ofstream & outputFile)
   {
+    NumberToString<T> convert;
     SizeValueType index = itk::NumericTraits< SizeValueType >::Zero;
 
     for ( SizeValueType ii = 0; ii < this->m_NumberOfPoints; ii++ )
@@ -105,7 +107,7 @@ protected:
       outputFile << "v ";
       for ( unsigned int jj = 0; jj < this->m_PointDimension; jj++ )
         {
-        outputFile << buffer[index++] << "  ";
+        outputFile << convert(buffer[index++]) << "  ";
         }
       outputFile << '\n';
       }
@@ -134,6 +136,7 @@ protected:
   template< typename T >
   void WritePointData(T *buffer, std::ofstream & outputFile)
   {
+    NumberToString<T> convert;
     SizeValueType index = itk::NumericTraits< SizeValueType >::Zero;
 
     for ( SizeValueType ii = 0; ii < this->m_NumberOfPointPixels; ii++ )
@@ -141,7 +144,7 @@ protected:
       outputFile << "vn ";
       for ( unsigned int jj = 0; jj < this->m_PointDimension; jj++ )
         {
-        outputFile << buffer[index++] << "  ";
+        outputFile << convert(buffer[index++]) << "  ";
         }
 
       outputFile << '\n';

@@ -39,7 +39,7 @@ namespace itk
  *  \ingroup ITKLevelSetsv4
  */
 template< unsigned int VDimension,
-          class TEquationContainer >
+          typename TEquationContainer >
 class UpdateMalcolmSparseLevelSet : public Object
 {
 public:
@@ -60,6 +60,7 @@ public:
   typedef typename LevelSetType::Pointer               LevelSetPointer;
   typedef typename LevelSetType::InputType             LevelSetInputType;
   typedef typename LevelSetType::OutputType            LevelSetOutputType;
+  typedef typename LevelSetType::OffsetType            LevelSetOffsetType;
 
   typedef typename LevelSetType::LabelMapType          LevelSetLabelMapType;
   typedef typename LevelSetType::LabelMapPointer       LevelSetLabelMapPointer;
@@ -82,21 +83,21 @@ public:
   typedef typename EquationContainerType::Pointer               EquationContainerPointer;
   typedef typename EquationContainerType::TermContainerPointer  TermContainerPointer;
 
-  itkGetObjectMacro( OutputLevelSet, LevelSetType );
+  itkGetModifiableObjectMacro(OutputLevelSet, LevelSetType );
 
   /** Update function for initializing and computing the output level set */
   void Update();
 
   /** Set/Get the sparse levet set image */
   itkSetObjectMacro( InputLevelSet, LevelSetType );
-  itkGetObjectMacro( InputLevelSet, LevelSetType );
+  itkGetModifiableObjectMacro(InputLevelSet, LevelSetType );
 
   /** Set/Get the RMS change for the update */
   itkGetMacro( RMSChangeAccumulator, LevelSetOutputRealType );
 
   /** Set/Get the Equation container for computing the update */
   itkSetObjectMacro( EquationContainer, EquationContainerType );
-  itkGetObjectMacro( EquationContainer, EquationContainerType );
+  itkGetModifiableObjectMacro(EquationContainer, EquationContainerType );
 
   /** Set/Get the current level set id */
   itkSetMacro( CurrentLevelSetId, IdentifierType );
@@ -147,6 +148,8 @@ private:
 
   // input
   LevelSetPointer   m_InputLevelSet;
+
+  LevelSetOffsetType m_Offset;
 
   typedef std::pair< LevelSetInputType, LevelSetOutputType > NodePairType;
 

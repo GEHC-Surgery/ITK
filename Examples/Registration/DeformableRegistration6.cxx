@@ -179,7 +179,7 @@ int main( int argc, char *argv[] )
 
   for( unsigned int i=0; i< SpaceDimension; i++ )
     {
-    fixedOrigin = fixedImage->GetOrigin()[i];
+    fixedOrigin[i] = fixedImage->GetOrigin()[i];
     fixedPhysicalDimensions[i] = fixedImage->GetSpacing()[i] *
       static_cast<double>(
       fixedImage->GetLargestPossibleRegion().GetSize()[i] - 1 );
@@ -221,9 +221,8 @@ int main( int argc, char *argv[] )
   optimizer->SetDefaultStepLength( 1.5 );
   optimizer->TraceOn();
   optimizer->SetMaximumNumberOfFunctionEvaluations( 1000 );
-
-
-  std::cout << "Starting Registration with low resolution transform" << std::endl;
+  std::cout << "Starting Registration with low resolution transform"
+            << std::endl;
 
   try
     {
@@ -255,7 +254,7 @@ int main( int argc, char *argv[] )
 
   for( unsigned int i=0; i< SpaceDimension; i++ )
     {
-    fixedOrigin = fixedImage->GetOrigin()[i];
+    fixedOrigin[i] = fixedImage->GetOrigin()[i];
     fixedPhysicalDimensions[i] = fixedImage->GetSpacing()[i] *
       static_cast<double>(
       fixedImage->GetLargestPossibleRegion().GetSize()[i] - 1 );
@@ -340,9 +339,8 @@ int main( int argc, char *argv[] )
   std::cout << "Starting Registration with high resolution transform" << std::endl;
 
   // Software Guide : BeginCodeSnippet
-  registration->SetInitialTransformParameters( transformHigh->GetParameters() );
+  registration->SetInitialTransformParameters(transformHigh->GetParameters());
   registration->SetTransform( transformHigh );
-
   //  Software Guide : BeginLatex
   //
   //  Typically, we will also want to tighten the optimizer parameters
@@ -351,8 +349,6 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
   optimizer->SetGradientConvergenceTolerance( 0.01 );
   optimizer->SetDefaultStepLength( 0.25 );
-
-
   try
     {
     registration->Update();

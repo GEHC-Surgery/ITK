@@ -31,7 +31,8 @@ namespace itk
  * set non-zero pixels of two images using the following formula:
  * \f[ H(A,B) = \max(h(A,B),h(B,A)) \f]
  * where
- * \f[ h(A,B) = \max_{a \in A} \min_{b \in B} \| a - b\| \f] is the directed
+ * \f[ h(A,B) = \mathrm{mean}_{a \in A} \min_{b \in B} \| a - b\| \f] is the dir
+ected
  * Mean distance
  * and \f$A\f$ and \f$B\f$ are respectively the set of non-zero pixels
  * in the first and second input images.
@@ -64,8 +65,8 @@ namespace itk
  * \wikiexample{Curves/ContourMeanDistanceImageFilter,Compute the mean distance between all points of two curves}
  * \endwiki
  */
-template< class TInputImage1, class TInputImage2 >
-class ITK_EXPORT ContourMeanDistanceImageFilter:
+template< typename TInputImage1, typename TInputImage2 >
+class ContourMeanDistanceImageFilter:
   public ImageToImageFilter< TInputImage1, TInputImage1 >
 {
 public:
@@ -123,10 +124,10 @@ public:
   itkGetConstMacro( UseImageSpacing, bool );
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputImage1PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

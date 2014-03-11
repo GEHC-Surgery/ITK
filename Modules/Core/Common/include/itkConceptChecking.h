@@ -124,7 +124,7 @@ inline void IgnoreUnusedVariable(T) {}
  * Passing the expression to this function will enforce this requirement.
  * (BOOST)
  */
-template< class T >
+template< typename T >
 void RequireBooleanExpression(const T & t)
 {
   bool x = t;
@@ -435,7 +435,7 @@ struct DivisionAndAssignOperators {
 /** Concept requiring T1 to have operators &, |, and ^ in the form
     T1 op T2 = T3.  */
 template< typename T1, typename T2 = T1, typename T3 = T1 >
-struct LogicalOperators {
+struct BitwiseOperators {
   struct Constraints {
     void constraints()
     {
@@ -734,6 +734,27 @@ struct IsInteger {
 
   itkConceptConstraintsMacro();
 };
+
+
+/** Concept requiring T to be an unsigned integer. */
+template< typename T >
+struct IsUnsignedInteger {
+  typedef IsUnsignedInteger Self;
+  itkStaticConstMacro(Unsigned, bool, !NumericTraits< T >::is_signed);
+  struct Constraints {
+    typedef Detail::UniqueType_bool< true >                             TrueT;
+    typedef Detail::UniqueType_bool< itkGetStaticConstMacro(Unsigned) > UnsignedT;
+    void constraints()
+    {
+      UnsignedT a = TrueT();
+
+      Detail::IgnoreUnusedVariable(a);
+    }
+  };
+
+  itkConceptConstraintsMacro();
+};
+
 
 /** Concept requiring T to be non-integer. */
 template< typename T >

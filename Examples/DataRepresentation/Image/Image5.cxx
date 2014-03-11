@@ -67,7 +67,9 @@ int main(int argc, char * argv[])
   // Software Guide : BeginCodeSnippet
   typedef unsigned char   PixelType;
   const unsigned int Dimension = 3;
+
   typedef itk::Image< PixelType, Dimension > ImageType;
+
   // Software Guide : EndCodeSnippet
 
 
@@ -139,14 +141,9 @@ int main(int argc, char * argv[])
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  double origin[ Dimension ];
-  origin[0] = 0.0;    // X coordinate
-  origin[1] = 0.0;    // Y coordinate
-  origin[2] = 0.0;    // Z coordinate
-
+  const itk::SpacePrecisionType origin[ Dimension ] = { 0.0, 0.0, 0.0 };
   importFilter->SetOrigin( origin );
   // Software Guide : EndCodeSnippet
-
 
   //  Software Guide : BeginLatex
   //
@@ -155,14 +152,10 @@ int main(int argc, char * argv[])
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  double spacing[ Dimension ];
-  spacing[0] = 1.0;    // along X direction
-  spacing[1] = 1.0;    // along Y direction
-  spacing[2] = 1.0;    // along Z direction
-
+  // spacing isotropic volumes to 1.0
+  const itk::SpacePrecisionType  spacing[ Dimension ] =  { 1.0, 1.0, 1.0 };
   importFilter->SetSpacing( spacing );
   // Software Guide : EndCodeSnippet
-
 
   //  Software Guide : BeginLatex
   //
@@ -199,13 +192,16 @@ int main(int argc, char * argv[])
 
   for(unsigned int z=0; z < size[2]; z++)
     {
-    const double dz = static_cast<double>( z ) - static_cast<double>(size[2])/2.0;
+    const double dz = static_cast<double>( z )
+      - static_cast<double>(size[2])/2.0;
     for(unsigned int y=0; y < size[1]; y++)
       {
-      const double dy = static_cast<double>( y ) - static_cast<double>(size[1])/2.0;
+      const double dy = static_cast<double>( y )
+        - static_cast<double>(size[1])/2.0;
       for(unsigned int x=0; x < size[0]; x++)
         {
-        const double dx = static_cast<double>( x ) - static_cast<double>(size[0])/2.0;
+        const double dx = static_cast<double>( x )
+          - static_cast<double>(size[0])/2.0;
         const double d2 = dx*dx + dy*dy + dz*dz;
         *it++ = ( d2 < radius2 ) ? 255 : 0;
         }

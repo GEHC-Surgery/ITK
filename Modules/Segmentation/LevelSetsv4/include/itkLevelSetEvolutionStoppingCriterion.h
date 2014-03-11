@@ -28,7 +28,7 @@ namespace itk
  /** \class LevelSetEvolutionStoppingCriterion
   \ingroup ITKLevelSetsv4
   */
- template< class TLevelSetContainer >
+ template< typename TLevelSetContainer >
  class LevelSetEvolutionStoppingCriterion : public StoppingCriterionBase
  {
  public:
@@ -61,7 +61,7 @@ namespace itk
    typedef IdentifierType IterationIdType;
 
    itkSetObjectMacro( LevelSetContainer, LevelSetContainerType );
-   itkGetObjectMacro( LevelSetContainer, LevelSetContainerType );
+   itkGetModifiableObjectMacro(LevelSetContainer, LevelSetContainerType );
 
    itkSetMacro( NumberOfIterations, IterationIdType );
    itkGetMacro( NumberOfIterations, IterationIdType );

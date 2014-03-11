@@ -71,7 +71,7 @@ int itkQuadEdgeTest1( int , char* [] )
     { // create a local scope for these tests
     QuadEdgeType * quadEdge1 = new QuadEdgeType;
     QuadEdgeType * quadEdge2 = new QuadEdgeType;
-    QuadEdgeType * quadEdge3 = new QuadEdgeType;
+
     const QuadEdgeType * quadEdge1c = quadEdge1;
 
     quadEdge1->GetOnext(); // testing null case
@@ -81,26 +81,40 @@ int itkQuadEdgeTest1( int , char* [] )
     if( quadEdge1->GetOnext() != quadEdge2 )
       {
       std::cerr << "Error in SetOnext() / GetOnext() " << std::endl;
+      delete quadEdge1;
+      delete quadEdge2;
       return EXIT_FAILURE;
       }
+
     // Test the const version
     if( quadEdge1c->GetOnext() != quadEdge2 )
       {
       std::cerr << "Error in const GetOnext() " << std::endl;
+      delete quadEdge1;
+      delete quadEdge2;
       return EXIT_FAILURE;
       }
 
     // Verify that it can be changed.
+    QuadEdgeType * quadEdge3 = new QuadEdgeType;
     quadEdge1->SetOnext( quadEdge3 );
+
     if( quadEdge1->GetOnext() != quadEdge3 )
       {
       std::cerr << "Error in changing SetOnext() / GetOnext() " << std::endl;
+      delete quadEdge1;
+      delete quadEdge2;
+      delete quadEdge3;
       return EXIT_FAILURE;
       }
+
     // Test the const version
     if( quadEdge1c->GetOnext() != quadEdge3 )
       {
       std::cerr << "Error changed const GetOnext() " << std::endl;
+      delete quadEdge1;
+      delete quadEdge2;
+      delete quadEdge3;
       return EXIT_FAILURE;
       }
 
@@ -313,11 +327,18 @@ int itkQuadEdgeTest1( int , char* [] )
     quadEdge3->SetRot( quadEdge4 );
     quadEdge4->SetRot( quadEdge1 );
 
+
 #ifndef NDEBUG
     quadEdge2->SetOnext( NULL );
     if( quadEdge1->GetRnext() || quadEdge1c->GetRnext( ) )
       {
       std::cerr << "Error in GetRnext()" << std::endl;
+      delete quadEdge1;
+      delete quadEdge2;
+      delete quadEdge3;
+      delete quadEdge4;
+      delete quadEdgeA;
+      delete quadEdgeB;
       return EXIT_FAILURE;
       }
 #endif
@@ -328,22 +349,28 @@ int itkQuadEdgeTest1( int , char* [] )
     if( quadEdge1->GetRnext() || quadEdge1c->GetRnext( ) )
       {
       std::cerr << "Error in GetRnext()" << std::endl;
+      delete quadEdge1;
+      delete quadEdge2;
+      delete quadEdge3;
+      delete quadEdge4;
+      delete quadEdgeA;
+      delete quadEdgeB;
       return EXIT_FAILURE;
       }
 #endif
 
+    bool quadEdgeError = false;
     quadEdgeA->SetRot( quadEdgeB );
 
     if( quadEdgeA->GetRnext() != quadEdge1 )
       {
       std::cerr << "Error in GetRnext()" << std::endl;
-      return EXIT_FAILURE;
+      quadEdgeError = true;
       }
-
-    if( quadEdgeAc->GetRnext() != quadEdge1 )
+    else if( quadEdgeAc->GetRnext() != quadEdge1 )
       {
       std::cerr << "Error in const GetRnext()" << std::endl;
-      return EXIT_FAILURE;
+      quadEdgeError = true;
       }
 
     delete quadEdge1;
@@ -352,6 +379,11 @@ int itkQuadEdgeTest1( int , char* [] )
     delete quadEdge4;
     delete quadEdgeA;
     delete quadEdgeB;
+
+    if( quadEdgeError )
+      {
+        return EXIT_FAILURE;
+      }
 
     std::cout << "GetRnext() Test passed ! " << std::endl;
     }
@@ -1166,21 +1198,23 @@ int itkQuadEdgeTest1( int , char* [] )
     // Tests for the IsIsolated() method
     { // create a local scope for these tests
     QuadEdgeType * quadEdge1 = new QuadEdgeType;
-    QuadEdgeType * quadEdge2 = new QuadEdgeType;
-
     const QuadEdgeType * quadEdge1c = quadEdge1;
 
     if( quadEdge1c->IsIsolated() != true )
       {
       std::cerr << "Error in IsIsolated() A" << std::endl;
+      delete quadEdge1;
       return EXIT_FAILURE;
       }
 
+    QuadEdgeType * quadEdge2 = new QuadEdgeType;
     quadEdge1->SetOnext( quadEdge2 );
 
     if( quadEdge1c->IsIsolated() != false )
       {
       std::cerr << "Error in IsIsolated() B" << std::endl;
+      delete quadEdge1;
+      delete quadEdge2;
       return EXIT_FAILURE;
       }
 
@@ -1189,6 +1223,8 @@ int itkQuadEdgeTest1( int , char* [] )
     if( quadEdge1c->IsIsolated() != true )
       {
       std::cerr << "Error in IsIsolated() C" << std::endl;
+      delete quadEdge1;
+      delete quadEdge2;
       return EXIT_FAILURE;
       }
 

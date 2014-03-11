@@ -43,9 +43,9 @@ namespace itk
  * \ingroup ITKReview
  */
 template<
-  class TInputImage,
-  class TCoordRep = float >
-class ITK_EXPORT VectorCentralDifferenceImageFunction:
+  typename TInputImage,
+  typename TCoordRep = float >
+class VectorCentralDifferenceImageFunction:
   public ImageFunction< TInputImage,
                         Matrix< double,
                                 TInputImage::PixelType::Dimension,

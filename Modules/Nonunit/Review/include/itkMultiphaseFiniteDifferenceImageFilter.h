@@ -157,12 +157,12 @@ namespace itk
  * \sa DenseFiniteDifferenceImageFilter2
  * \ingroup ITKReview
  */
-template< class TInputImage,
-          class TFeatureImage,
-          class TOutputImage,
-          class TFiniteDifferenceFunction = FiniteDifferenceFunction< TOutputImage >,
+template< typename TInputImage,
+          typename TFeatureImage,
+          typename TOutputImage,
+          typename TFiniteDifferenceFunction = FiniteDifferenceFunction< TOutputImage >,
           typename TIdCell = unsigned int >
-class ITK_EXPORT MultiphaseFiniteDifferenceImageFilter:
+class MultiphaseFiniteDifferenceImageFilter:
   public InPlaceImageFilter< TFeatureImage, TOutputImage >
 {
 public:

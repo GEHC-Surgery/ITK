@@ -21,29 +21,29 @@
 #include "itkImageGaussianModelEstimator.h"
 namespace itk
 {
-template< class TInputImage,
-          class TMembershipFunction,
-          class TTrainingImage >
+template< typename TInputImage,
+          typename TMembershipFunction,
+          typename TTrainingImage >
 ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 ::ImageGaussianModelEstimator(void):
   m_Covariance(NULL)
 {}
 
-template< class TInputImage,
-          class TMembershipFunction,
-          class TTrainingImage >
+template< typename TInputImage,
+          typename TMembershipFunction,
+          typename TTrainingImage >
 ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 ::~ImageGaussianModelEstimator(void)
 {
-  if ( m_Covariance ) { delete[] m_Covariance; }
+  delete[] m_Covariance;
 }
 
 /**
  * PrintSelf
  */
-template< class TInputImage,
-          class TMembershipFunction,
-          class TTrainingImage >
+template< typename TInputImage,
+          typename TMembershipFunction,
+          typename TTrainingImage >
 void
 ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -61,9 +61,9 @@ ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 /**
  * Generate data (start the model building process)
  */
-template< class TInputImage,
-          class TMembershipFunction,
-          class TTrainingImage >
+template< typename TInputImage,
+          typename TMembershipFunction,
+          typename TTrainingImage >
 void
 ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 ::GenerateData()
@@ -75,15 +75,15 @@ ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 // and variance of the various classes defined in the
 // training set.
 
-template< class TInputImage,
-          class TMembershipFunction,
-          class TTrainingImage >
+template< typename TInputImage,
+          typename TMembershipFunction,
+          typename TTrainingImage >
 void
 ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 ::EstimateModels()
 {
   //Do some error checking
-  InputImagePointer inputImage = this->GetInputImage();
+  InputImageConstPointer inputImage = this->GetInputImage();
 
   // Check if the training and input image dimensions are the same
   if ( (int)(TInputImage::ImageDimension) != (int)(TTrainingImage::ImageDimension) )
@@ -91,15 +91,12 @@ ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
     throw ExceptionObject(__FILE__, __LINE__, "Training and input image dimensions are not the same.", ITK_LOCATION);
     }
 
-  InputImageSizeType
-  inputImageSize = inputImage->GetBufferedRegion().GetSize();
+  InputImageSizeType inputImageSize = inputImage->GetBufferedRegion().GetSize();
+
+  TrainingImageConstPointer trainingImage = this->GetTrainingImage();
 
   typedef InputImageSizeType TrainingImageSizeType;
-
-  TrainingImagePointer trainingImage = this->GetTrainingImage();
-
-  TrainingImageSizeType
-  trainingImageSize = trainingImage->GetBufferedRegion().GetSize();
+  TrainingImageSizeType trainingImageSize = trainingImage->GetBufferedRegion().GetSize();
 
   // Check if size of the two inputs are the same
   for ( unsigned int i = 0; i < TInputImage::ImageDimension; i++ )
@@ -152,25 +149,24 @@ ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
     }
 } // end train classifier
 
-template< class TInputImage,
-          class TMembershipFunction,
-          class TTrainingImage >
+template< typename TInputImage,
+          typename TMembershipFunction,
+          typename TTrainingImage >
 void
 ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
 ::EstimateGaussianModelParameters()
 {
   // Set the iterators and the pixel type definition for the input image
-  InputImagePointer  inputImage = this->GetInputImage();
-  InputImageIterator inIt( inputImage, inputImage->GetBufferedRegion() );
+  InputImageConstPointer  inputImage = this->GetInputImage();
+  InputImageConstIterator inIt( inputImage, inputImage->GetBufferedRegion() );
 
   //-------------------------------------------------------------------
 
   //-------------------------------------------------------------------
   // Set the iterators and the pixel type definition for the training image
-  TrainingImagePointer trainingImage = this->GetTrainingImage();
+  TrainingImageConstPointer trainingImage = this->GetTrainingImage();
 
-  TrainingImageIterator
-  trainingImageIt( trainingImage, trainingImage->GetBufferedRegion() );
+  TrainingImageConstIterator trainingImageIt( trainingImage, trainingImage->GetBufferedRegion() );
 
   //-------------------------------------------------------------------
 
@@ -187,7 +183,7 @@ ImageGaussianModelEstimator< TInputImage, TMembershipFunction, TTrainingImage >
   m_NumberOfSamples.fill(0);
 
   // delete previous allocation first
-  if ( m_Covariance ) { delete[] m_Covariance; }
+  delete[] m_Covariance;
   //Number of covariance matrices are equal to the number of classes
   m_Covariance = (MatrixType *)new MatrixType[numberOfModels];
 

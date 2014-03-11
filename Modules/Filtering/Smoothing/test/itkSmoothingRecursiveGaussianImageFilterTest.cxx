@@ -18,6 +18,7 @@
 
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itkFilterWatcher.h"
+#include "itkImageRegionConstIterator.h"
 
 namespace
 {
@@ -38,8 +39,6 @@ int InPlaceTest( void )
 
   // Declare the type of the Region
   typedef itk::ImageRegion<myDimension>        myRegionType;
-
-
 
   // Define their size, and start index
   mySizeType size;
@@ -258,21 +257,13 @@ int itkSmoothingRecursiveGaussianImageFilterTest(int, char* [] )
     ++itg;
   }
 
-
-
   if ( InPlaceTest() == EXIT_FAILURE )
     {
     return EXIT_FAILURE;
     }
-
-
 
   // All objects should be automatically destroyed at this point
   std::cout << std::endl << "Test PASSED ! " << std::endl;
   return EXIT_SUCCESS;
 
 }
-
-
-
-

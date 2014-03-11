@@ -55,38 +55,47 @@ endif()
 #
 # if DCMTK is built elsewhere
 if(ITK_USE_SYSTEM_DCMTK)
-
-  find_package(DCMTK REQUIRED)
-
   # assign includes to std module var
   set(ITKDCMTK_SYSTEM_INCLUDE_DIRS ${DCMTK_INCLUDE_DIRS})
 
   # Module standard library var
   set(ITKDCMTK_LIBRARIES ${DCMTK_LIBRARIES})
 
+  # When this module is loaded by an app, load DCMTK too.
+  set(ITKDCMTK_EXPORT_CODE_INSTALL "
+set(DCMTK_DIR \"${DCMTK_DIR}\")
+find_package(DCMTK REQUIRED)
+")
+  set(ITKDCMTK_EXPORT_CODE_BUILD "
+if(NOT ITK_BINARY_DIR)
+  set(CMAKE_MODULE_PATH
+    \"${CMAKE_CURRENT_SOURCE_DIR}/CMake\" \${CMAKE_MODULE_PATH})
+  set(DCMTK_DIR \"${DCMTK_DIR}\")
+  find_package(DCMTK REQUIRED)
+endif()
+")
+
   itk_module_impl()
 
 else(ITK_USE_SYSTEM_DCMTK)
-  #
-  # this is a first guess, I presume that
-  # on windows the library name is dependent on
-  # whether it's debug or release.
-  #
-  # also, .lib won't be right for shared libs.
-  if(NOT WIN32 OR MINGW)
+  if(NOT WIN32)
     set(lib_prefix lib)
     if(BUILD_SHARED_LIBS)
-      if(APPLE)
-        set(lib_suffix .dylib)
-      else()
-        set(lib_suffix .so)
-      endif()
+      set(lib_suffix "${CMAKE_SHARED_LIBRARY_SUFFIX}")
+      set(lib_prefix "${CMAKE_SHARED_LIBRARY_PREFIX}")
     else()
-      set(lib_suffix .a)
+      set(lib_suffix "${CMAKE_STATIC_LIBRARY_SUFFIX}")
+      set(lib_prefix "${CMAKE_STATIC_LIBRARY_PREFIX}")
     endif()
   else()
     set(lib_prefix "")
-    set(lib_suffix .lib)
+    if(BUILD_SHARED_LIBS)
+      set(lib_suffix "${CMAKE_IMPORT_LIBRARY_SUFFIX}")
+      set(lib_prefix "${CMAKE_IMPORT_LIBRARY_PREFIX}")
+    else()
+      set(lib_suffix "${CMAKE_STATIC_LIBRARY_SUFFIX}")
+      set(lib_prefix "${CMAKE_IMPORT_LIBRARY_PREFIX}")
+    endif()
   endif()
 
   set(DCMTK_EPNAME ITKDCMTK_ExtProject)
@@ -112,9 +121,15 @@ else(ITK_USE_SYSTEM_DCMTK)
   list(APPEND ITKDCMTK_INCLUDE_DIRS
     ${CMAKE_CURRENT_BINARY_DIR}/${DCMTK_EPNAME}-build/config/include)
 
+  set(ITKDCMTK_EXPORT_CODE_BUILD "
+set(CMAKE_MODULE_PATH
+  \"${CMAKE_CURRENT_SOURCE_DIR}/CMake\" \${CMAKE_MODULE_PATH})
+")
+
   # create imported targets when module is loaded from build tree
   if(CMAKE_CONFIGURATION_TYPES)
     set(ITKDCMTK_EXPORT_CODE_BUILD "
+${ITKDCMTK_EXPORT_CODE_BUILD}
 foreach(lib ${_ITKDCMTK_LIB_NAMES})
   if(NOT TARGET \${lib})
     add_library(\${lib} ${_ITKDCMTK_LIB_LINKAGE} IMPORTED)
@@ -128,6 +143,7 @@ endforeach()
 ")
   else()
     set(ITKDCMTK_EXPORT_CODE_BUILD "
+${ITKDCMTK_EXPORT_CODE_BUILD}
 foreach(lib ${_ITKDCMTK_LIB_NAMES})
   if(NOT TARGET \${lib})
     add_library(\${lib} ${_ITKDCMTK_LIB_LINKAGE} IMPORTED)
@@ -172,10 +188,11 @@ endforeach()
     string(REPLACE ";" ":::" DCMTK${libdep}_INCLUDE_DIRS "${ITK${libdep}_INCLUDE_DIRS}")
   endforeach()
 
-  set(DCMTK_GIT_REPOSITORY "http://git.dcmtk.org/dcmtk.git")
-  set(DCMTK_GIT_TAG GIT_TAG ab844899a92f46e2d880c38c85ce098933533aef)
+  include(${CMAKE_CURRENT_LIST_DIR}/DCMTKGitTag.cmake)
 
   set(DCMTK_EP_FLAGS
+    -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
+    -DBUILD_APPS:BOOL=OFF        # Only DCMTK libraries are needed
     -DDCMTK_WITH_OPENSSL:BOOL=OFF
     -DDCMTK_WITH_PNG:BOOL=OFF
     -DDCMTK_WITH_XML:BOOL=OFF
@@ -186,12 +203,11 @@ endforeach()
     list(APPEND DCMTK_EP_FLAGS -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF)
   endif()
 
-  ExternalProject_add(${DCMTK_EPNAME}
+  ExternalProject_Add(${DCMTK_EPNAME}
     GIT_REPOSITORY ${DCMTK_GIT_REPOSITORY}
     GIT_TAG ${DCMTK_GIT_TAG}
     SOURCE_DIR ${DCMTK_EPNAME}
     BINARY_DIR ${DCMTK_EPNAME}-build
-    UPDATE_COMMAND ""
     LIST_SEPARATOR ":::"
     # PATCH_COMMAND ${CMAKE_COMMAND} -E
     # copy ${CMAKE_CURRENT_LIST_DIR}/CMake/FindLIBICONV.cmake
@@ -199,6 +215,9 @@ endforeach()
     INSTALL_COMMAND ""
    CMAKE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    -DDCMTK_WITH_DOXYGEN:BOOL=OFF
+    -DDCMTK_WITH_SNDFILE:BOOL=OFF
+    -DDCMTK_WITH_WRAP:BOOL=OFF
     -DDCMTK_WITH_XML:BOOL=ON
     -DDCMTK_WITH_PRIVATE_TAGS:BOOL=ON
     -DJPEG_LIBRARY:PATH=${DCMTKJPEG_LIBRARIES}
@@ -215,27 +234,6 @@ endforeach()
     -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
     DEPENDS ${JPEG_DEPENDENCY} ${TIFF_DEPENDENCY} ${ICONV_DEPENDENCY}
-    )
-
-  #
-  # there are a few things that require patching:
-  # 1. Modern TIFF lib versions depend on jpeg
-  # 2. FindPackage can't use ITK-built versions of tiff and zlib -- so
-  #    get rid of FIND_PACKAGE commands for those libraries, and pass in
-  #    relevant CMake variables.
-  # 3. replace zlib.h and tiff.h with itk_ versions
-  # 4. Turn off building dcmtk apps
-  set(dcmtkPatchScript ${CMAKE_CURRENT_LIST_DIR}/CMake/dcmtkPatchScript.cmake)
-
-  ExternalProject_Add_Step(${DCMTK_EPNAME} fixGenerateConfig
-    COMMENT "Add JPEG library to dependencies"
-    DEPENDEES download
-    DEPENDERS configure
-    COMMAND ${CMAKE_COMMAND}
-    -DdcmtkSource=<SOURCE_DIR>
-    -DITK_USE_SYSTEM_ZLIB=${ITK_USE_SYSTEM_ZLIB}
-    -DITK_USE_SYSTEM_TIFF=${ITK_USE_SYSTEM_TIFF}
-    -P ${dcmtkPatchScript}
     )
 
   # build the list of libraries upon which DCMTK depends

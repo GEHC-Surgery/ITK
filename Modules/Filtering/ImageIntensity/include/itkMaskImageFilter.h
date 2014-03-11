@@ -31,7 +31,7 @@ namespace Functor
  * \brief
  * \ingroup ITKImageIntensity
  */
-template< class TInput, class TMask, class TOutput = TInput >
+template< typename TInput, typename TMask, typename TOutput = TInput >
 class MaskInput
 {
 public:
@@ -39,6 +39,7 @@ public:
 
   MaskInput()
   {
+    m_MaskingValue = NumericTraits< TMask >::ZeroValue();
     InitializeOutsideValue( static_cast<TOutput*>( NULL ) );
   }
   ~MaskInput() {}
@@ -54,7 +55,7 @@ public:
 
   inline TOutput operator()(const TInput & A, const TMask & B) const
   {
-    if ( B != NumericTraits< TMask >::ZeroValue() )
+    if ( B != m_MaskingValue )
       {
       return static_cast< TOutput >( A );
       }
@@ -76,15 +77,26 @@ public:
     return m_OutsideValue;
   }
 
+  /** Method to explicitly set the masking value */
+  void SetMaskingValue(const TMask & maskingValue)
+  {
+    m_MaskingValue = maskingValue;
+  }
+  /** Method to get the masking value */
+  const TMask & GetMaskingValue() const
+  {
+    return m_MaskingValue;
+  }
+
 private:
 
-  template < class TPixelType >
+  template < typename TPixelType >
   void InitializeOutsideValue( TPixelType * )
   {
     this->m_OutsideValue = NumericTraits< TPixelType >::Zero;
   }
 
-  template < class TValueType >
+  template < typename TValueType >
   void InitializeOutsideValue( VariableLengthVector<TValueType> * )
   {
     // set the outside value to be of zero length
@@ -92,11 +104,11 @@ private:
   }
 
   TOutput m_OutsideValue;
+  TMask   m_MaskingValue;
 };
 }
 /** \class MaskImageFilter
  * \brief Mask an image with a mask.
- * image with the mask.
  *
  * This class is templated over the types of the
  * input image type, the mask image type and the type of the output image.
@@ -107,7 +119,7 @@ private:
  * filter will perform the operation
  *
  * \code
- *        if pixel_from_mask_image != 0
+ *        if pixel_from_mask_image != masking_value
  *             pixel_output_image = pixel_input_image
  *        else
  *             pixel_output_image = outside_value
@@ -117,7 +129,7 @@ private:
  *
  * Note that the input and the mask images must be of the same size.
  *
- * \warning Any pixel value other than 0 will not be masked out.
+ * \warning Any pixel value other than masking value (0 by default) will not be masked out.
  *
  * \sa MaskNegatedImageFilter
  * \ingroup IntensityImageFilters
@@ -128,8 +140,8 @@ private:
  * \wikiexample{ImageProcessing/MaskImageFilter,Apply a mask to an image}
  * \endwiki
  */
-template< class TInputImage, class TMaskImage, class TOutputImage = TInputImage >
-class ITK_EXPORT MaskImageFilter:
+template< typename TInputImage, typename TMaskImage, typename TOutputImage = TInputImage >
+class MaskImageFilter:
   public
   BinaryFunctorImageFilter< TInputImage, TMaskImage, TOutputImage,
                             Functor::MaskInput<
@@ -190,6 +202,22 @@ public:
     return this->GetFunctor().GetOutsideValue();
   }
 
+  /** Method to explicitly set the masking value of the mask. Defaults to 0 */
+  void SetMaskingValue(const typename TMaskImage::PixelType & maskingValue)
+  {
+    if ( this->GetMaskingValue() != maskingValue )
+      {
+      this->Modified();
+      this->GetFunctor().SetMaskingValue(maskingValue);
+      }
+  }
+
+  /** Method to get the masking value of the mask. */
+  const typename TMaskImage::PixelType & GetMaskingValue() const
+  {
+    return this->GetFunctor().GetMaskingValue();
+  }
+
   void BeforeThreadedGenerateData()
   {
     typedef typename TOutputImage::PixelType PixelType;
@@ -197,13 +225,13 @@ public:
   }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( MaskEqualityComparableCheck,
                    ( Concept::EqualityComparable< typename TMaskImage::PixelType > ) );
   itkConceptMacro( InputConvertibleToOutputCheck,
                    ( Concept::Convertible< typename TInputImage::PixelType,
                                            typename TOutputImage::PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:
@@ -220,10 +248,10 @@ private:
   MaskImageFilter(const Self &); //purposely not implemented
   void operator=(const Self &);  //purposely not implemented
 
-  template < class TPixelType >
+  template < typename TPixelType >
   void CheckOutsideValue( const TPixelType * ) {}
 
-  template < class TValue >
+  template < typename TValue >
   void CheckOutsideValue( const VariableLengthVector< TValue > * )
   {
     // Check to see if the outside value contains only zeros. If so,

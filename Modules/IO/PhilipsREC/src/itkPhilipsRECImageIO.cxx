@@ -600,9 +600,9 @@ void PhilipsRECImageIO::ReadImageInformation()
     {
     philipsPAR->ReadPAR(HeaderFileName, &par);
     }
-  catch ( itk::ExceptionObject & err )
+  catch ( itk::ExceptionObject & )
     {
-    throw err;
+    throw;
     }
   if ( par.problemreading )
     {
@@ -1065,7 +1065,5 @@ void PhilipsRECImageIO::ReadImageInformation()
                              par.num_label_types);
   EncapsulateMetaData< LabelTypesASLContainerType::Pointer >(thisDic,
                                                              PAR_ASLLabelTypes, labelTypesASLVector);
-
-  return;
 }
 } // end namespace itk

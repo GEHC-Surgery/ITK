@@ -91,7 +91,7 @@ int testMetaObject(int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
-  delete [] name;
+  delete[] name;
 
   int* array = static_cast<int*>(tObj.GetUserField("MyArray"));
 
@@ -100,11 +100,12 @@ int testMetaObject(int argc, char *argv[])
     if(array[i] != i+1)
     {
       std::cout << "MyArray: FAIL" << std::endl;
+      delete[] array;
       return EXIT_FAILURE;
     }
   }
 
-  delete [] array;
+  delete[] array;
 
   float* matrix = static_cast<float*>(tObj.GetUserField("MyMatrix"));
   for(i=0; i<4; i++)
@@ -112,11 +113,12 @@ int testMetaObject(int argc, char *argv[])
     if(matrix[i] != i)
       {
       std::cout << "MyMatrix: FAIL" << std::endl;
+      delete[] matrix;
       return EXIT_FAILURE;
       }
     }
 
-  delete [] matrix;
+  delete[] matrix;
 
   std::cout << "PASSED!" << std::endl;
 
@@ -180,8 +182,8 @@ int testMetaObject(int argc, char *argv[])
     std::cout << "outDataChar = " << static_cast<itk::NumericTraits<char>::PrintType>(outDataChar[0]) << std::endl;
     }
 
-  delete [] inDataChar;
-  delete [] outDataChar;
+  delete[] inDataChar;
+  delete[] outDataChar;
 
   unsigned char* inDataUChar = new unsigned char[1];
   inDataUChar[0]=1;
@@ -196,8 +198,8 @@ int testMetaObject(int argc, char *argv[])
     std::cout << "outDataUChar = " << static_cast<itk::NumericTraits<char>::PrintType>(outDataUChar[0]) << std::endl;
     }
 
-  delete [] inDataUChar;
-  delete [] outDataUChar;
+  delete[] inDataUChar;
+  delete[] outDataUChar;
 
 
   std::cout << "[DONE]" << std::endl;

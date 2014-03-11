@@ -28,8 +28,8 @@ namespace itk
  *  copy of the input SpatialObject
  * \ingroup ITKSpatialObjects
  */
-template< class TInputSpatialObject >
-class ITK_EXPORT SpatialObjectDuplicator:public Object
+template< typename TInputSpatialObject >
+class SpatialObjectDuplicator:public Object
 {
 public:
   /** Standard class typedefs. */
@@ -55,11 +55,11 @@ public:
   typedef SpatialObject< itkGetStaticConstMacro(ObjectDimension) >
   InternalSpatialObjectType;
 
-  /** Set the input SpatialObject. */
+  /** Get/Set the input SpatialObject. */
   itkSetConstObjectMacro(Input, SpatialObjectType);
 
-  /** Get the output SpatialObject. */
-  itkGetObjectMacro(Output, SpatialObjectType);
+  /** Get/Set the output SpatialObject. */
+  itkGetModifiableObjectMacro(Output, SpatialObjectType);
 
   /** Compute of the input SpatialObject. */
   void Update(void);

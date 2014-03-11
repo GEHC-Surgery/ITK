@@ -68,8 +68,8 @@ namespace itk
  * \ingroup GeometricTransform
  * \ingroup ITKImageIntensity
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT VectorExpandImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class VectorExpandImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -117,11 +117,9 @@ public:
   typedef typename InterpolatorType::Pointer                                   InterpolatorPointer;
   typedef VectorLinearInterpolateImageFunction< InputImageType, CoordRepType > DefaultInterpolatorType;
 
-  /** Set the interpolator function. */
+  /** Get/Set the interpolator function. */
   itkSetObjectMacro(Interpolator, InterpolatorType);
-
-  /** Get a pointer to the interpolator function. */
-  itkGetObjectMacro(Interpolator, InterpolatorType);
+  itkGetModifiableObjectMacro(Interpolator, InterpolatorType);
 
   /** Set the expand factors. Values are clamped to
    * a minimum value of 1. Default is 1 for all dimensions. */
@@ -157,12 +155,12 @@ public:
   virtual void GenerateInputRequestedRegion();
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputValueType > ) );
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< OutputValueType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

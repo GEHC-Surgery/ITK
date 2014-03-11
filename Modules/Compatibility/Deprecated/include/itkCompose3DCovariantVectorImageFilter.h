@@ -26,7 +26,7 @@ namespace itk
 {
 namespace Functor
 {
-template< class TInput >
+template< typename TInput >
 class Compose3DCovariantVector
 {
 public:
@@ -78,7 +78,7 @@ template< typename TInputImage,
           typename TOutputImage =
             Image< CovariantVector< typename TInputImage::PixelType, 3 >,
                    TInputImage::ImageDimension > >
-class ITK_EXPORT Compose3DCovariantVectorImageFilter:
+class Compose3DCovariantVectorImageFilter:
   public
   TernaryFunctorImageFilter< TInputImage, TInputImage,
                              TInputImage, TOutputImage,
@@ -106,10 +106,10 @@ public:
                TernaryFunctorImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename TInputImage::PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

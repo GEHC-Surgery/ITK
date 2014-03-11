@@ -31,7 +31,7 @@ namespace itk
 /**
  * Constructor
  */
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::ConstantVelocityFieldTransform() :
   m_ConstantVelocityField( NULL ),
@@ -62,13 +62,13 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
 /**
  * Destructor
  */
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 ConstantVelocityFieldTransform<TScalar, NDimensions>::
 ~ConstantVelocityFieldTransform()
 {
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 void
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::UpdateTransformParameters( const DerivativeType & update, ScalarType factor)
@@ -83,7 +83,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
 /**
  * return an inverse transformation
  */
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 bool
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::GetInverse( Self *inverse ) const
@@ -106,7 +106,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
 }
 
 // Return an inverse of this transform
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 typename ConstantVelocityFieldTransform<TScalar, NDimensions>::InverseTransformBasePointer
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::GetInverseTransform() const
@@ -122,7 +122,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
     }
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 void ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::SetConstantVelocityField( ConstantVelocityFieldType* field )
 {
@@ -146,7 +146,7 @@ void ConstantVelocityFieldTransform<TScalar, NDimensions>
   this->SetFixedParametersFromConstantVelocityField();
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 void
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::SetConstantVelocityFieldInterpolator( ConstantVelocityFieldInterpolatorType* interpolator )
@@ -163,7 +163,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
     }
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 void
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::SetFixedParameters( const ParametersType & fixedParameters )
@@ -214,7 +214,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
   this->SetConstantVelocityField( velocityField );
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 void
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::SetFixedParametersFromConstantVelocityField() const
@@ -257,7 +257,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
     }
 }
 
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 void
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::IntegrateVelocityField()
@@ -265,7 +265,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
   typedef ExponentialDisplacementFieldImageFilter<ConstantVelocityFieldType, ConstantVelocityFieldType>
     ExponentiatorType;
 
-  ConstantVelocityFieldPointer constantVelocityField = this->GetConstantVelocityField();
+  ConstantVelocityFieldPointer constantVelocityField = this->GetModifiableConstantVelocityField();
 
   typename ExponentiatorType::Pointer exponentiator = ExponentiatorType::New();
   exponentiator->SetInput( constantVelocityField );
@@ -323,7 +323,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
     }
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 typename ConstantVelocityFieldTransform<TScalar, NDimensions>::DisplacementFieldType::Pointer
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::CopyDisplacementField( const DisplacementFieldType *toCopy ) const
@@ -345,7 +345,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
   return rval;
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 typename LightObject::Pointer
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::InternalClone() const
@@ -371,7 +371,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
   typename DisplacementFieldType::ConstPointer dispField = nonConstThis->GetDisplacementField();
   typename DisplacementFieldType::Pointer cloneDispField =
     this->CopyDisplacementField(dispField.GetPointer());
-  rval->GetInterpolator()->SetInputImage( cloneDispField );
+  rval->GetModifiableInterpolator()->SetInputImage( cloneDispField );
   rval->SetDisplacementField( cloneDispField );
 
   // now do the inverse -- it actually gets created as a side effect?
@@ -405,7 +405,7 @@ ConstantVelocityFieldTransform<TScalar, NDimensions>
   return loPtr;
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 void
 ConstantVelocityFieldTransform<TScalar, NDimensions>
 ::PrintSelf( std::ostream& os, Indent indent ) const

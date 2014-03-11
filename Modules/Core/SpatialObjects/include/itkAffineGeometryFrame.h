@@ -29,8 +29,8 @@ namespace itk
  * \brief Describes the geometry of a data object
  * \ingroup ITKSpatialObjects
  */
-template< class TScalarType = double, unsigned int NDimensions = 3 >
-class ITK_EXPORT AffineGeometryFrame:public Object
+template< typename TScalar = double, unsigned int NDimensions = 3 >
+class AffineGeometryFrame:public Object
 {
 public:
   typedef AffineGeometryFrame        Self;
@@ -38,10 +38,10 @@ public:
   typedef SmartPointer< Self >       Pointer;
   typedef SmartPointer< const Self > ConstPointer;
 
-  typedef ScalableAffineTransform< TScalarType, NDimensions >     TransformType;
-  typedef BoundingBox< IdentifierType, NDimensions, TScalarType > BoundingBoxType;
-  typedef typename BoundingBoxType::BoundsArrayType               BoundsArrayType;
-  typedef typename BoundingBoxType::Pointer                       BoundingBoxPointer;
+  typedef ScalableAffineTransform< TScalar, NDimensions >     TransformType;
+  typedef BoundingBox< IdentifierType, NDimensions, TScalar > BoundingBoxType;
+  typedef typename BoundingBoxType::BoundsArrayType           BoundsArrayType;
+  typedef typename BoundingBoxType::Pointer                   BoundingBoxPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -50,7 +50,7 @@ public:
   itkTypeMacro(AffineGeometryFrame, Object);
 
   /** Get the bounding box */
-  itkGetConstObjectMacro(BoundingBox, BoundingBoxType);
+  itkGetModifiableObjectMacro(BoundingBox, BoundingBoxType);
 
   const BoundsArrayType GetBounds() const
   {
@@ -64,7 +64,7 @@ public:
   virtual void SetBounds(const BoundsArrayType & bounds);
 
   /** Get the extent of the bounding box */
-  TScalarType GetExtent(unsigned int direction) const
+  TScalar GetExtent(unsigned int direction) const
   {
     itkAssertInDebugAndIgnoreInReleaseMacro(direction < NDimensions);
     itkAssertInDebugAndIgnoreInReleaseMacro( m_BoundingBox.IsNotNull() );
@@ -73,23 +73,20 @@ public:
   }
 
   /** Set/Get the IndexToObjectTransform */
-  itkGetConstObjectMacro(IndexToObjectTransform, TransformType);
-  itkGetObjectMacro(IndexToObjectTransform, TransformType);
   itkSetObjectMacro(IndexToObjectTransform, TransformType);
+  itkGetModifiableObjectMacro(IndexToObjectTransform, TransformType);
 
   /** Set/Get the ObjectToNodeTransform */
-  itkGetConstObjectMacro(ObjectToNodeTransform, TransformType);
-  itkGetObjectMacro(ObjectToNodeTransform, TransformType);
   itkSetObjectMacro(ObjectToNodeTransform, TransformType);
+  itkGetModifiableObjectMacro(ObjectToNodeTransform, TransformType);
 
   /** Set/Get the IndexToWorldTransform */
-  itkGetConstObjectMacro(IndexToWorldTransform, TransformType);
-  itkGetObjectMacro(IndexToWorldTransform, TransformType);
   itkSetObjectMacro(IndexToWorldTransform, TransformType);
+  itkGetModifiableObjectMacro(IndexToWorldTransform, TransformType);
 
   /** Get the IndexToNodeTransform
    *  This Transform cannot be set, and is just computed internally */
-  itkGetConstObjectMacro(IndexToNodeTransform, TransformType);
+  itkGetModifiableObjectMacro(IndexToNodeTransform, TransformType);
 
   /** Initialize the geometry frame */
   virtual void Initialize();

@@ -47,6 +47,8 @@
 
 int testSystemInformation(int, char*[])
 {
+  kwsys_ios::cout << "CTEST_FULL_OUTPUT\n"; // avoid truncation
+
   kwsys::SystemInformation info;
   info.RunCPUCheck();
   info.RunOSCheck();
@@ -66,6 +68,7 @@ int testSystemInformation(int, char*[])
   printMethod(info, GetFamilyID);
   printMethod(info, GetModelID);
   printMethod(info, GetExtendedProcessorName);
+  printMethod(info, GetSteppingCode);
   printMethod(info, GetProcessorSerialNumber);
   printMethod2(info, GetProcessorCacheSize, "KB");
   printMethod(info, GetLogicalProcessorsPerPhysical);
@@ -85,7 +88,31 @@ int testSystemInformation(int, char*[])
   printMethod3(info, GetHostMemoryUsed(), "KiB");
   printMethod3(info, GetProcMemoryUsed(), "KiB");
 
-  //int GetProcessorCacheXSize(long int);
-//  bool DoesCPUSupportFeature(long int);
+  for (long int i = 0; i <= 31; i++)
+    {
+    if (info.DoesCPUSupportFeature(static_cast<long int>(1) << i))
+      {
+      kwsys_ios::cout << "CPU feature " << i << "\n";
+      }
+    }
+
+  /* test stack trace
+  */
+  kwsys_ios::cout
+    << "Program Stack:" << kwsys_ios::endl
+    << kwsys::SystemInformation::GetProgramStack(0,0) << kwsys_ios::endl
+    << kwsys_ios::endl;
+
+  /* test segv handler
+  info.SetStackTraceOnError(1);
+  double *d = (double*)100;
+  *d=0;
+  */
+
+  /* test abort handler
+  info.SetStackTraceOnError(1);
+  abort();
+  */
+
   return 0;
 }

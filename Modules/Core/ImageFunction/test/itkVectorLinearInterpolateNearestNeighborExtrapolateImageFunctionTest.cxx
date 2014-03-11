@@ -46,8 +46,6 @@ bool itkNotUsed( isInside ),
 OutputType trueValue )
 {
 
-  int k;
-
   std::cout << " Point: " << point;
 
   bool bvalue = interp->IsInsideBuffer( point );
@@ -61,6 +59,7 @@ OutputType trueValue )
 
   if( bvalue )
     {
+    int k;
     OutputType value = interp->Evaluate( point );
     std::cout << " Value: ";
     for( k = 0; k < VectorDimension - 1; k++ )
@@ -107,8 +106,6 @@ bool isInside,
 OutputType trueValue )
 {
 
-  int k;
-
   std::cout << " Index: " << index;
 
   bool bvalue = interp->IsInsideBuffer( index );
@@ -122,6 +119,7 @@ OutputType trueValue )
 
   if( isInside )
     {
+    int k;
     OutputType value = interp->EvaluateAtContinuousIndex( index );
     std::cout << " Value: ";
     for( k = 0; k < VectorDimension - 1; k++ )
@@ -224,7 +222,7 @@ int itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunctionTest(int, c
 
   // an integer position inside the image
   {
-  double darray[3] = {10, 20, 40};
+  itk::SpacePrecisionType darray[3] = {10, 20, 40};
   double temp[3] = {70, 140, 210};
   output = OutputType( temp );
   cindex = ContinuousIndexType(darray);
@@ -252,7 +250,7 @@ int itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunctionTest(int, c
 
   // position at the image border
     {
-    double darray[3] = {0, 20, 40};
+    itk::SpacePrecisionType darray[3] = {0, 20, 40};
     double temp[3] = {60, 120, 180};
     output = OutputType( temp );
     cindex = ContinuousIndexType(darray);
@@ -268,9 +266,9 @@ int itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunctionTest(int, c
 
   // position near image border
     {
-    double epsilon = 1.0e-10;
-    double darray[3] = {19 - epsilon, 20, 40};
-    double temp[3] = {79, 158, 237};
+    const itk::SpacePrecisionType epsilon = 1.0e-10;
+    const itk::SpacePrecisionType darray[3] = {19 - epsilon, 20, 40};
+    const double temp[3] = {79, 158, 237};
     output = OutputType( temp );
     cindex = ContinuousIndexType(darray);
     passed = TestContinuousIndex( interp, cindex, true, output );
@@ -285,8 +283,8 @@ int itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunctionTest(int, c
 
   // position outside the image
     {
-    double darray[3] = {20, 20, 40};
-    double temp[3] = {79, 158, 237};
+    const itk::SpacePrecisionType darray[3] = {20, 20, 40};
+    const double temp[3] = {79, 158, 237};
     output = OutputType( temp );
     cindex = ContinuousIndexType(darray);
     passed = TestContinuousIndex( interp, cindex, false, output );
@@ -301,7 +299,7 @@ int itkVectorLinearInterpolateNearestNeighborExtrapolateImageFunctionTest(int, c
 
   // at non-integer position
     {
-    double darray[3] = {5.25, 12.5, 42.0};
+    itk::SpacePrecisionType darray[3] = {5.25, 12.5, 42.0};
     double temp[3] = {59.75, 119.5, 179.25};
     output = OutputType( temp );
     cindex = ContinuousIndexType(darray);

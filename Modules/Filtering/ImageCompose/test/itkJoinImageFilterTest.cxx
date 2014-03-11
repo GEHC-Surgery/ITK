@@ -19,6 +19,7 @@
 #include "itkJoinImageFilter.h"
 #include "itkRGBAPixel.h"
 #include "vnl/vnl_sample.h"
+#include "itkImageRegionIterator.h"
 
 int itkJoinImageFilterTest(int, char* [] )
 {
@@ -26,9 +27,9 @@ int itkJoinImageFilterTest(int, char* [] )
   const unsigned int myDimension = 2;
 
   // Declare the types of the images
-  typedef itk::Image<char, myDimension>  myImageType1;
-  typedef itk::Image<itk::Vector<unsigned short, 2>, myDimension>  myImageType2;
-  typedef itk::Image<itk::RGBAPixel<short>, myDimension>  myImageType3;
+  typedef itk::Image<char, myDimension>                           myImageType1;
+  typedef itk::Image<itk::Vector<unsigned short, 2>, myDimension> myImageType2;
+  typedef itk::Image<itk::RGBAPixel<short>, myDimension>          myImageType3;
 
   // Declare the type of the index to access images
   typedef itk::Index<myDimension>         myIndexType;

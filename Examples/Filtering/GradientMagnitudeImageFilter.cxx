@@ -175,8 +175,8 @@ int main( int argc, char * argv[] )
   //
   //  Software Guide : EndLatex
 
-  typedef unsigned char WritePixelType;
-  typedef itk::Image< WritePixelType, 2 > WriteImageType;
+  typedef unsigned char                          WritePixelType;
+  typedef itk::Image< WritePixelType, 2 >        WriteImageType;
   typedef itk::RescaleIntensityImageFilter<
                OutputImageType, WriteImageType > RescaleFilterType;
 
@@ -200,8 +200,8 @@ int main( int argc, char * argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySlice.eps}
-  // \includegraphics[width=0.44\textwidth]{GradientMagnitudeImageFilterOutput.eps}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySlice}
+  // \includegraphics[width=0.44\textwidth]{GradientMagnitudeImageFilterOutput}
   // \itkcaption[GradientMagnitudeImageFilter output]{Effect of the
   // GradientMagnitudeImageFilter on a slice from a MRI proton density image
   // of the brain.}
@@ -227,4 +227,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

@@ -27,7 +27,7 @@ const unsigned int Dimension = 3;
 
 // This function assumes that the center of mass of both images is the
 // geometrical center.
-template< class TFixedImage, class TMovingImage >
+template< typename TFixedImage, typename TMovingImage >
 bool RunTest(
   itk::SmartPointer< TFixedImage >  fixedImage,
   itk::SmartPointer< TMovingImage > movingImage
@@ -176,13 +176,13 @@ bool RunTest(
   }
 
 
-template< class TImage >
+template< typename TImage >
 void PopulateImage( itk::SmartPointer< TImage > image )
   {
   image->Allocate();
   image->FillBuffer( 0 );
 
-  typedef TImage ImageType;
+  typedef TImage                         ImageType;
   typedef typename ImageType::RegionType RegionType;
   typedef typename ImageType::SizeType   SizeType;
   typedef typename ImageType::IndexType  IndexType;
@@ -352,7 +352,7 @@ int itkCenteredTransformInitializerTest(int , char* [] )
   movingRegion.SetSize( size );
   movingRegion.SetIndex( movingIndex );
 
-  typedef itk::Versor< double > VersorType;
+  typedef itk::Versor< itk::SpacePrecisionType > VersorType;
   VersorType x; x.SetRotationAroundX( 0.5 );
   VersorType y; y.SetRotationAroundY( 1.0 );
   VersorType z; z.SetRotationAroundZ( 1.5 );

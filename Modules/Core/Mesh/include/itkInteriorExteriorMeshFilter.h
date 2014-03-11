@@ -44,8 +44,8 @@ namespace itk
  * \ingroup MeshFilters
  * \ingroup ITKMesh
  */
-template< class TInputMesh, class TOutputMesh, class TSpatialFunction >
-class ITK_EXPORT InteriorExteriorMeshFilter:
+template< typename TInputMesh, typename TOutputMesh, typename TSpatialFunction >
+class InteriorExteriorMeshFilter:
   public MeshToMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
@@ -72,11 +72,9 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(InteriorExteriorMeshFilter, MeshToMeshFilter);
 
-  /** Set the spatial function. */
+  /** Get/Set the spatial function. */
   itkSetObjectMacro(SpatialFunction, SpatialFunctionType);
-
-  /** Get the spatial function. */
-  itkGetObjectMacro(SpatialFunction, SpatialFunctionType);
+  itkGetModifiableObjectMacro(SpatialFunction, SpatialFunctionType);
 
   typedef DataObjectDecorator< SpatialFunctionType >
   SpatialFunctionDataObjectType;

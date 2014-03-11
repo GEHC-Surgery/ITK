@@ -26,7 +26,7 @@ namespace itk
 /**
  * Default Constructor
  */
-template< class T >
+template< typename T >
 DiffusionTensor3D< T >
 ::DiffusionTensor3D()
 {}
@@ -34,7 +34,7 @@ DiffusionTensor3D< T >
 /**
  * Constructor with initialization
  */
-template< class T >
+template< typename T >
 DiffusionTensor3D< T >
 ::DiffusionTensor3D(const Superclass & r):SymmetricSecondRankTensor< T, 3 >(r)
 {}
@@ -42,7 +42,7 @@ DiffusionTensor3D< T >
 /**
  * Constructor with initialization
  */
-template< class T >
+template< typename T >
 DiffusionTensor3D< T >
 ::DiffusionTensor3D(const ComponentType & r):SymmetricSecondRankTensor< T, 3 >(r)
 {}
@@ -50,7 +50,7 @@ DiffusionTensor3D< T >
 /**
  * Constructor with initialization
  */
-template< class T >
+template< typename T >
 DiffusionTensor3D< T >
 ::DiffusionTensor3D(const ComponentArrayType r):SymmetricSecondRankTensor< T, 3 >(r)
 {}
@@ -58,7 +58,7 @@ DiffusionTensor3D< T >
 /**
  * Assignment Operator
  */
-template< class T >
+template< typename T >
 DiffusionTensor3D< T > &
 DiffusionTensor3D< T >
 ::operator=(const ComponentType & r)
@@ -70,7 +70,7 @@ DiffusionTensor3D< T >
 /**
  * Assignment Operator
  */
-template< class T >
+template< typename T >
 DiffusionTensor3D< T > &
 DiffusionTensor3D< T >
 ::operator=(const ComponentArrayType r)
@@ -82,7 +82,7 @@ DiffusionTensor3D< T >
 /**
  * Assignment Operator
  */
-template< class T >
+template< typename T >
 DiffusionTensor3D< T > &
 DiffusionTensor3D< T >
 ::operator=(const Superclass & r)
@@ -106,7 +106,7 @@ DiffusionTensor3D< T >
  * M[0], M[3] and M[5].
  *
  */
-template< class T >
+template< typename T >
 typename DiffusionTensor3D< T >::AccumulateValueType
 DiffusionTensor3D< T >
 ::GetTrace() const
@@ -121,7 +121,7 @@ DiffusionTensor3D< T >
 /**
  *  Compute the value of fractional anisotropy
  */
-template< class T >
+template< typename T >
 typename DiffusionTensor3D< T >::RealValueType
 DiffusionTensor3D< T >
 ::GetFractionalAnisotropy() const
@@ -137,9 +137,18 @@ DiffusionTensor3D< T >
     {
     const RealValueType trace = this->GetTrace();
     const RealValueType anisotropy = 3.0 * isp - trace * trace;
-    const RealValueType fractionalAnisotropy =
-      static_cast< RealValueType >( vcl_sqrt( anisotropy / ( 2.0 * isp ) ) );
-    return fractionalAnisotropy;
+    // sometimes anisotropy has been reported to be a small negative
+    // number, and then vcl_sqrt returns NaN.  If it is a small
+    // negative number, the obvious thing is to round to zero. If
+    // it is a larger negative number, I'm not sure what the proper
+    // result would be.  In either case, returning zero makes as much
+    // sense in those cases as any other number.
+    if(anisotropy > 0.0)
+      {
+      const RealValueType fractionalAnisotropy =
+        static_cast< RealValueType >( vcl_sqrt( anisotropy / ( 2.0 * isp ) ) );
+      return fractionalAnisotropy;
+      }
     }
 
   return 0.0;
@@ -148,7 +157,7 @@ DiffusionTensor3D< T >
 /**
  *  Compute the value of relative anisotropy
  */
-template< class T >
+template< typename T >
 typename DiffusionTensor3D< T >::RealValueType
 DiffusionTensor3D< T >
 ::GetRelativeAnisotropy() const
@@ -182,7 +191,7 @@ DiffusionTensor3D< T >
 /**
  *  Compute the inner scalar product
  */
-template< class T >
+template< typename T >
 typename DiffusionTensor3D< T >::RealValueType
 DiffusionTensor3D< T >
 ::GetInnerScalarProduct() const

@@ -32,10 +32,10 @@ namespace itk
  * \deprecated
  * \ingroup ITKDeprecated
  * \ingroup IntensityImageFilters
- * \ingroup SingelThreaded
+ * \ingroup SingleThreaded
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT ReflectImageFilter:public ImageToImageFilter< TInputImage, TOutputImage >
+template< typename TInputImage, typename TOutputImage >
+class ReflectImageFilter:public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Standard class typedefs. */
@@ -72,12 +72,12 @@ public:
                       TOutputImage::ImageDimension);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( SameDimensionCheck,
                    ( Concept::SameDimension< InputImageDimension, OutputImageDimension > ) );
   itkConceptMacro( InputConvertibleToOutputCheck,
                    ( Concept::Convertible< InputImagePixelType, OutputImagePixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

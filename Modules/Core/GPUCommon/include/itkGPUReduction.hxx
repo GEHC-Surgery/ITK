@@ -28,7 +28,7 @@ namespace itk
 /**
  * Default constructor
  */
-template< class TElement >
+template< typename TElement >
 GPUReduction< TElement >
 ::GPUReduction()
 {
@@ -36,8 +36,14 @@ GPUReduction< TElement >
   m_GPUKernelManager = GPUKernelManager::New();
   m_GPUDataManager = NULL;
 
+  m_ReduceGPUKernelHandle = 0;
+  m_TestGPUKernelHandle = 0;
+
+  m_Size = 0;
+  m_SmallBlock = false;
+
 }
-template< class TElement >
+template< typename TElement >
 GPUReduction< TElement >
 ::~GPUReduction()
 {
@@ -47,7 +53,7 @@ GPUReduction< TElement >
 /**
  * Standard "PrintSelf" method.
  */
-template< class TElement >
+template< typename TElement >
 void
 GPUReduction< TElement >
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -57,7 +63,7 @@ GPUReduction< TElement >
   //GetTypenameInString( typeid(TElement), os);
 }
 
-template< class TElement >
+template< typename TElement >
 unsigned int
 GPUReduction< TElement >
 ::NextPow2( unsigned int x ) {
@@ -70,7 +76,7 @@ GPUReduction< TElement >
     return ++x;
 }
 
-template< class TElement >
+template< typename TElement >
 bool
 GPUReduction< TElement >
 ::isPow2(unsigned int x)
@@ -78,7 +84,7 @@ GPUReduction< TElement >
     return ((x&(x-1)) == 0);
 }
 
-template< class TElement >
+template< typename TElement >
 void
 GPUReduction< TElement >
 ::GetNumBlocksAndThreads(int whichKernel, int n, int maxBlocks, int maxThreads, int &blocks, int &threads)
@@ -104,7 +110,7 @@ GPUReduction< TElement >
     }
 }
 
-template< class TElement >
+template< typename TElement >
 unsigned int
 GPUReduction< TElement >
 ::GetReductionKernel(int whichKernel, int blockSize, int isPowOf2)
@@ -146,7 +152,7 @@ GPUReduction< TElement >
   return handle;
 }
 
-template< class TElement >
+template< typename TElement >
 void
 GPUReduction< TElement >
 ::AllocateGPUInputBuffer(TElement *h_idata)
@@ -164,7 +170,7 @@ GPUReduction< TElement >
     }
 }
 
-template< class TElement >
+template< typename TElement >
 void
 GPUReduction< TElement >
 ::ReleaseGPUInputBuffer()
@@ -177,7 +183,7 @@ GPUReduction< TElement >
   m_GPUDataManager->Initialize();
 }
 
-template< class TElement >
+template< typename TElement >
 TElement
 GPUReduction< TElement >
 ::RandomTest()
@@ -210,7 +216,7 @@ GPUReduction< TElement >
   return 0;
 }
 
-template< class TElement >
+template< typename TElement >
 void
 GPUReduction< TElement >
 ::InitializeKernel(unsigned int size)
@@ -236,7 +242,7 @@ GPUReduction< TElement >
 
 }
 
-template< class TElement >
+template< typename TElement >
 TElement
 GPUReduction< TElement >
 ::GPUGenerateData()
@@ -281,7 +287,7 @@ GPUReduction< TElement >
   return m_GPUResult;
 }
 
-template< class TElement >
+template< typename TElement >
 TElement
 GPUReduction< TElement >
 ::GPUReduce(  cl_int  n,
@@ -348,7 +354,7 @@ GPUReduction< TElement >
   return gpu_result;
 }
 
-template< class TElement >
+template< typename TElement >
 TElement
 GPUReduction< TElement >
 ::CPUGenerateData(TElement *data, int size)

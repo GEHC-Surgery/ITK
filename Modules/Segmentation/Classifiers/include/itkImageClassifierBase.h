@@ -66,9 +66,9 @@ namespace itk
  * \ingroup ITKClassifiers
  */
 
-template< class TInputImage,
-          class TClassifiedImage >
-class ITK_EXPORT ImageClassifierBase:
+template< typename TInputImage,
+          typename TClassifiedImage >
+class ImageClassifierBase:
   public ClassifierBase< TInputImage >
 {
 public:
@@ -109,10 +109,8 @@ public:
   /** Type alias for decision rule */
   typedef typename Superclass::DecisionRuleType DecisionRuleType;
 
-  /** Set the input image. */
+  /** Get/Set the input image. */
   itkSetConstObjectMacro(InputImage, InputImageType);
-
-  /** Get the input image. */
   itkGetConstObjectMacro(InputImage, InputImageType);
 
   /** Set the classified image. */

@@ -38,8 +38,8 @@ namespace itk
  * \ingroup MeshFilters
  * \ingroup ITKMesh
  */
-template< class TInputMesh, class TOutputMesh, class TTransform >
-class ITK_EXPORT TransformMeshFilter:
+template< typename TInputMesh, typename TOutputMesh, typename TTransform >
+class TransformMeshFilter:
   public MeshToMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
@@ -66,11 +66,9 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(TransformMeshFilter, MeshToMeshFilter);
 
-  /** Set transform. */
+  /** Get/Set transform. */
   itkSetObjectMacro(Transform, TransformType);
-
-  /** Get transform. */
-  itkGetObjectMacro(Transform, TransformType);
+  itkGetModifiableObjectMacro(Transform, TransformType);
 
 protected:
   TransformMeshFilter();

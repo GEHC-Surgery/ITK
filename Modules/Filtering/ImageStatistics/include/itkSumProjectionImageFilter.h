@@ -30,8 +30,8 @@ namespace itk
  * The original paper can be found at
  *      http://hdl.handle.net/1926/164
  *
- * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction
- * , INRA de Jouy-en-Josas, France.
+ * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
+ * INRA de Jouy-en-Josas, France.
  *
  * \sa ProjectionImageFilter
  * \sa MedianProjectionImageFilter
@@ -46,7 +46,7 @@ namespace itk
 
 namespace Functor
 {
-template< class TInputPixel, class TOuputPixel >
+template< typename TInputPixel, typename TOuputPixel >
 class SumAccumulator
 {
 public:
@@ -72,8 +72,8 @@ public:
 };
 } // end namespace Function
 
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT SumProjectionImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class SumProjectionImageFilter:
   public
   ProjectionImageFilter< TInputImage, TOutputImage,
                          Functor::SumAccumulator<
@@ -102,14 +102,14 @@ public:
   itkNewMacro(Self);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputPixelToOutputPixelTypeGreaterAdditiveOperatorCheck,
                    ( Concept::AdditiveOperators< OutputPixelType,
                                                  InputPixelType,
                                                  OutputPixelType > ) );
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

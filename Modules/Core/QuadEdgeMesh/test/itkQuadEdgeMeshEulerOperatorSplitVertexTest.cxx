@@ -16,8 +16,6 @@
  *
  *=========================================================================*/
 
-
-
 #include "itkQuadEdgeMeshEulerOperatorSplitVertexFunction.h"
 #include "itkQuadEdgeMeshEulerOperatorJoinVertexFunction.h"
 #include "itkQuadEdgeMeshEulerOperatorsTestHelper.h"
@@ -83,7 +81,7 @@ int itkQuadEdgeMeshEulerOperatorSplitVertexTest( int , char * [] )
   if( ! AssertTopologicalInvariants< MeshType >
           ( mesh, 26, 57, 32, 1, 0 ) )
     {
-    std::cout << "FAILED." << std::endl;
+    std::cout << "FAILED, wrong topology" << std::endl;
     return EXIT_FAILURE;
     }
   if ( mesh->GetPoint( splitVertex->GetNewPointID( ) ).GetValence( ) != 4 )

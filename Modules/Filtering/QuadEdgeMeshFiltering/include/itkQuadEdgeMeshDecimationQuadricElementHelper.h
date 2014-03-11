@@ -28,8 +28,8 @@
 namespace itk
 {
 ///TODO explicit specification for VDimension=3!!!
-template< class TPoint >
-class ITK_EXPORT QuadEdgeMeshDecimationQuadricElementHelper
+template< typename TPoint >
+class QuadEdgeMeshDecimationQuadricElementHelper
 {
 public:
 
@@ -201,7 +201,10 @@ public:
   // operators
   Self & operator=(const Self & iRight)
   {
-    this->m_Coefficients = iRight.m_Coefficients;
+    if(this != &iRight)
+      {
+      this->m_Coefficients = iRight.m_Coefficients;
+      }
     return *this;
   }
 

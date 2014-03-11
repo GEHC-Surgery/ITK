@@ -28,8 +28,8 @@
  * Define a mesh type that stores a PixelType of "int".  Use the defaults
  * for the other template parameters.
  */
-typedef itk::Mesh<int>  MeshType;
-typedef MeshType::CellTraits  CellTraits;
+typedef itk::Mesh<int>                        MeshType;
+typedef MeshType::CellTraits                  CellTraits;
 typedef itk::CellInterface< int, CellTraits > CellInterfaceType;
 
 /**
@@ -41,7 +41,7 @@ typedef CellType::CellAutoPointer       CellAutoPointer;
 
 // Test the cell interface
 
-template<class TCell> int TestCellInterface(std::string name, TCell *aCell)
+template<typename TCell> int TestCellInterface(std::string name, TCell *aCell)
 {
   CellAutoPointer cell(aCell,true);
 
@@ -134,7 +134,7 @@ template<class TCell> int TestCellInterface(std::string name, TCell *aCell)
   std::cout << std::endl;
 
 
-  delete []pointIds;
+  delete[] pointIds;
   return EXIT_SUCCESS;
 }
 int itkCellInterfaceTest(int, char* [] )

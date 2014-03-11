@@ -50,8 +50,8 @@ namespace itk
  *  Set/GetTimeStep sets the time step to be used for each iteration (update).
  *  This parameter is described in detail in itkAnisotropicDiffusionFunction.
  *  The time step is constrained at run-time to keep the solution stable.  In
- *  general, the time step should be at or below 1/2^N, where N is the
- *  dimensionality of the image.
+ *  general, the time step should be at or below \f$(PixelSpacing)/2^{N+1}\f$,
+ *  where \f$N\f$ is the dimensionality of the image.
  *
  *  \par
  *  Set/GetConductanceParameter set a common parameter used by subclasses of
@@ -69,8 +69,8 @@ namespace itk
  * \ingroup ImageEnhancement
  * \ingroup ITKAnisotropicSmoothing
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT AnisotropicDiffusionImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class AnisotropicDiffusionImageFilter:
   public DenseFiniteDifferenceImageFilter< TInputImage, TOutputImage >
 {
 public:

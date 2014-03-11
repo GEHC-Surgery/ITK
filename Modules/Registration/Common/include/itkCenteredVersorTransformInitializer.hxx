@@ -22,7 +22,7 @@
 
 namespace itk
 {
-template< class TFixedImage, class TMovingImage >
+template< typename TFixedImage, typename TMovingImage >
 CenteredVersorTransformInitializer< TFixedImage, TMovingImage >
 ::CenteredVersorTransformInitializer()
 {
@@ -33,7 +33,7 @@ CenteredVersorTransformInitializer< TFixedImage, TMovingImage >
   this->m_ComputeRotation = false;
 }
 
-template< class TFixedImage, class TMovingImage >
+template< typename TFixedImage, typename TMovingImage >
 void
 CenteredVersorTransformInitializer< TFixedImage, TMovingImage >
 ::InitializeTransform()
@@ -51,11 +51,11 @@ CenteredVersorTransformInitializer< TFixedImage, TMovingImage >
 
     MovingMatrixType rotationMatrix = movingPrincipalAxis * fixedPrincipalAxis.GetInverse();
 
-    this->GetTransform()->SetMatrix(rotationMatrix);
+    this->GetModifiableTransform()->SetMatrix(rotationMatrix);
     }
 }
 
-template< class TFixedImage, class TMovingImage >
+template< typename TFixedImage, typename TMovingImage >
 void
 CenteredVersorTransformInitializer< TFixedImage, TMovingImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

@@ -181,9 +181,8 @@ int main( int argc, char * argv[] )
   // Software Guide : EndCodeSnippet
 
 
-  typedef  unsigned char  WritePixelType;
-  typedef itk::Image< WritePixelType, 2 >    WriteImageType;
-
+  typedef  unsigned char                             WritePixelType;
+  typedef itk::Image< WritePixelType, 2 >            WriteImageType;
   typedef itk::RescaleIntensityImageFilter<
                    OutputImageType, WriteImageType > RescaleFilterType;
 
@@ -203,8 +202,8 @@ int main( int argc, char * argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.44\textwidth]{SmoothingRecursiveGaussianImageFilterOutput3.eps}
-  // \includegraphics[width=0.44\textwidth]{SmoothingRecursiveGaussianImageFilterOutput5.eps}
+  // \includegraphics[width=0.44\textwidth]{SmoothingRecursiveGaussianImageFilterOutput3}
+  // \includegraphics[width=0.44\textwidth]{SmoothingRecursiveGaussianImageFilterOutput5}
   // \itkcaption[SmoothingRecursiveGaussianImageFilter output]{Effect of the
   // SmoothingRecursiveGaussianImageFilter on a slice from a MRI proton density image of the brain.}
   // \label{fig:SmoothingRecursiveGaussianImageFilterInputOutput}
@@ -222,4 +221,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

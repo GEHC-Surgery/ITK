@@ -24,12 +24,10 @@
 #include "itkAffineTransform.h"
 #include "itkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "itkCorrelationImageToImageMetricv4.h"
-#include "itkGaussianSmoothingOnUpdateDisplacementFieldTransform.h"
-#include "itkGaussianSmoothingOnUpdateDisplacementFieldTransformParametersAdaptor.h"
 #include "itkJointHistogramMutualInformationImageToImageMetricv4.h"
 #include "itkObjectToObjectMultiMetricv4.h"
 
-template<class TFilter>
+template<typename TFilter>
 class CommandIterationUpdate : public itk::Command
 {
 public:
@@ -56,11 +54,11 @@ public:
       { return; }
 
     unsigned int currentLevel = filter->GetCurrentLevel();
-    typename TFilter::ShrinkFactorsArrayType shrinkFactors = filter->GetShrinkFactorsPerLevel();
+    typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
     typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
     typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
 
-    typename itk::ObjectToObjectOptimizerBase::Pointer optimizerBase = (const_cast<TFilter*>(filter))->GetOptimizer();
+    typename itk::ObjectToObjectOptimizerBase::Pointer optimizerBase = (const_cast<TFilter*>(filter))->GetModifiableOptimizer();
     typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
     typename GradientDescentOptimizerv4Type::Pointer optimizer = dynamic_cast<GradientDescentOptimizerv4Type *>(optimizerBase.GetPointer());
     if( !optimizer )
@@ -78,7 +76,7 @@ public:
 
     //debug:
     std::cout << "  CL Current level:           " << currentLevel << std::endl;
-    std::cout << "   SF Shrink factor:          " << shrinkFactors[currentLevel] << std::endl;
+    std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;
     std::cout << "   SS Smoothing sigma:        " << smoothingSigmas[currentLevel] << std::endl;
     std::cout << "   RFP Required fixed params: " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
     std::cout << "   LR Final learning rate:    " << optimizer->GetLearningRate() << std::endl;
@@ -192,13 +190,17 @@ int PerformSimpleImageRegistration2( int argc, char *argv[] )
 
   typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
   typename GradientDescentOptimizerv4Type::Pointer affineOptimizer =
-    dynamic_cast<GradientDescentOptimizerv4Type * >( affineSimple->GetOptimizer() );
+    dynamic_cast<GradientDescentOptimizerv4Type * >( affineSimple->GetModifiableOptimizer() );
   if( !affineOptimizer )
     {
     itkGenericExceptionMacro( "Error dynamic_cast failed" );
     }
 
+#ifdef NDEBUG
   affineOptimizer->SetNumberOfIterations( atoi( argv[5] ) );
+#else
+  affineOptimizer->SetNumberOfIterations( 1 );
+#endif
   affineOptimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   affineOptimizer->SetDoEstimateLearningRateAtEachIteration( true );
   affineOptimizer->SetScalesEstimator( scalesEstimator1 );

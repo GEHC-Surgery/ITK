@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkImageIOBase_h
 #define __itkImageIOBase_h
+#include "ITKIOImageBaseExport.h"
 
 #include "itkIOConfigure.h"
 
@@ -29,6 +30,7 @@
 #include "itkCovariantVector.h"
 #include "itkSymmetricSecondRankTensor.h"
 #include "itkDiffusionTensor3D.h"
+#include "itkImageRegionSplitterBase.h"
 
 #include "vnl/vnl_vector.h"
 
@@ -64,7 +66,7 @@ namespace itk
  *
  * \ingroup ITKIOImageBase
  */
-class ITK_EXPORT ImageIOBase:public LightProcessObject
+class ITKIOImageBase_EXPORT ImageIOBase:public LightProcessObject
 {
 public:
   /** Standard class typedefs. */
@@ -116,7 +118,7 @@ public:
    * SetDimensions() is used prior to writing the data. */
   virtual void SetDimensions(unsigned int i, unsigned int dim);
 
-  virtual unsigned int GetDimensions(unsigned int i) const
+  virtual itk::SizeValueType GetDimensions(unsigned int i) const
   { return m_Dimensions[i]; }
 
   /** Set/Get the image origin on a axis-by-axis basis. The SetOrigin() method
@@ -139,9 +141,9 @@ public:
 
   /** Set/Get the image direction on an axis-by-axis basis. The
    * SetDirection() method is required when writing the image. */
-  virtual void SetDirection(unsigned int i, std::vector< double > & direction);
+  virtual void SetDirection(unsigned int i, const std::vector< double > & direction);
 
-  virtual void SetDirection(unsigned int i, vnl_vector< double > & direction);
+  virtual void SetDirection(unsigned int i, const vnl_vector< double > & direction);
 
   virtual std::vector< double > GetDirection(unsigned int i) const
   {
@@ -478,7 +480,7 @@ public:
     this->SetComponentType(MapPixelType<TPixel>::CType);
   }
 
-  template <class TPixel, unsigned VLength>
+  template <typename TPixel, unsigned VLength>
     void SetPixelTypeInfo(const SymmetricSecondRankTensor<TPixel,VLength> *)
   {
     this->SetNumberOfComponents(VLength * (VLength + 1) / 2 );
@@ -522,6 +524,8 @@ protected:
   ImageIOBase();
   ~ImageIOBase();
   void PrintSelf(std::ostream & os, Indent indent) const;
+
+  virtual const ImageRegionSplitterBase* GetImageRegionSplitter(void) const;
 
   /** Used internally to keep track of the type of the pixel. */
   IOPixelType m_PixelType;

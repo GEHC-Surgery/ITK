@@ -19,15 +19,15 @@
 #define __itkStreamingImageFilter_hxx
 #include "itkStreamingImageFilter.h"
 #include "itkCommand.h"
-#include "itkImageRegionIterator.h"
 #include "itkImageAlgorithm.h"
+#include "itkImageRegionSplitterSlowDimension.h"
 
 namespace itk
 {
 /**
  *
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 StreamingImageFilter< TInputImage, TOutputImage >
 ::StreamingImageFilter()
 {
@@ -35,13 +35,13 @@ StreamingImageFilter< TInputImage, TOutputImage >
   m_NumberOfStreamDivisions = 10;
 
   // create default region splitter
-  m_RegionSplitter = ImageRegionSplitter< InputImageDimension >::New();
+  m_RegionSplitter = ImageRegionSplitterSlowDimension::New();
 }
 
 /**
  *
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 StreamingImageFilter< TInputImage, TOutputImage >
 ::~StreamingImageFilter()
 {}
@@ -49,7 +49,7 @@ StreamingImageFilter< TInputImage, TOutputImage >
 /**
  *
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 StreamingImageFilter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -71,7 +71,7 @@ StreamingImageFilter< TInputImage, TOutputImage >
 /**
  *
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 StreamingImageFilter< TInputImage, TOutputImage >
 ::PropagateRequestedRegion(DataObject *output)
@@ -112,7 +112,7 @@ StreamingImageFilter< TInputImage, TOutputImage >
 /**
  *
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 StreamingImageFilter< TInputImage, TOutputImage >
 ::UpdateOutputData( DataObject *itkNotUsed(output) )
@@ -135,7 +135,7 @@ StreamingImageFilter< TInputImage, TOutputImage >
   /**
    * Make sure we have the necessary inputs
    */
-  unsigned int ninputs = this->GetNumberOfValidRequiredInputs();
+  const itk::ProcessObject::DataObjectPointerArraySizeType &ninputs = this->GetNumberOfValidRequiredInputs();
   if ( ninputs < this->GetNumberOfRequiredInputs() )
     {
     itkExceptionMacro(
@@ -144,7 +144,7 @@ StreamingImageFilter< TInputImage, TOutputImage >
     return;
     }
   this->SetAbortGenerateData(0);
-  this->SetProgress(0.0);
+  this->UpdateProgress(0.0);
   this->m_Updating = true;
 
   /**
@@ -156,7 +156,7 @@ StreamingImageFilter< TInputImage, TOutputImage >
    * Allocate the output buffer.
    */
   OutputImageType      *outputPtr = this->GetOutput(0);
-  OutputImageRegionType outputRegion = outputPtr->GetRequestedRegion();
+  const OutputImageRegionType outputRegion = outputPtr->GetRequestedRegion();
   outputPtr->SetBufferedRegion(outputRegion);
   outputPtr->Allocate();
 
@@ -186,14 +186,13 @@ StreamingImageFilter< TInputImage, TOutputImage >
    * Loop over the number of pieces, execute the upstream pipeline on each
    * piece, and copy the results into the output image.
    */
-  unsigned int         piece;
-  InputImageRegionType streamRegion;
-  for ( piece = 0;
-        piece < numDivisions && !this->GetAbortGenerateData();
-        piece++ )
+  unsigned int         piece=0;
+  for (;
+       piece < numDivisions && !this->GetAbortGenerateData();
+       piece++ )
     {
-    streamRegion = m_RegionSplitter->GetSplit(piece, numDivisions,
-                                              outputRegion);
+    InputImageRegionType streamRegion = outputRegion;
+    m_RegionSplitter->GetSplit(piece, numDivisions, streamRegion);
 
     inputPtr->SetRequestedRegion(streamRegion);
     inputPtr->PropagateRequestedRegion();
@@ -206,7 +205,7 @@ StreamingImageFilter< TInputImage, TOutputImage >
     ImageAlgorithm::Copy( inputPtr, outputPtr, streamRegion, streamRegion );
 
 
-    this->UpdateProgress( (float)piece / numDivisions );
+    this->UpdateProgress( static_cast<float>(piece) / static_cast<float>(numDivisions) );
     }
 
   /**

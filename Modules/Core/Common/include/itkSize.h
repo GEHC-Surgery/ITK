@@ -20,7 +20,6 @@
 
 #include "itkMacro.h"
 #include "itkIntTypes.h"
-#include <cstring>
 
 namespace itk
 {
@@ -167,7 +166,11 @@ public:
    * Try to prototype this function so that val has to point to a block of
    * memory that is the appropriate size. \sa GetSize */
   void SetSize(const SizeValueType val[VDimension])
-  { memcpy(m_Size, val, sizeof( SizeValueType ) * VDimension); }
+  {
+    std::copy(val,
+              val+VDimension,
+              m_Size);
+  }
 
   /** Set an element of the Size.
    * sets the value of one of the elements in the Size

@@ -48,16 +48,11 @@ int itkImageAdaptorPipeLineTest(int, char* [] )
 
 
   // RGBPixel Image typedefs
-  typedef   itk::RGBPixel<myFloatPixelType>               myRGBPixelPixelType;
-  typedef   itk::Image<myRGBPixelPixelType, 3>            myRGBPixelImageType;
-
-
-
-  typedef   itk::RedPixelAccessor<myFloatPixelType> myAccessorType;
-
+  typedef   itk::RGBPixel<myFloatPixelType>           myRGBPixelPixelType;
+  typedef   itk::Image<myRGBPixelPixelType, 3>        myRGBPixelImageType;
+  typedef   itk::RedPixelAccessor<myFloatPixelType>   myAccessorType;
   typedef   itk::ImageAdaptor<myRGBPixelImageType,
-                              myAccessorType>        myAdaptorType;
-
+                              myAccessorType>         myAdaptorType;
   typedef itk::ImageRegionIteratorWithIndex<
                                    myFloatImageType > myFloatIteratorType;
 
@@ -90,10 +85,7 @@ int itkImageAdaptorPipeLineTest(int, char* [] )
   region.SetIndex( start );
   region.SetSize( size );
 
-  float spacing[3];
-  spacing[0] = 1.0;
-  spacing[1] = 1.0;
-  spacing[2] = 1.0;
+  const float spacing[3] = { 1.0, 1.0, 1.0 };
 
   //-------------------------------------------------------------
   //                 Create and Initialize the RGBPixel image
@@ -194,9 +186,6 @@ int itkImageAdaptorPipeLineTest(int, char* [] )
 
   myAdaptor->SetImage( myRGBPixelImage );
 
-
-
-
   //-------------------------------------------------------------
   //         Create the filter and connect the inputs
   //-------------------------------------------------------------
@@ -215,8 +204,6 @@ int itkImageAdaptorPipeLineTest(int, char* [] )
   myFloatOutputImage->SetSpacing( spacing );
 
   std::cout << "Float Output Image Initializaed" << std::endl;
-
-
 
   //-------------------------------------------------------------
   //         Force the execution of the filter

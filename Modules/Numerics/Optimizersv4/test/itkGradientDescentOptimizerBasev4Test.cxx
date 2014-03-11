@@ -20,8 +20,8 @@
 #include "itkTestingMacros.h"
 
 /* Create a simple metric to use for testing here. */
-template< class TFixedObject,  class TMovingObject >
-class ITK_EXPORT GradientDescentOptimizerBasev4TestMetric:
+template< typename TFixedObject,  typename TMovingObject >
+class GradientDescentOptimizerBasev4TestMetric:
   public itk::ObjectToObjectMetricBase
 {
 public:
@@ -98,7 +98,7 @@ class GradientDescentOptimizerBasev4TestOptimizer
 public:
   /** Standard "Self" typedef. */
   typedef GradientDescentOptimizerBasev4TestOptimizer     Self;
-  typedef GradientDescentOptimizerBasev4                  Superclass;
+  typedef itk::GradientDescentOptimizerBasev4             Superclass;
   typedef itk::SmartPointer< Self >                       Pointer;
   typedef itk::SmartPointer< const Self >                 ConstPointer;
 

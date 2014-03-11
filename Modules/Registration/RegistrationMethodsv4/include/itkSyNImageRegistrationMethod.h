@@ -27,9 +27,9 @@ namespace itk
 //Forward-declare these because of module dependency conflict.
 //They will soon be moved to a different module, at which
 // time this can be removed.
-template <unsigned int VDimension, class TDataHolder>
+template <unsigned int VDimension, typename TDataHolder>
 class ImageToData;
-template <class TDataHolder>
+template <typename TDataHolder>
 class Array1DToData;
 
 /** \class SyNImageRegistrationMethod
@@ -71,7 +71,7 @@ class Array1DToData;
  */
 template<typename TFixedImage, typename TMovingImage, typename TOutputTransform =
   DisplacementFieldTransform<double, TFixedImage::ImageDimension> >
-class ITK_EXPORT SyNImageRegistrationMethod
+class SyNImageRegistrationMethod
 : public ImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
 {
 public:
@@ -104,6 +104,8 @@ public:
   typedef typename ImageMetricType::VirtualImageType                  VirtualImageType;
   typedef typename ImageMetricType::MeasureType                       MeasureType;
   typedef typename Superclass::MultiMetricType                        MultiMetricType;
+  typedef typename ImageMetricType::FixedImageMaskType                FixedImageMaskType;
+  typedef typename ImageMetricType::MovingImageMaskType               MovingImageMaskType;
 
   typedef TOutputTransform                                            OutputTransformType;
   typedef typename OutputTransformType::Pointer                       OutputTransformPointer;
@@ -165,6 +167,10 @@ public:
   itkSetMacro( GaussianSmoothingVarianceForTheTotalField, RealType );
   itkGetConstReferenceMacro( GaussianSmoothingVarianceForTheTotalField, RealType );
 
+  /** Get the FixedToMiddle and MovingToMidle transform to track the registration procedure at each iteration. */
+  itkGetConstObjectMacro( FixedToMiddleTransform, OutputTransformType);
+  itkGetConstObjectMacro( MovingToMiddleTransform, OutputTransformType);
+
 protected:
   SyNImageRegistrationMethod();
   virtual ~SyNImageRegistrationMethod();
@@ -182,7 +188,8 @@ protected:
    */
   virtual void InitializeRegistrationAtEachLevel( const SizeValueType );
 
-  virtual DisplacementFieldPointer ComputeUpdateField( const FixedImagesContainerType, const TransformBaseType *, const MovingImagesContainerType, const TransformBaseType *, MeasureType & );
+  virtual DisplacementFieldPointer ComputeUpdateField( const FixedImagesContainerType, const TransformBaseType *,
+    const MovingImagesContainerType, const TransformBaseType *, const FixedImageMaskType *, MeasureType & );
   virtual DisplacementFieldPointer GaussianSmoothDisplacementField( const DisplacementFieldType *, const RealType );
   virtual DisplacementFieldPointer InvertDisplacementField( const DisplacementFieldType *, const DisplacementFieldType * = NULL );
 

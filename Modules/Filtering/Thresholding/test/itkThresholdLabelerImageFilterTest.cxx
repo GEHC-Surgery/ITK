@@ -19,6 +19,7 @@
 //
 
 #include "itkThresholdLabelerImageFilter.h"
+#include "itkImageRegionIterator.h"
 
 int itkThresholdLabelerImageFilterTest( int, char *[] )
 {
@@ -28,10 +29,10 @@ int itkThresholdLabelerImageFilterTest( int, char *[] )
   //
   const unsigned int Dimension = 2;
 
-  typedef float InputPixelType;
+  typedef float         InputPixelType;
   typedef unsigned long LabeledPixelType;
 
-  typedef itk::Image<InputPixelType,Dimension> InputImageType;
+  typedef itk::Image<InputPixelType,Dimension>   InputImageType;
   typedef itk::Image<LabeledPixelType,Dimension> LabeledImageType;
 
   // create an image with stripes to label

@@ -72,8 +72,8 @@ namespace itk
  * \ingroup ClassificationFilters
  * \ingroup ITKClassifiers
  */
-template< class TInputImage, class TProbabilityPrecisionType = float >
-class ITK_EXPORT BayesianClassifierInitializationImageFilter:
+template< typename TInputImage, typename TProbabilityPrecisionType = float >
+class BayesianClassifierInitializationImageFilter:
   public
   ImageToImageFilter< TInputImage, VectorImage< TProbabilityPrecisionType,
                                                 TInputImage::ImageDimension > >
@@ -136,8 +136,7 @@ public:
    * input image.  */
   virtual void SetMembershipFunctions(MembershipFunctionContainerType
                                       *densityFunctionContainer);
-
-  itkGetObjectMacro(MembershipFunctionContainer, MembershipFunctionContainerType);
+  itkGetModifiableObjectMacro(MembershipFunctionContainer, MembershipFunctionContainerType);
 
   /** Set/Get methods for the number of classes. The user must supply this. */
   itkSetMacro(NumberOfClasses, unsigned int);
@@ -146,7 +145,7 @@ public:
   virtual void GenerateOutputInformation();
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputMultiplyOperatorCheck,
                    ( Concept::MultiplyOperator< InputPixelType > ) );
   itkConceptMacro( DoubleConvertibleToProbabilityCheck,
@@ -157,7 +156,7 @@ public:
                    ( Concept::HasNumericTraits< TProbabilityPrecisionType > ) );
   itkConceptMacro( DoublePlusInputCheck,
                    ( Concept::AdditiveOperators< double, InputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

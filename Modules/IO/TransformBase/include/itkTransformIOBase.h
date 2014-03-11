@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkTransformIOBase_h
 #define __itkTransformIOBase_h
+
 #include "itkLightProcessObject.h"
 #include "itkTransformBase.h"
 #include <list>
@@ -26,36 +27,43 @@
 
 namespace itk
 {
-/** \class TransformIOBase
+
+/** \class TransformIOBaseTemplate
+ *
  * \brief Abstract superclass defining the Transform IO interface.
  *
- * TransformIOBase is a pure virtual base class for dervied classes that
- * read/write transform data. It's used by the TransformFileReader and
- * TransformFileWriter classes.  End users don't directly manipulate classes
- * derived from TransformIOBase; the TransformIOFactory is used by
- * the Reader/Writer to pick a concrete derived class to do the actual
- * reading/writing of transforms.
+ * TransformIOBaseTemplate is a pure virtual base class for derived classes that
+ * read/write transform data considering the type of input transform.
+ * First, TransformIOBase is derived from this class for legacy read/write transform.
+ * This class also is used by the TransformFileReader and TransformFileWriter
+ * classes. End users don't directly manipulate classes derived from TransformIOBaseTemplate;
+ * the TransformIOFactory is used by the Reader/Writer to pick a concrete derived class to do
+ * the actual reading/writing of transforms.
+ *
  * \ingroup ITKIOTransformBase
  */
-class ITK_EXPORT TransformIOBase:public LightProcessObject
+template<typename TScalar>
+class TransformIOBaseTemplate:public LightProcessObject
 {
 public:
   /** Standard class typedefs */
-  typedef TransformIOBase      Self;
-  typedef LightProcessObject   Superclass;
-  typedef SmartPointer< Self > Pointer;
+  typedef TransformIOBaseTemplate   Self;
+  typedef LightProcessObject        Superclass;
+  typedef SmartPointer< Self >      Pointer;
+
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformIOBase, Superclass);
+  itkTypeMacro(TransformIOBaseTemplate, Superclass);
 
   /** Transform types */
-  typedef TransformBase TransformType;
+  typedef TScalar                           ScalarType;
+  typedef TransformBaseTemplate<ScalarType> TransformType;
   /** For writing, a const transform list gets passed in, for
    * reading, a non-const transform list is created from the file.
    */
-  typedef TransformType::Pointer             TransformPointer;
-  typedef std::list< TransformPointer >      TransformListType;
-  typedef TransformType::ConstPointer        ConstTransformPointer;
-  typedef std::list< ConstTransformPointer > ConstTransformListType;
+  typedef typename TransformType::Pointer             TransformPointer;
+  typedef std::list< TransformPointer >               TransformListType;
+  typedef typename TransformType::ConstPointer        ConstTransformPointer;
+  typedef std::list< ConstTransformPointer >          ConstTransformListType;
 
   /** Set/Get the name of the file to be read. */
   itkSetStringMacro(FileName);
@@ -88,20 +96,91 @@ public:
   itkGetConstMacro(AppendMode, bool);
   itkBooleanMacro(AppendMode);
 
+  /** The transform type has a string representation used when reading
+   * and writing transform files.  In the case where a double-precision
+   * transform is to be written as float, or vice versa, the transform
+   * type name used to write the file needs to patched in order for the
+   * transform I/O hierachy to work correctly. These template functions
+   * will be chosen at compile time within template classes in order to
+   * patch up the type name.
+   *  */
+  static inline void CorrectTransformPrecisionType( std::string & itkNotUsed(inputTransformName) )
+    {
+    itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(ScalarType).name());
+    }
+
 protected:
-  TransformIOBase();
-  virtual ~TransformIOBase();
+  TransformIOBaseTemplate();
+  virtual ~TransformIOBaseTemplate();
   void PrintSelf(std::ostream & os, Indent indent) const;
 
-  void OpenStream(std::ofstream & out, bool binary);
+  void OpenStream(std::ofstream & outputStream, bool binary);
 
   void CreateTransform(TransformPointer & ptr, const std::string & ClassName);
 
-private:
   std::string            m_FileName;
   TransformListType      m_ReadTransformList;
   ConstTransformListType m_WriteTransformList;
   bool                   m_AppendMode;
+
+  /* The following struct returns the string name of computation type */
+  /* default implementation */
+  static inline const std::string GetTypeNameString()
+    {
+    itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(ScalarType).name());
+    }
 };
+
+
+template <>
+inline void
+TransformIOBaseTemplate<float>
+::CorrectTransformPrecisionType( std::string & inputTransformName )
+{
+  // output precision type is not found in input transform.
+ if(inputTransformName.find("float") == std::string::npos)
+   {
+   const std::string::size_type begin = inputTransformName.find("double");
+   inputTransformName.replace(begin, 6, "float");
+   }
+}
+
+template <>
+inline void
+TransformIOBaseTemplate<double>
+::CorrectTransformPrecisionType( std::string & inputTransformName )
+{
+  // output precision type is not found in input transform.
+ if(inputTransformName.find("double") == std::string::npos)
+   {
+   const std::string::size_type begin = inputTransformName.find("float");
+   inputTransformName.replace(begin, 5, "double");
+   }
+}
+
+template <>
+inline const std::string
+TransformIOBaseTemplate<float>
+::GetTypeNameString()
+{
+  return std::string("float");
+}
+
+template <>
+inline const std::string
+TransformIOBaseTemplate<double>
+::GetTypeNameString()
+{
+  return std::string("double");
+}
+
+/** This helps to meet backward compatibility */
+typedef itk::TransformIOBaseTemplate<double> TransformIOBase;
+
 } // end namespace itk
-#endif // __itaTransformIOBase
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "itkTransformIOBase.hxx"
+#endif
+
+#endif // __itkTransformIOBase.h

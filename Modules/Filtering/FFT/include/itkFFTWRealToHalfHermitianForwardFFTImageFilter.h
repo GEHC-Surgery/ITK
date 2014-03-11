@@ -33,8 +33,8 @@ namespace itk
  *
  * This filter is multithreaded and supports input images of any size.
  *
- * In order to use this class, USE_FFTWF must be set to ON in the CMake
- * configuration to support float images, and USE_FFTWD must set to ON to
+ * In order to use this class, ITK_USE_FFTWF must be set to ON in the CMake
+ * configuration to support float images, and ITK_USE_FFTWD must set to ON to
  * support double images.
  *
  * This implementation was taken from the Insight Journal paper:
@@ -50,8 +50,8 @@ namespace itk
  * \sa FFTWGlobalConfiguration
  * \sa RealToHalfHermitianForwardFFTImageFilter
  */
-template< class TInputImage, class TOutputImage=Image< std::complex<typename TInputImage::PixelType>, TInputImage::ImageDimension> >
-class ITK_EXPORT FFTWRealToHalfHermitianForwardFFTImageFilter:
+template< typename TInputImage, typename TOutputImage=Image< std::complex<typename TInputImage::PixelType>, TInputImage::ImageDimension> >
+class FFTWRealToHalfHermitianForwardFFTImageFilter:
   public RealToHalfHermitianForwardFFTImageFilter< TInputImage, TOutputImage >
 {
 public:

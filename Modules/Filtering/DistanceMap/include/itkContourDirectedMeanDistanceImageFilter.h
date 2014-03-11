@@ -38,12 +38,10 @@ namespace itk
  * to the nearest neighbor in \f$B\f$. Note that this function is not
  * is not symmetric and hence is not a true distance.
  *
- * In particular, this filter uses the SignedDanielssonDistanceMapImageFilter
+ * In particular, this filter uses the SignedMaurerDistanceMapImageFilter
  * inside to compute distance map from all non-zero pixels in the second image.
  * It then computes the mean distance (in pixels) within the boundary pixels
  *  of non-zero regions in the first image.
- *
- * Use MeanDistanceImageFilter to compute the full Mean distance.
  *
  * This filter requires the largest possible region of the first image and the
  * same corresponding region in the second image. It behaves as filter with
@@ -53,8 +51,7 @@ namespace itk
  * This filter is templated over the two input image type. It assume
  * both image have the same number of dimensions.
  *
- * \sa SignedDanielssonDistanceMapImageFilter
- * \sa MeanDistanceImageFilter
+ * \sa SignedMaurerDistanceMapImageFilter
  *
  * \ingroup MultiThreaded
  *
@@ -62,8 +59,8 @@ namespace itk
  *
  * \ingroup ITKDistanceMap
  */
-template< class TInputImage1, class TInputImage2 >
-class ITK_EXPORT ContourDirectedMeanDistanceImageFilter:
+template< typename TInputImage1, typename TInputImage2 >
+class ContourDirectedMeanDistanceImageFilter:
   public ImageToImageFilter< TInputImage1, TInputImage1 >
 {
 public:
@@ -121,10 +118,10 @@ public:
   itkGetConstMacro( UseImageSpacing, bool );
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputImage1PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

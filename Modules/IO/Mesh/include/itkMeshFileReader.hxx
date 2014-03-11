@@ -32,7 +32,7 @@
 
 namespace itk
 {
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::MeshFileReader()
 {
@@ -41,7 +41,7 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
   m_UserSpecifiedMeshIO = false;
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -62,7 +62,7 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
   os << indent << "FileName: " << m_FileName << "\n";
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::SetMeshIO(MeshIOBase *meshIO)
@@ -78,7 +78,7 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
   m_UserSpecifiedMeshIO = true;
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::TestFileExistanceAndReadability()
@@ -113,8 +113,8 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
   readTester.close();
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
-template< class T >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
+template< typename T >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::ReadPoints(T *buffer)
@@ -134,8 +134,8 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
     }
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
-template< class T >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
+template< typename T >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::ReadCells(T *buffer)
@@ -338,7 +338,7 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
     }
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::ReadPointData()
@@ -382,44 +382,32 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
   catch ( ... )
     {
     // if an exception is thrown catch it
-    if ( inputPointDataBuffer )
-      {
-      // clean up
-      delete[] inputPointDataBuffer;
-      inputPointDataBuffer = 0;
-      }
 
-    if ( outputPointDataBuffer )
-      {
-      // clean up
-      delete[] outputPointDataBuffer;
-      outputPointDataBuffer = 0;
-      }
+    // clean up
+    delete[] inputPointDataBuffer;
+    inputPointDataBuffer = 0;
+
+    delete[] outputPointDataBuffer;
+    outputPointDataBuffer = 0;
 
     // then rethrow
     throw;
     }
 
   // clean up
-  if ( inputPointDataBuffer )
-    {
-    delete[] inputPointDataBuffer;
-    inputPointDataBuffer = 0;
-    }
+  delete[] inputPointDataBuffer;
+  inputPointDataBuffer = 0;
 
   for ( OutputPointIdentifier id = 0; id < m_MeshIO->GetNumberOfPointPixels(); id++ )
     {
     output->SetPointData(id, outputPointDataBuffer[id]);
     }
 
-  if ( outputPointDataBuffer )
-    {
-    delete[] outputPointDataBuffer;
-    outputPointDataBuffer = 0;
-    }
+  delete[] outputPointDataBuffer;
+  outputPointDataBuffer = 0;
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::ReadCellData()
@@ -464,44 +452,31 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
     {
     // if an exception is thrown catch it
 
-    if ( inputCellDataBuffer )
-      {
-      // clean up
-      delete[] inputCellDataBuffer;
-      inputCellDataBuffer = 0;
-      }
+    // clean up
+    delete[] inputCellDataBuffer;
+    inputCellDataBuffer = 0;
 
-    if ( outputCellDataBuffer )
-      {
-      // clean up
-      delete[] outputCellDataBuffer;
-      outputCellDataBuffer = 0;
-      }
+    delete[] outputCellDataBuffer;
+    outputCellDataBuffer = 0;
 
     // then rethrow
     throw;
     }
 
   // clean up
-  if ( inputCellDataBuffer )
-    {
-    delete[] inputCellDataBuffer;
-    inputCellDataBuffer = 0;
-    }
+  delete[] inputCellDataBuffer;
+  inputCellDataBuffer = 0;
 
   for ( OutputCellIdentifier id = 0; id < m_MeshIO->GetNumberOfCellPixels(); id++ )
     {
     output->SetCellData(id, outputCellDataBuffer[id]);
     }
 
-  if ( outputCellDataBuffer )
-    {
-    delete[] outputCellDataBuffer;
-    outputCellDataBuffer = 0;
-    }
+  delete[] outputCellDataBuffer;
+  outputCellDataBuffer = 0;
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::GenerateOutputInformation()
@@ -553,7 +528,7 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
     }
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 ::GenerateData()
@@ -833,7 +808,7 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
     }
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 template< typename T >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
@@ -910,7 +885,7 @@ MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >
 #undef ITK_CONVERT_POINT_PIXEL_BUFFER_IF_BLOCK
 }
 
-template< class TOutputMesh, class ConvertPointPixelTraits, class ConvertCellPixelTraits >
+template< typename TOutputMesh, typename ConvertPointPixelTraits, typename ConvertCellPixelTraits >
 template< typename T >
 void
 MeshFileReader< TOutputMesh, ConvertPointPixelTraits, ConvertCellPixelTraits >

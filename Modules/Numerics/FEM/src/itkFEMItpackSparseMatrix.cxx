@@ -83,22 +83,11 @@ void ItpackSparseMatrix::Initialize()
     }
 
   /* initialize itpack variables */
-  if( m_IA != 0 )
-    {
-    delete[] m_IA;
-    }
-  if( m_JA != 0 )
-    {
-    delete[] m_JA;
-    }
-  if( m_IWORK != 0 )
-    {
-    delete[] m_IWORK;
-    }
-  if( m_A != 0 )
-    {
-    delete[] m_A;
-    }
+
+  delete[] m_IA;
+  delete[] m_JA;
+  delete[] m_IWORK;
+  delete[] m_A;
   m_IA =    new integer[m_N + 1];
   m_JA =    new integer[m_NZ];
   m_IWORK = new integer[m_NZ];
@@ -127,29 +116,15 @@ void ItpackSparseMatrix::Initialize()
     {
     this->Set(i, i, 0.0);
     }
-
-  return;
 }
 
 void ItpackSparseMatrix::Clear()
 {
   /* free variables */
-  if( m_IA != 0 )
-    {
-    delete[] m_IA;
-    }
-  if( m_JA != 0 )
-    {
-    delete[] m_JA;
-    }
-  if( m_IWORK != 0 )
-    {
-    delete[] m_IWORK;
-    }
-  if( m_A != 0 )
-    {
-    delete[] m_A;
-    }
+  delete[] m_IA;
+  delete[] m_JA;
+  delete[] m_IWORK;
+  delete[] m_A;
 
   m_MatrixFinalized = 0;
   m_MatrixInitialized = 0;
@@ -185,8 +160,6 @@ void ItpackSparseMatrix::Finalize()
 
   /* set info flag */
   m_MatrixFinalized = 1;
-
-  return;
 }
 
 void ItpackSparseMatrix::UnFinalize()
@@ -208,8 +181,6 @@ void ItpackSparseMatrix::UnFinalize()
 
   /* set info flag */
   m_MatrixFinalized = 0;
-
-  return;
 }
 
 void ItpackSparseMatrix::Set(integer i, integer j, doublereal value)
@@ -246,8 +217,6 @@ void ItpackSparseMatrix::Set(integer i, integer j, doublereal value)
     {
     throw FEMExceptionItpackSparseMatrixSbsij(__FILE__, __LINE__, "ItpackSparseMatrix::Set", IER);
     }
-
-  return;
 }
 
 void ItpackSparseMatrix::Add(integer i, integer j, doublereal value)
@@ -289,8 +258,6 @@ void ItpackSparseMatrix::Add(integer i, integer j, doublereal value)
     {
     throw FEMExceptionItpackSparseMatrixSbsij(__FILE__, __LINE__, "ItpackSparseMatrix::Set", IER);
     }
-
-  return;
 }
 
 ItpackSparseMatrix::doublereal ItpackSparseMatrix::Get(integer i, integer j)
@@ -381,7 +348,7 @@ void ItpackSparseMatrix::mult(doublereal *vector, doublereal *result)
   int i;
   int j;
   /* prepare result vector */
-  // delete [] result;
+  // delete[] result;
   // result = new doublereal [ m_N ];
   for( i = 0; i < m_N; i++ )
     {
@@ -397,8 +364,6 @@ void ItpackSparseMatrix::mult(doublereal *vector, doublereal *result)
       result[i] += m_A[j] * vector[m_JA[j] - 1];
       }
     }
-
-  return;
 }
 
 void ItpackSparseMatrix::mult(ItpackSparseMatrix *rightMatrix, ItpackSparseMatrix *resultMatrix)

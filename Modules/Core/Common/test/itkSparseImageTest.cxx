@@ -23,14 +23,14 @@
 
 namespace itk {
 
-template <class TImageType>
+template <typename TImageType>
 class NodeClass
 {
 public:
-  typedef TImageType ImageType;
+  typedef TImageType                    ImageType;
   typedef typename ImageType::IndexType IndexType;
-  int m_Value;
-  IndexType m_Index;
+  int        m_Value;
+  IndexType  m_Index;
   NodeClass *Next;
   NodeClass *Previous;
 };
@@ -39,10 +39,10 @@ public:
 
 int itkSparseImageTest(int, char* [] )
 {
-  typedef itk::Image<int, 2> DummyImageType;
+  typedef itk::Image<int, 2>             DummyImageType;
   typedef itk::NodeClass<DummyImageType> NodeType;
-  typedef itk::SparseImage<NodeType, 2> SparseImageType;
-  typedef SparseImageType::Superclass ImageType;
+  typedef itk::SparseImage<NodeType, 2>  SparseImageType;
+  typedef SparseImageType::Superclass    ImageType;
 
   SparseImageType::Pointer im = SparseImageType::New();
   ImageType::RegionType r;

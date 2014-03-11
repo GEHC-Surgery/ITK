@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkImageFileReader_h
 #define __itkImageFileReader_h
+#include "ITKIOImageBaseExport.h"
 
 #include "itkImageIOBase.h"
 #include "itkImageSource.h"
@@ -96,10 +97,10 @@ public:
  * \wikiexample{IO/ImageFileReader,Read an image}
  * \endwiki
  */
-template< class TOutputImage,
-          class ConvertPixelTraits = DefaultConvertPixelTraits<
+template< typename TOutputImage,
+          typename ConvertPixelTraits = DefaultConvertPixelTraits<
             typename TOutputImage::IOPixelType > >
-class ITK_EXPORT ImageFileReader:public ImageSource< TOutputImage >
+class ITKIOImageBase_HIDDEN ImageFileReader:public ImageSource< TOutputImage >
 {
 public:
   /** Standard class typedefs. */
@@ -135,8 +136,7 @@ public:
    * to use to read a particular file in case the factory mechanism will
    * not work properly (e.g., unknown or unusual extension). */
   void  SetImageIO(ImageIOBase *imageIO);
-
-  itkGetObjectMacro(ImageIO, ImageIOBase);
+  itkGetModifiableObjectMacro(ImageIO, ImageIOBase);
 
   /** Prepare the allocation of the output image during the first back
    * propagation of the pipeline. */

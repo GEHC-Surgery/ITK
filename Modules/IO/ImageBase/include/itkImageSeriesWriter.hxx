@@ -31,7 +31,7 @@
 namespace itk
 {
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::ImageSeriesWriter():
   m_ImageIO(0), m_UserSpecifiedImageIO(false),
@@ -42,13 +42,13 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::~ImageSeriesWriter()
 {}
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::SetInput(const InputImageType *input)
@@ -59,7 +59,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 const typename ImageSeriesWriter< TInputImage, TOutputImage >::InputImageType *
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::GetInput(void)
@@ -68,7 +68,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 const typename ImageSeriesWriter< TInputImage, TOutputImage >::InputImageType *
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::GetInput(unsigned int idx)
@@ -77,7 +77,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::Write(void)
@@ -115,7 +115,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::GenerateNumericFileNamesAndWrite(void)
@@ -126,7 +126,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::GenerateNumericFileNames(void)
@@ -162,7 +162,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::GenerateData(void)
@@ -179,7 +179,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::WriteFiles()
@@ -352,6 +352,18 @@ ImageSeriesWriter< TInputImage, TOutputImage >
         EncapsulateMetaData< DoubleArrayType >(dictionary, ITK_Origin, originArray);
         EncapsulateMetaData< DoubleArrayType >(dictionary, ITK_Spacing, spacingArray);
         EncapsulateMetaData<  unsigned int   >(dictionary, ITK_NumberOfDimensions, inputImageDimension);
+
+        typename InputImageType::DirectionType direction2 = inputImage->GetDirection();
+        typedef Matrix< double, inputImageDimension, inputImageDimension> DoubleMatrixType;
+        DoubleMatrixType directionMatrix;
+        for( unsigned int i = 0; i < inputImageDimension; i++ )
+          {
+          for( unsigned int j = 0; j < inputImageDimension; j++ )
+            {
+            directionMatrix[j][i]  = direction2[i][j];
+            }
+          }
+        EncapsulateMetaData< DoubleMatrixType >( dictionary, ITK_ZDirection, directionMatrix );
         }
       }
 
@@ -365,7 +377,7 @@ ImageSeriesWriter< TInputImage, TOutputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 ImageSeriesWriter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

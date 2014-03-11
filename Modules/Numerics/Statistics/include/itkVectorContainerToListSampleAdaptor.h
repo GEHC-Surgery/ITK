@@ -42,8 +42,8 @@ namespace Statistics
  * \ingroup ITKStatistics
  */
 
-template< class TVectorContainer >
-class ITK_EXPORT VectorContainerToListSampleAdaptor:
+template< typename TVectorContainer >
+class VectorContainerToListSampleAdaptor:
   public ListSample< typename TVectorContainer::Element >
 {
 public:
@@ -81,11 +81,9 @@ public:
 
   typedef MeasurementVectorType ValueType;
 
-  /** Method to set the point set */
+  /** Get/Set Method for the point set */
   itkSetObjectMacro( VectorContainer, VectorContainerType );
-
-  /** Method to get the point set */
-  itkGetConstObjectMacro( VectorContainer, VectorContainerType );
+  itkGetConstObjectMacro(VectorContainer, VectorContainerType );
 
   /** returns the number of measurement vectors in this container */
   InstanceIdentifier Size() const;

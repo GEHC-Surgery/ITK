@@ -21,7 +21,7 @@
 
 #include "itkVnlInverseFFTImageFilter.h"
 
-#if defined( USE_FFTWD ) || defined( USE_FFTWF )
+#if defined( ITK_USE_FFTWD ) || defined( ITK_USE_FFTWF )
 #include "itkFFTWInverseFFTImageFilter.h"
 #endif
 
@@ -29,7 +29,7 @@ namespace itk
 {
 
 // Partial specialization allows avoiding runtime type choice
-template< typename TSelfPointer, class TInputImage, class TOutputImage, typename TPixel >
+template< typename TSelfPointer, typename TInputImage, typename TOutputImage, typename TPixel >
 struct Dispatch_Inverse_New
 {
   static TSelfPointer Apply()
@@ -39,8 +39,8 @@ struct Dispatch_Inverse_New
     }
 };
 
-#ifdef USE_FFTWD
-template < typename TSelfPointer, class TInputImage, class TOutputImage >
+#ifdef ITK_USE_FFTWD
+template < typename TSelfPointer, typename TInputImage, typename TOutputImage >
 struct Dispatch_Inverse_New< TSelfPointer, TInputImage, TOutputImage, double >
 {
   static TSelfPointer Apply()
@@ -51,8 +51,8 @@ struct Dispatch_Inverse_New< TSelfPointer, TInputImage, TOutputImage, double >
 };
 #endif
 
-#ifdef USE_FFTWF
-template< typename TSelfPointer, class TInputImage, class TOutputImage >
+#ifdef ITK_USE_FFTWF
+template< typename TSelfPointer, typename TInputImage, typename TOutputImage >
 struct Dispatch_Inverse_New< TSelfPointer, TInputImage, TOutputImage, float >
 {
   static TSelfPointer Apply()
@@ -63,7 +63,7 @@ struct Dispatch_Inverse_New< TSelfPointer, TInputImage, TOutputImage, float >
 };
 #endif
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 typename InverseFFTImageFilter< TInputImage, TOutputImage >::Pointer
 InverseFFTImageFilter< TInputImage, TOutputImage >
 ::New(void)
@@ -78,7 +78,7 @@ InverseFFTImageFilter< TInputImage, TOutputImage >
   return smartPtr;
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 InverseFFTImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
@@ -93,7 +93,7 @@ InverseFFTImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 InverseFFTImageFilter< TInputImage, TOutputImage >
 ::EnlargeOutputRequestedRegion(DataObject *)

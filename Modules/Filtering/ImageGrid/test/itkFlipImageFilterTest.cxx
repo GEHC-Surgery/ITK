@@ -19,6 +19,7 @@
 #include "itkFlipImageFilter.h"
 #include "itkTextOutput.h"
 #include "itkFilterWatcher.h"
+#include "itkImageRegionIteratorWithIndex.h"
 
 int itkFlipImageFilterTest(int, char* [] )
 {
@@ -28,7 +29,7 @@ int itkFlipImageFilterTest(int, char* [] )
   typedef unsigned char PixelType;
   enum { ImageDimension = 3 };
   typedef itk::Image<PixelType,ImageDimension> ImageType;
-  typedef itk::FlipImageFilter<ImageType> FlipperType;
+  typedef itk::FlipImageFilter<ImageType>      FlipperType;
 
 
   // define a small input test
@@ -93,7 +94,7 @@ int itkFlipImageFilterTest(int, char* [] )
   inputImage->Print( std::cout );
   outputImage->Print( std::cout );
 
-  typedef ImageType::IndexType IndexType;
+  typedef ImageType::IndexType      IndexType;
   typedef IndexType::IndexValueType IndexValueType;
 
   inputIter.GoToBegin();

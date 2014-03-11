@@ -44,8 +44,8 @@ namespace itk
  * \ingroup Numerics Optimizers
  * \ingroup ITKLevelSets
  */
-template< class TFeatureImage, class TOutputPixel >
-class ITK_EXPORT ShapePriorMAPCostFunctionBase:
+template< typename TFeatureImage, typename TOutputPixel >
+class ShapePriorMAPCostFunctionBase:
   public SingleValuedCostFunction
 {
 public:
@@ -94,7 +94,7 @@ public:
 
   /** Set/Get the shape distance function. */
   itkSetObjectMacro(ShapeFunction, ShapeFunctionType);
-  itkGetObjectMacro(ShapeFunction, ShapeFunctionType);
+  itkGetModifiableObjectMacro(ShapeFunction, ShapeFunctionType);
 
   /** Set/Get the active region. */
   itkSetConstObjectMacro(ActiveRegion, NodeContainerType);

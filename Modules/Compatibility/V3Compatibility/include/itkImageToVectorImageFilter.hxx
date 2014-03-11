@@ -25,7 +25,7 @@
 namespace itk
 {
 //----------------------------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 ImageToVectorImageFilter< TInputImage >
 ::ImageToVectorImageFilter()
 {
@@ -34,7 +34,7 @@ ImageToVectorImageFilter< TInputImage >
 }
 
 //----------------------------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 void
 ImageToVectorImageFilter< TInputImage >
 ::GenerateOutputInformation(void)
@@ -49,7 +49,7 @@ ImageToVectorImageFilter< TInputImage >
 }
 
 //----------------------------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 void
 ImageToVectorImageFilter< TInputImage >
 ::BeforeThreadedGenerateData()
@@ -61,7 +61,7 @@ ImageToVectorImageFilter< TInputImage >
 
   for ( unsigned int i = 0; i < numberOfInputs; i++ )
     {
-    InputImageType *input = this->Superclass::GetInput(i);
+    const InputImageType * input = this->Superclass::GetInput(i);
     if ( !input )
       {
       itkExceptionMacro(<< "Input " << i << " not set!");
@@ -78,7 +78,7 @@ ImageToVectorImageFilter< TInputImage >
 }
 
 //----------------------------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 void
 ImageToVectorImageFilter< TInputImage >
 ::ThreadedGenerateData(const RegionType & outputRegionForThread,

@@ -21,6 +21,7 @@
 #include "itkImageRegistrationMethodv4.h"
 
 #include "itkBSplineScatteredDataPointSetToImageFilter.h"
+#include "itkImageMaskSpatialObject.h"
 #include "itkTimeVaryingBSplineVelocityFieldTransform.h"
 
 namespace itk
@@ -28,9 +29,9 @@ namespace itk
 //Forward-declare these because of module dependency conflict.
 //They will soon be moved to a different module, at which
 // time this can be removed.
-template <unsigned int VDimension, class TDataHolder>
+template <unsigned int VDimension, typename TDataHolder>
 class ImageToData;
-template <class TDataHolder>
+template <typename TDataHolder>
 class Array1DToData;
 
 /** \class TimeVaryingBSplineVelocityFieldImageRegistrationMethod
@@ -43,10 +44,11 @@ class Array1DToData;
  *
  * This derived class from the SimpleImageRegistrationMethod class
  * is specialized to handle time-varying velocity field transforms
- * of which there are currently 2:
+ * of which there are currently 3:
  *
  * -# TimeVaryingDisplacementFieldTransform
  * -# GaussianSmoothingOnUpdateTimeVaryingDisplacementFieldTransform
+ * -# BSplineSmoothingOnUpdateTimeVaryingDisplacementFieldTransform
  *
  * The latter is derived from the former and performs an optional
  * spatial and temporal smoothing on the update and total velocity
@@ -69,12 +71,12 @@ class Array1DToData;
  * this can be described as
  *
  * \f[
- * v_{total} = G_1( v_{total} + \lambda * G_2( v_{update} ) )
+ * v_{total} = B_1( v_{total} + \lambda * B_2( v_{update} ) )
  * \f]
  * where
 
- * \f$ G_1 = \f$ gaussian smoothing on the total field
- * \f$ G_2 = \f$ gaussian smoothing on the update field
+ * \f$ B_1 = \f$ bspline smoothing on the total field
+ * \f$ B_2 = \f$ bspline smoothing on the update field
  * \f$ \lambda = \f$ learning rate
  * \f$ v_{update} = \f$ the normalized velocity field where we
  * normalize the velocity field at each time point
@@ -90,7 +92,7 @@ class Array1DToData;
  */
 template<typename TFixedImage, typename TMovingImage, typename TOutputTransform =
   TimeVaryingBSplineVelocityFieldTransform<double, TFixedImage::ImageDimension> >
-class ITK_EXPORT TimeVaryingBSplineVelocityFieldImageRegistrationMethod
+class TimeVaryingBSplineVelocityFieldImageRegistrationMethod
 : public ImageRegistrationMethodv4<TFixedImage, TMovingImage, TOutputTransform>
 {
 public:
@@ -121,6 +123,10 @@ public:
   typedef typename ImageMetricType::VirtualImageType                  VirtualImageType;
   typedef typename ImageMetricType::MeasureType                       MeasureType;
   typedef typename Superclass::MultiMetricType                        MultiMetricType;
+  typedef typename ImageMetricType::FixedImageMaskType                FixedImageMaskType;
+  typedef typename ImageMetricType::MovingImageMaskType               MovingImageMaskType;
+  typedef ImageMaskSpatialObject<ImageDimension>                      ImageMaskSpatialObjectType;
+  typedef typename ImageMaskSpatialObjectType::ImageType              MaskImageType;
 
   typedef TOutputTransform                                                                     OutputTransformType;
   typedef typename OutputTransformType::Pointer                                                OutputTransformPointer;
@@ -140,6 +146,13 @@ public:
   typedef typename DecoratedOutputTransformType::Pointer              DecoratedOutputTransformPointer;
 
   typedef Array<SizeValueType>                                        NumberOfIterationsArrayType;
+
+  typedef PointSet<DisplacementVectorType, ImageDimension + 1>                                  PointSetType;
+  typedef BSplineScatteredDataPointSetToImageFilter<PointSetType, TimeVaryingVelocityFieldType> BSplineFilterType;
+  typedef typename BSplineFilterType::WeightsContainerType                                      WeightsContainerType;
+  typedef typename WeightsContainerType::Element                                                WeightsElementType;
+  typedef Image<WeightsElementType, ImageDimension>                                             WeightedMaskImageType;
+  typedef Image<WeightsElementType, ImageDimension + 1>                                         TimeVaryingWeightedMaskImageType;
 
   /** Set/Get the learning rate. */
   itkSetMacro( LearningRate, RealType );

@@ -61,7 +61,7 @@ namespace itk
  * \brief A vanilla class of metric thread, required to implement the virtual base class
  */
 
-template<class TDomainPartitioner, class TImageToImageMetric>
+template<typename TDomainPartitioner, typename TImageToImageMetric>
 class VanilaImageToImageMetricv4GetValueAndDerivativeThreader
 : public ImageToImageMetricv4GetValueAndDerivativeThreader<TDomainPartitioner, TImageToImageMetric>
 {
@@ -127,8 +127,8 @@ private:
  * \brief A vanilla metric for ImageToImageMetricv4 since we need to
  * access the protected methods by adding friend class.
  */
-template<class TFixedImage, class TMovingImage, class TVirtualImage = TFixedImage>
-class ITK_EXPORT VanillaImageToImageMetricv4 : public ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage>
+template<typename TFixedImage, typename TMovingImage, typename TVirtualImage = TFixedImage>
+class VanillaImageToImageMetricv4 : public ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage>
 {
 public:
   /** Standard class typedefs. */
@@ -347,10 +347,9 @@ double itkMetricImageGradientTestRunTest( unsigned int imageSize, typename TTran
 
       double norm1 = p1.two_norm();
       double norm2 = p2.two_norm();
-      double correlation = 0.0;
       if ( norm1 > 0 && norm2 > 0 )
         {
-        correlation = dot_product( p2, p1 ) / ( norm1 * norm2 );
+        double correlation = dot_product( p2, p1 ) / ( norm1 * norm2 );
         sumc += correlation;
         }
 

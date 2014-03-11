@@ -41,8 +41,8 @@ namespace itk
  *
  * \ingroup ITKMetricsv4
  */
-template <class TPointSet, class TOutput = double, class TCoordRep = double>
-class ITK_EXPORT ManifoldParzenWindowsPointSetFunction
+template <typename TPointSet, typename TOutput = double, typename TCoordRep = double>
+class ManifoldParzenWindowsPointSetFunction
 : public PointSetFunction<TPointSet, TOutput, TCoordRep>
 {
 public:
@@ -72,15 +72,13 @@ public:
   typedef TCoordRep                                        CoordRepType;
 
   /** Typedef for points locator class to speed up finding neighboring points */
-  typedef PointsLocator<PointIdentifier,
-    itkGetStaticConstMacro( PointDimension ),
-    CoordRepType, PointsContainer>                     PointsLocatorType;
-  typedef typename PointsLocatorType::
-    NeighborsIdentifierType                            NeighborsIdentifierType;
+  typedef PointsLocator< PointsContainer>                       PointsLocatorType;
+  typedef typename PointsLocatorType::NeighborsIdentifierType   NeighborsIdentifierType;
 
   typedef typename Statistics::
     GaussianMembershipFunction<PointType>                  GaussianType;
   typedef typename GaussianType::Pointer                   GaussianPointer;
+  typedef typename GaussianType::ConstPointer              GaussianConstPointer;
   typedef std::vector<GaussianPointer>                     GaussianContainerType;
   typedef typename GaussianType::CovarianceMatrixType      CovarianceMatrixType;
 
@@ -172,10 +170,10 @@ public:
   virtual TOutput Evaluate( const InputPointType & ) const;
 
   /** Get Gaussian corresponding to a specific point */
-  GaussianPointer GetGaussian( PointIdentifier );
+  GaussianConstPointer GetGaussian( PointIdentifier ) const;
 
   /** Get the points locator describing the point set neighborhood */
-  itkGetConstObjectMacro( PointsLocator, PointsLocatorType );
+  itkGetModifiableObjectMacro(PointsLocator, PointsLocatorType );
 
 protected:
   ManifoldParzenWindowsPointSetFunction();

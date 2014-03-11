@@ -78,8 +78,8 @@ namespace Testing
  * \ingroup ITKTestKernel
  */
 
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT ExtractSliceImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class ExtractSliceImageFilter:
   public ImageSource< TOutputImage >
 {
 public:
@@ -218,10 +218,10 @@ public:
   const TInputImage * GetInput(void) const;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputCovertibleToOutputCheck,
                    ( Concept::Convertible< InputImagePixelType, OutputImagePixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

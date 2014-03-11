@@ -27,7 +27,7 @@ namespace itk
 /** \class BinaryImageToLevelSetImageAdaptorBase
  *  \ingroup ITKLevelSetsv4
  */
-template< class TInputImage, class TLevelSet >
+template< typename TInputImage, typename TLevelSet >
 class BinaryImageToLevelSetImageAdaptorBase : public Object
 {
 public:
@@ -59,11 +59,11 @@ public:
   virtual void Initialize() = 0;
 
   /** Get the sparse levet set function */
-  itkGetObjectMacro( LevelSet, LevelSetType );
+  itkGetModifiableObjectMacro(LevelSet, LevelSetType );
 
   /** Set/Get the input image*/
   itkSetObjectMacro( InputImage, InputImageType );
-  itkGetObjectMacro( InputImage, InputImageType );
+  itkGetModifiableObjectMacro(InputImage, InputImageType );
 
 protected:
   /** Constructor */

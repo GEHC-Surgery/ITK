@@ -85,16 +85,29 @@ int itkBoxSpatialObjectTest( int argc, char *argv[] )
   std::cout << box2->GetBoundingBox()->GetBounds() << std::endl;
   BoxType::BoundingBoxType * boundingBox = box1->GetBoundingBox();
 
-  if(     (boundingBox->GetBounds()[0]!= 29)
-      ||  (boundingBox->GetBounds()[1]!= 59)
-      ||  (boundingBox->GetBounds()[2]!= 29)
-      ||  (boundingBox->GetBounds()[3]!= 59) )
+  if(     (boundingBox->GetBounds()[0] != 29)
+      ||  (boundingBox->GetBounds()[1] != 59)
+      ||  (boundingBox->GetBounds()[2] != 29)
+      ||  (boundingBox->GetBounds()[3] != 59) )
     {
     std::cout << "[FAILED] Test returned" << std::endl;
     std::cout << box1->GetBoundingBox()->GetBounds() << std::endl;
     std::cout << "Instead of [29 59 29 59]" << std::endl;
     return EXIT_FAILURE;
     }
+
+  BoxType::BoundingBoxType * boundingBox2 = box2->GetBoundingBox();
+  if(     (boundingBox2->GetBounds()[0] != 50)
+      ||  (boundingBox2->GetBounds()[1] != 80)
+      ||  (boundingBox2->GetBounds()[2] != 50)
+      ||  (boundingBox2->GetBounds()[3] != 80) )
+    {
+    std::cout << "[FAILED] Test returned" << std::endl;
+    std::cout << box2->GetBoundingBox()->GetBounds() << std::endl;
+    std::cout << "Instead of [50 80 50 80]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   std::cout << "[PASSED]" << std::endl;
 
   // Point consistency

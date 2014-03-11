@@ -43,7 +43,7 @@ namespace itk
  *
  */
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::BSplineScatteredDataPointSetToImageFilter()
 {
@@ -79,12 +79,12 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   this->m_IsFittingComplete = false;
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::~BSplineScatteredDataPointSetToImageFilter()
 {}
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::SetSplineOrder( unsigned int order )
@@ -93,7 +93,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   this->SetSplineOrder( this->m_SplineOrder );
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::SetSplineOrder( const ArrayType & order )
@@ -150,7 +150,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   this->Modified();
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::SetNumberOfLevels( unsigned int levels )
@@ -159,7 +159,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   this->SetNumberOfLevels( this->m_NumberOfLevels );
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::SetNumberOfLevels( const ArrayType & levels )
@@ -196,7 +196,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   this->Modified();
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::SetPointWeights( WeightsContainerType *weights )
@@ -206,7 +206,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   this->Modified();
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::GenerateData()
@@ -416,7 +416,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
       ImageDuplicatorType::New();
     duplicator->SetInputImage( this->m_PsiLattice );
     duplicator->Update();
-    this->m_PhiLattice = duplicator->GetOutput();
+    this->m_PhiLattice = duplicator->GetModifiableOutput();
 
     this->UpdatePointSet();
     }
@@ -439,7 +439,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   this->SetPhiLatticeParametricDomainParameters();
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::BeforeThreadedGenerateData()
@@ -477,7 +477,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
     }
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 unsigned int
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::SplitRequestedRegion( unsigned int i, unsigned int num,
@@ -539,7 +539,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
     }
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::ThreadedGenerateData( const RegionType &region, ThreadIdType threadId )
@@ -554,7 +554,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
     }
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::ThreadedGenerateDataForFitting(
@@ -699,7 +699,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
     }
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::ThreadedGenerateDataForReconstruction( const RegionType &region, ThreadIdType
@@ -725,7 +725,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   duplicator->SetInputImage( this->m_PhiLattice );
   duplicator->Update();
 
-  collapsedPhiLattices[ImageDimension] = duplicator->GetOutput();
+  collapsedPhiLattices[ImageDimension] = duplicator->GetModifiableOutput();
 
   ArrayType totalNumberOfSpans;
   for( unsigned int i = 0; i < ImageDimension; i++ )
@@ -790,7 +790,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
     }
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::AfterThreadedGenerateData()
@@ -877,7 +877,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
     }
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::RefineControlPointLattice()
@@ -1031,10 +1031,10 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   typename ImageDuplicatorType::Pointer duplicator = ImageDuplicatorType::New();
   duplicator->SetInputImage( refinedLattice );
   duplicator->Update();
-  this->m_PsiLattice = duplicator->GetOutput();
+  this->m_PsiLattice = duplicator->GetModifiableOutput();
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::UpdatePointSet()
@@ -1126,7 +1126,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
     }
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::CollapsePhiLattice( PointDataImageType *lattice,
@@ -1187,7 +1187,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
     }
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::SetPhiLatticeParametricDomainParameters()
@@ -1223,7 +1223,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
   this->m_PhiLattice->SetDirection( this->m_Direction );
 }
 
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 typename BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::IndexType
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
@@ -1252,7 +1252,7 @@ BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 /**
  * Standard "PrintSelf" method
  */
-template<class TInputPointSet, class TOutputImage>
+template<typename TInputPointSet, typename TOutputImage>
 void
 BSplineScatteredDataPointSetToImageFilter<TInputPointSet, TOutputImage>
 ::PrintSelf( std::ostream & os, Indent indent ) const

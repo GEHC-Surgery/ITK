@@ -61,10 +61,10 @@ class ExampleWeightFunction :
 {
 public:
   /** Standard class typedefs. */
-  typedef ExampleWeightFunction Self;
+  typedef ExampleWeightFunction                              Self;
   typedef itk::FunctionBase< MeasurementVectorType, double > Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::SmartPointer<Self>                            Pointer;
+  typedef itk::SmartPointer<const Self>                      ConstPointer;
 
   /** Standard macros. */
   itkTypeMacro(ExampleWeightFunction, FunctionBase);
@@ -92,7 +92,7 @@ public:
 protected:
   ExampleWeightFunction() {}
   ~ExampleWeightFunction() {}
-} ; // end of class
+}; // end of class
 
 int main()
 {
@@ -166,7 +166,7 @@ int main()
   weightedMeanAlgorithm->SetWeights( weightArray );
   weightedMeanAlgorithm->Update();
 
-  std::cout << "Sample weighted mean = " 
+  std::cout << "Sample weighted mean = "
             << weightedMeanAlgorithm->GetMean() << std::endl;
 
   typedef itk::Statistics::WeightedCovarianceSampleFilter< SampleType >
@@ -179,7 +179,7 @@ int main()
   weightedCovarianceAlgorithm->SetWeights( weightArray );
   weightedCovarianceAlgorithm->Update();
 
-  std::cout << "Sample weighted covariance = " << std::endl ; 
+  std::cout << "Sample weighted covariance = " << std::endl;
   std::cout << weightedCovarianceAlgorithm->GetCovarianceMatrix() << std::endl;
   // Software Guide : EndCodeSnippet
 
@@ -200,18 +200,19 @@ int main()
   weightedMeanAlgorithm->SetWeightingFunction( weightFunction );
   weightedMeanAlgorithm->Update();
 
-  std::cout << "Sample weighted mean = " 
+  std::cout << "Sample weighted mean = "
             << weightedMeanAlgorithm->GetMean() << std::endl;
 
   weightedCovarianceAlgorithm->SetWeightingFunction( weightFunction );
   weightedCovarianceAlgorithm->Update();
 
-  std::cout << "Sample weighted covariance = " << std::endl ; 
+  std::cout << "Sample weighted covariance = " << std::endl;
   std::cout << weightedCovarianceAlgorithm->GetCovarianceMatrix();
 
   std::cout << "Sample weighted mean (from WeightedCovarainceSampleFilter) = "
-            << std::endl << weightedCovarianceAlgorithm->GetMean() << std::endl;
+            << std::endl << weightedCovarianceAlgorithm->GetMean()
+            << std::endl;
   // Software Guide : EndCodeSnippet
 
-  return 0;
+  return EXIT_SUCCESS;
 }

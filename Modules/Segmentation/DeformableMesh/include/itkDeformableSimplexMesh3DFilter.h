@@ -72,8 +72,8 @@ namespace itk
   * \ingroup MeshSegmentation
   * \ingroup ITKDeformableMesh
   */
-template< class TInputMesh, class TOutputMesh >
-class ITK_EXPORT DeformableSimplexMesh3DFilter:public MeshToMeshFilter< TInputMesh, TOutputMesh >
+template< typename TInputMesh, typename TOutputMesh >
+class DeformableSimplexMesh3DFilter:public MeshToMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
   /** Standard "Self" typedef. */
@@ -189,7 +189,7 @@ public:
   itkGetConstMacro(Rigidity, unsigned int);
 
   itkSetObjectMacro(Data, GeometryMapType);
-  itkGetConstObjectMacro(Data, GeometryMapType);
+  itkGetModifiableObjectMacro(Data, GeometryMapType);
 
   /** Width, height and depth of image */
   itkGetConstMacro(ImageWidth, int);

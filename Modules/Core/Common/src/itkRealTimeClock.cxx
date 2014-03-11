@@ -78,7 +78,7 @@ RealTimeClock::RealTimeClock():m_Frequency(1)
 
   this->m_Origin = static_cast< TimeStampType >( intTime.QuadPart ) / static_cast< TimeStampType >( 1e7 );
   this->m_Origin -= static_cast< TimeStampType >( static_cast<__int64>( tick.QuadPart ) ) / this->m_Frequency;
-  this->m_Origin += this->m_Difference;
+  this->m_Origin -= this->m_Difference;
 #else
   this->m_Frequency = 1e6;
 #endif  // defined(WIN32) || defined(_WIN32)
@@ -138,7 +138,7 @@ RealTimeClock::GetRealTimeStamp() const
   struct timeval tval;
   ::gettimeofday(&tval, 0);
 
-  RealTimeStamp value( tval.tv_sec, tval.tv_usec );
+  RealTimeStamp value( static_cast<RealTimeStamp::SecondsCounterType>(tval.tv_sec), static_cast<RealTimeStamp::MicroSecondsCounterType>(tval.tv_usec) );
   return value;
 #endif  // defined(WIN32) || defined(_WIN32)
 }

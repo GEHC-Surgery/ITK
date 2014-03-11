@@ -69,14 +69,14 @@ namespace itk {
  * \wikiexample{ImageProcessing/ObjectByObjectLabelMapFilter,Apply an operation to every label object in a label map}
  * \endwiki
  */
-template<class TInputImage, class TOutputImage=TInputImage,
-  class TInputFilter=ImageToImageFilter<
+template<typename TInputImage, typename TOutputImage=TInputImage,
+  typename TInputFilter=ImageToImageFilter<
     Image< unsigned char, TInputImage::ImageDimension >,
     Image< unsigned char, TOutputImage::ImageDimension > >,
   class TOutputFilter=typename TInputFilter::Superclass,
   class TInternalInputImage=typename TInputFilter::InputImageType,
   class TInternalOutputImage=typename TOutputFilter::OutputImageType >
-class ITK_EXPORT ObjectByObjectLabelMapFilter :
+class ObjectByObjectLabelMapFilter :
     public LabelMapFilter<TInputImage, TOutputImage>
 {
 public:
@@ -149,11 +149,10 @@ public:
     }
 
   void SetInputFilter( InputFilterType * filter );
-  itkGetObjectMacro( InputFilter, InputFilterType );
+  itkGetModifiableObjectMacro(InputFilter, InputFilterType );
 
   void SetOutputFilter( OutputFilterType * filter );
-  itkGetObjectMacro( OutputFilter, OutputFilterType );
-
+  itkGetModifiableObjectMacro(OutputFilter, OutputFilterType );
 
   /** If KeepLabels is set to true, the filter will do its best to reuse the labels
    * of the input objects in the output ones. However, this is possible only if the

@@ -21,6 +21,7 @@ itkConstrainedValueAdditionImageFilterTest.cxx
 itkAtanImageFilterAndAdaptorTest.cxx
 itkMaskNegatedImageFilterTest.cxx
 itkAddImageFilterTest.cxx
+itkAddImageFilterTest2.cxx
 itkAddImageFilterFrameTest.cxx
 itkPowImageFilterTest.cxx
 itkMultiplyImageFilterTest.cxx
@@ -73,8 +74,21 @@ itkGreaterEqualTest.cxx
 itkGreaterTest.cxx
 itkLessEqualTest.cxx
 itkLessTest.cxx
-
+itkClampImageFilterTest.cxx
+itkNthElementPixelAccessorTest2.cxx
 )
+
+# Disable optimization on the tests below to avoid possible
+# optimization bugs in some compilers. This option will appear on the
+# command line after any other optimization flag (including those from
+# CMAKE_CXX_FLAGS) which means that on gcc, MSVC, and the Intel
+# compiler, it will override any other optimization flag.
+if (DEFINED ITK_CXX_DISABLE_OPTIMIZATION_FLAG)
+  set_source_files_properties(
+    itkClampImageFilterTest.cxx
+    PROPERTIES COMPILE_FLAGS ${ITK_CXX_DISABLE_OPTIMIZATION_FLAG}
+  )
+endif()
 
 CreateTestDriver(ITKImageIntensity  "${ITKImageIntensity-Test_LIBRARIES}" "${ITKImageIntensityTests}")
 
@@ -136,6 +150,9 @@ itk_add_test(NAME itkMaskNegatedImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkMaskNegatedImageFilterTest)
 itk_add_test(NAME itkAddImageFilterTest
       COMMAND ITKImageIntensityTestDriver itkAddImageFilterTest)
+itk_add_test(NAME itkAddImageFilterTest2
+      COMMAND ITKImageIntensityTestDriver itkAddImageFilterTest2
+      DATA{${ITK_DATA_ROOT}/Input/HeadMRVolume.mha} ${TEMP}/itkAddImageFilterTest2.mha)
 itk_add_test(NAME itkAddImageFilterFrameTest
       COMMAND ITKImageIntensityTestDriver itkAddImageFilterFrameTest)
 itk_add_test(NAME itkPowImageFilterTest
@@ -256,3 +273,7 @@ itk_add_test(NAME itkLessEqualTest
       COMMAND ITKImageIntensityTestDriver itkLessEqualTest)
 itk_add_test(NAME itkLessTest
       COMMAND ITKImageIntensityTestDriver itkLessTest)
+itk_add_test(NAME itkClampImageFilterTest
+      COMMAND ITKImageIntensityTestDriver itkClampImageFilterTest)
+itk_add_test(NAME itkNthElementPixelAccessorTest2
+      COMMAND ITKImageIntensityTestDriver itkNthElementPixelAccessorTest2)

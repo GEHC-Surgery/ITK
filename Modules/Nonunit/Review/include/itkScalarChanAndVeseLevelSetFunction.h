@@ -70,12 +70,12 @@ namespace itk
  * \wikiexample{Segmentation/SinglephaseChanAndVeseDenseFieldLevelSetSegmentation,Single-phase Chan And Vese Dense Field Level Set Segmentation}
  * \endwiki
  */
-template< class TInputImage,
-          class TFeatureImage,
-          class TSharedData = ConstrainedRegionBasedLevelSetFunctionSharedData< TInputImage, TFeatureImage,
+template< typename TInputImage,
+          typename TFeatureImage,
+          typename TSharedData = ConstrainedRegionBasedLevelSetFunctionSharedData< TInputImage, TFeatureImage,
                                                                                 ScalarChanAndVeseLevelSetFunctionData<
                                                                                   TInputImage, TFeatureImage > > >
-class ITK_EXPORT ScalarChanAndVeseLevelSetFunction:
+class ScalarChanAndVeseLevelSetFunction:
   public ScalarRegionBasedLevelSetFunction< TInputImage, TFeatureImage, TSharedData >
 {
 public:

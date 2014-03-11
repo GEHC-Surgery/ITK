@@ -41,7 +41,7 @@ namespace itk
  * \ingroup ITKCommon
  */
 template< typename TValueType >
-class Array2D:public vnl_matrix< TValueType >
+class Array2D: public vnl_matrix< TValueType >
 {
 public:
 
@@ -49,8 +49,6 @@ public:
   typedef TValueType               ValueType;
   typedef Array2D                  Self;
   typedef vnl_matrix< TValueType > VnlMatrixType;
-
-public:
 
   Array2D();
   Array2D(unsigned int rows, unsigned int cols);
@@ -74,19 +72,19 @@ public:
 template< typename TValueType >
 std::ostream & operator<<(std::ostream & os, const Array2D< TValueType > & arr)
 {
-  const unsigned int numberOfColumns = arr.cols();
   const unsigned int numberOfRows    = arr.rows();
-  const signed int   lastColumn = (signed int)numberOfColumns - 1;
+  const unsigned int numberOfColumns = arr.cols();
 
   for ( unsigned int r = 0; r < numberOfRows; ++r )
     {
     os << "[";
-    for ( signed int c = 0; c < lastColumn; ++c )
-      {
-      os << arr(r, c) << ", ";
-      }
     if ( numberOfColumns >= 1 )
       {
+      const unsigned int lastColumn = numberOfColumns - 1;
+      for ( unsigned int c = 0; c < lastColumn; ++c )
+        {
+        os << arr(r, c) << ", ";
+        }
       os << arr(r, lastColumn);
       }
     os << "]" << std::endl;
@@ -94,6 +92,11 @@ std::ostream & operator<<(std::ostream & os, const Array2D< TValueType > & arr)
 
   return os;
 }
+
+// declaration of specialization
+template<> ITKCommon_EXPORT std::ostream & operator<<(std::ostream & os, const Array2D< float > & arr);
+template<> ITKCommon_EXPORT std::ostream & operator<<(std::ostream & os, const Array2D< double > & arr);
+
 } // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

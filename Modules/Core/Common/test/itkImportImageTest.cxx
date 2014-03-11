@@ -31,9 +31,8 @@ int itkImportImageTest(int, char* [] )
     }
 
   // typdefs to simplify the syntax
-  typedef itk::ImportImageFilter<short, 2>          ImportImageFilter;
-  typedef itk::Image<short, 2>   ShortImage;
-
+  typedef itk::ImportImageFilter<short, 2> ImportImageFilter;
+  typedef itk::Image<short, 2>             ShortImage;
   // Create an ImportImageFilter filter
   ImportImageFilter::Pointer import;
   import = ImportImageFilter::New();
@@ -63,16 +62,14 @@ int itkImportImageTest(int, char* [] )
     return EXIT_FAILURE;
     }
 
-
-
   // Test the SetVectorMacros and GetVectorMacros
-  const double data[2] = {1.0,1.0};
+  const itk::SpacePrecisionType data[2] = {1.0,1.0};
   import->SetSpacing(data);
 
   const float data2[2] = {1.0,1.0};
   import->SetSpacing(data2);
 
-  const double * spacingValue = import->GetSpacing().GetDataPointer();
+  const itk::SpacePrecisionType * spacingValue = import->GetSpacing().GetDataPointer();
   std::cout << "import->GetSpacing(): " << spacingValue << std::endl;
 
   const double data3[2] = {1.0,1.0};
@@ -81,7 +78,7 @@ int itkImportImageTest(int, char* [] )
   const float data4[2] = {1.0,1.0};
   import->SetOrigin(data4);
 
-  const double * originValue = import->GetOrigin().GetDataPointer();
+  const itk::SpacePrecisionType * originValue = import->GetOrigin().GetDataPointer();
   std::cout << "import->GetOrigin(): " << originValue << std::endl;
 
   //
@@ -98,8 +95,7 @@ int itkImportImageTest(int, char* [] )
   for (; !iterator2.IsAtEnd(); ++iterator2)
     {
     std::cout << "Pixel " << iterator2.GetIndex() << " = " << iterator2.Get() << std::endl;
-    if ( iterator2.Get() !=
-         itk::Math::RoundHalfIntegerUp<short>(
+    if (iterator2.Get() != itk::Math::RoundHalfIntegerUp<short>(
             static_cast<float>( (shrink->GetShrinkFactors()[0] * iterator2.GetIndex()[0] +
                                  shrink->GetShrinkFactors()[0]/2) +
             (region.GetSize()[0] * ((shrink->GetShrinkFactors()[1]/2) +

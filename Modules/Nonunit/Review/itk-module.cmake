@@ -64,6 +64,7 @@ itk_module(ITKReview
     ITKMesh
     ITKNarrowBand
     ITKNeuralNetworks
+    ITKOpenJPEG
     ITKOptimizers
     ITKPath
     ITKPDEDeformableRegistration
@@ -87,6 +88,8 @@ itk_module(ITKReview
   TEST_DEPENDS
     ITKTestKernel
     ITKIOMesh
+    ITKIOCSV
   DESCRIPTION
     "${DOCUMENTATION}"
-)
+  EXCLUDE_FROM_DEFAULT
+ )

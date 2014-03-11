@@ -153,40 +153,41 @@ int FastChamferDistanceImageFilterTest( unsigned int iPositive,
       }
     ++itNB;
     }
-
+  int returnVal(EXIT_SUCCESS);
   if( innerpositive != iPositive )
     {
     std::cout << "Inner positive points: " << innerpositive << " != " << iPositive << std::endl;
-    return EXIT_FAILURE;
+    returnVal = EXIT_FAILURE;
     }
 
   if( innernegative != iNegative )
     {
     std::cout << "Inner negative points: " << innernegative << " != " << iNegative << std::endl;
-    return EXIT_FAILURE;
+    returnVal = EXIT_FAILURE;
     }
 
   if( otherpoints != iOther )
     {
     std::cout << "Rest of points: " << otherpoints << " != " << iOther << std::endl;
-    return EXIT_FAILURE;
+    returnVal = EXIT_FAILURE;
     }
 
   //Exercising filter methods
   float inweights[VDimension];
   for( unsigned int dim = 0; dim < VDimension; dim++ )
     {
-    inweights[dim] = 0.;
-    }
-
-  if( VDimension > 0 )
-    {
-    inweights[0]=0.926;
-    }
-
-  if( VDimension > 1 )
-    {
-    inweights[1]=1.34;
+    if( dim == 0 )
+      {
+      inweights[dim] = 0.926f;
+      }
+    else if( dim == 1 )
+      {
+      inweights[dim] = 1.34f;
+      }
+    else
+      {
+      inweights[dim] = 0.f;
+      }
     }
   filter->SetWeights(inweights);
   const float *outweights =  filter->GetWeights().GetDataPointer();
@@ -196,7 +197,7 @@ int FastChamferDistanceImageFilterTest( unsigned int iPositive,
   if( filter->GetMaximumDistance() != 5 )
     {
     std::cout << "filter->GetMaximumDistance() != 5" <<std::endl;
-    return EXIT_FAILURE;
+    returnVal = EXIT_FAILURE;
     }
   /* For debugging write the result
   typedef itk::ImageFileWriter< ImageType >  WriterType;
@@ -207,8 +208,11 @@ int FastChamferDistanceImageFilterTest( unsigned int iPositive,
   writer->Update();
   */
 
-  std::cout << "Test passed" << std::endl;
-  return EXIT_SUCCESS;
+  if(returnVal == EXIT_SUCCESS)
+    {
+    std::cout << "Test passed" << std::endl;
+    }
+  return returnVal;
 }
 
 int itkFastChamferDistanceImageFilterTest( int argc, char* argv[] )

@@ -19,7 +19,7 @@
 #define __itkTernaryFunctorImageFilter_hxx
 
 #include "itkTernaryFunctorImageFilter.h"
-#include "itkImageRegionIterator.h"
+#include "itkImageScanlineIterator.h"
 #include "itkProgressReporter.h"
 
 namespace itk
@@ -27,8 +27,8 @@ namespace itk
 /**
  * Constructor
  */
-template< class TInputImage1, class TInputImage2,
-          class TInputImage3, class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TInputImage3, typename TOutputImage, typename TFunction  >
 TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImage, TFunction >
 ::TernaryFunctorImageFilter()
 {
@@ -38,8 +38,8 @@ TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImag
 /**
  * Connect one of the operands for pixel-wise addition
  */
-template< class TInputImage1, class TInputImage2,
-          class TInputImage3, class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TInputImage3, typename TOutputImage, typename TFunction  >
 void
 TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImage, TFunction >
 ::SetInput1(const TInputImage1 *image1)
@@ -51,8 +51,8 @@ TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImag
 /**
  * Connect one of the operands for pixel-wise addition
  */
-template< class TInputImage1, class TInputImage2,
-          class TInputImage3, class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TInputImage3, typename TOutputImage, typename TFunction  >
 void
 TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImage, TFunction >
 ::SetInput2(const TInputImage2 *image2)
@@ -64,8 +64,8 @@ TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImag
 /**
  * Connect one of the operands for pixel-wise addition
  */
-template< class TInputImage1, class TInputImage2,
-          class TInputImage3, class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TInputImage3, typename TOutputImage, typename TFunction  >
 void
 TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImage, TFunction >
 ::SetInput3(const TInputImage3 *image3)
@@ -77,8 +77,8 @@ TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImag
 /**
  * BeforeThreadedGenerateData function. Validate inputs
  */
-template< class TInputImage1, class TInputImage2,
-          class TInputImage3, class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TInputImage3, typename TOutputImage, typename TFunction  >
 void
 TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImage, TFunction >
 ::BeforeThreadedGenerateData()
@@ -102,13 +102,18 @@ TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImag
 /**
  * ThreadedGenerateData function. Performs the pixel-wise addition
  */
-template< class TInputImage1, class TInputImage2,
-          class TInputImage3, class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TInputImage3, typename TOutputImage, typename TFunction  >
 void
 TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImage, TFunction >
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
                        ThreadIdType threadId)
 {
+  const SizeValueType size0 = outputRegionForThread.GetSize(0);
+  if( size0 == 0)
+    {
+    return;
+    }
   // We use dynamic_cast since inputs are stored as DataObjects.  The
   // ImageToImageFilter::GetInput(int) always returns a pointer to a
   // TInputImage1 so it cannot be used for the second or third input.
@@ -120,25 +125,29 @@ TernaryFunctorImageFilter< TInputImage1, TInputImage2, TInputImage3, TOutputImag
     dynamic_cast< const TInputImage3 * >( ( ProcessObject::GetInput(2) ) );
   OutputImagePointer outputPtr = this->GetOutput(0);
 
-  ImageRegionConstIterator< TInputImage1 > inputIt1(inputPtr1, outputRegionForThread);
-  ImageRegionConstIterator< TInputImage2 > inputIt2(inputPtr2, outputRegionForThread);
-  ImageRegionConstIterator< TInputImage3 > inputIt3(inputPtr3, outputRegionForThread);
-  ImageRegionIterator< TOutputImage >      outputIt(outputPtr, outputRegionForThread);
 
-  ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
+  ImageScanlineConstIterator< TInputImage1 > inputIt1(inputPtr1, outputRegionForThread);
+  ImageScanlineConstIterator< TInputImage2 > inputIt2(inputPtr2, outputRegionForThread);
+  ImageScanlineConstIterator< TInputImage3 > inputIt3(inputPtr3, outputRegionForThread);
+  ImageScanlineIterator< TOutputImage >      outputIt(outputPtr, outputRegionForThread);
 
-  inputIt1.GoToBegin();
-  inputIt2.GoToBegin();
-  inputIt3.GoToBegin();
-  outputIt.GoToBegin();
+  const size_t numberOfLinesToProcess = outputRegionForThread.GetNumberOfPixels() / size0;
+  ProgressReporter progress( this, threadId, numberOfLinesToProcess );
 
   while ( !inputIt1.IsAtEnd() )
     {
-    outputIt.Set( m_Functor( inputIt1.Get(), inputIt2.Get(), inputIt3.Get() ) );
-    ++inputIt1;
-    ++inputIt2;
-    ++inputIt3;
-    ++outputIt;
+    while ( !inputIt1.IsAtEndOfLine() )
+      {
+      outputIt.Set( m_Functor( inputIt1.Get(), inputIt2.Get(), inputIt3.Get() ) );
+      ++inputIt1;
+      ++inputIt2;
+      ++inputIt3;
+      ++outputIt;
+      }
+      inputIt1.NextLine();
+      inputIt2.NextLine();
+      inputIt3.NextLine();
+      outputIt.NextLine();
     progress.CompletedPixel(); // potential exception thrown here
     }
 }

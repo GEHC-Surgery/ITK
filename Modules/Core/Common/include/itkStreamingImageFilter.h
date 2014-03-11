@@ -19,7 +19,7 @@
 #define __itkStreamingImageFilter_h
 
 #include "itkImageToImageFilter.h"
-#include "itkImageRegionSplitter.h"
+#include "itkImageRegionSplitterBase.h"
 
 namespace itk
 {
@@ -40,8 +40,8 @@ namespace itk
  * \ingroup DataProcessing
  * \ingroup ITKCommon
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT StreamingImageFilter:public ImageToImageFilter< TInputImage, TOutputImage >
+template< typename TInputImage, typename TOutputImage >
+class StreamingImageFilter:public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Standard class typedefs. */
@@ -75,8 +75,7 @@ public:
                       OutputImageType::ImageDimension);
 
   /** SmartPointer to a region splitting object */
-  typedef ImageRegionSplitter< itkGetStaticConstMacro(InputImageDimension) >
-  SplitterType;
+  typedef ImageRegionSplitterBase        SplitterType;
   typedef typename SplitterType::Pointer RegionSplitterPointer;
 
   /** Set the number of pieces to divide the input.  The upstream pipeline
@@ -87,11 +86,9 @@ public:
    * will be executed this many times. */
   itkGetConstReferenceMacro(NumberOfStreamDivisions, unsigned int);
 
-  /** Set the helper class for dividing the input into chunks. */
+  /** Get/Set the helper class for dividing the input into chunks. */
   itkSetObjectMacro(RegionSplitter, SplitterType);
-
-  /** Get the helper class for dividing the input into chunks. */
-  itkGetObjectMacro(RegionSplitter, SplitterType);
+  itkGetModifiableObjectMacro(RegionSplitter, SplitterType);
 
   /** Override UpdateOutputData() from ProcessObject to divide upstream
    * updates into pieces. This filter does not have a GenerateData()
@@ -107,12 +104,12 @@ public:
   virtual void PropagateRequestedRegion(DataObject *output);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( SameDimensionCheck,
                    ( Concept::SameDimension< InputImageDimension, OutputImageDimension > ) );
   itkConceptMacro( InputConvertibleToOutputCheck,
                    ( Concept::Convertible< InputImagePixelType, OutputImagePixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

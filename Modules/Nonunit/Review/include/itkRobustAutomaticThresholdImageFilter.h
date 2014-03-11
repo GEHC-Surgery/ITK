@@ -47,8 +47,8 @@ namespace itk
  * \ingroup ITKReview
  */
 
-template< class TInputImage, class TGradientImage = TInputImage, class TOutputImage = TInputImage >
-class ITK_EXPORT RobustAutomaticThresholdImageFilter:
+template< typename TInputImage, typename TGradientImage = TInputImage, typename TOutputImage = TInputImage >
+class RobustAutomaticThresholdImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -115,12 +115,12 @@ public:
   itkGetConstMacro(Pow, double);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( OutputComparableCheck,
                    ( Concept::Comparable< OutputPixelType > ) );
   itkConceptMacro( OutputOStreamWritableCheck,
                    ( Concept::OStreamWritable< OutputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
   /** Set the gradient image */

@@ -27,15 +27,15 @@
 namespace itk
 {
 /** Constructor */
-template< class TCoordRep, unsigned int VSpaceDimension,
+template< typename TCoordRep, unsigned int VSpaceDimension,
           unsigned int VSplineOrder >
 BSplineInterpolationWeightFunction< TCoordRep, VSpaceDimension, VSplineOrder >
 ::BSplineInterpolationWeightFunction()
 {
   // Initialize the number of weights;
   m_NumberOfWeights =
-    static_cast< unsigned long >( vcl_pow( static_cast< double >( SplineOrder + 1 ),
-                                           static_cast< double >( SpaceDimension ) ) );
+    static_cast< unsigned int >( vcl_pow( static_cast< double >( SplineOrder + 1 ),
+                                          static_cast< double >( SpaceDimension ) ) );
 
   // Initialize support region is a hypercube of length SplineOrder + 1
   m_SupportSize.Fill(SplineOrder + 1);
@@ -50,8 +50,8 @@ BSplineInterpolationWeightFunction< TCoordRep, VSpaceDimension, VSplineOrder >
   tempImage->FillBuffer(0);
 
   typedef ImageRegionConstIteratorWithIndex< CharImageType > IteratorType;
-  IteratorType  iterator( tempImage, tempImage->GetBufferedRegion() );
-  unsigned long counter = 0;
+  IteratorType iterator( tempImage, tempImage->GetBufferedRegion() );
+  unsigned int counter = 0;
 
   while ( !iterator.IsAtEnd() )
     {
@@ -70,7 +70,7 @@ BSplineInterpolationWeightFunction< TCoordRep, VSpaceDimension, VSplineOrder >
 /**
  * Standard "PrintSelf" method
  */
-template< class TCoordRep, unsigned int VSpaceDimension,
+template< typename TCoordRep, unsigned int VSpaceDimension,
           unsigned int VSplineOrder >
 void
 BSplineInterpolationWeightFunction< TCoordRep, VSpaceDimension, VSplineOrder >
@@ -85,7 +85,7 @@ BSplineInterpolationWeightFunction< TCoordRep, VSpaceDimension, VSplineOrder >
 }
 
 /** Compute weights for interpolation at continuous index position */
-template< class TCoordRep, unsigned int VSpaceDimension,
+template< typename TCoordRep, unsigned int VSpaceDimension,
           unsigned int VSplineOrder >
 typename BSplineInterpolationWeightFunction< TCoordRep, VSpaceDimension,
                                              VSplineOrder >
@@ -103,7 +103,7 @@ BSplineInterpolationWeightFunction< TCoordRep, VSpaceDimension, VSplineOrder >
 }
 
 /** Compute weights for interpolation at continuous index position */
-template< class TCoordRep, unsigned int VSpaceDimension,
+template< typename TCoordRep, unsigned int VSpaceDimension,
           unsigned int VSplineOrder >
 void BSplineInterpolationWeightFunction< TCoordRep, VSpaceDimension,
                                          VSplineOrder >

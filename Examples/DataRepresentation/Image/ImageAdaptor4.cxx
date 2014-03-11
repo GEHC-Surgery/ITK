@@ -56,7 +56,8 @@
 //
 //  Software Guide : EndLatex
 
-
+namespace itk
+{
 // Software Guide : BeginCodeSnippet
 class ThresholdingPixelAccessor
 {
@@ -75,14 +76,18 @@ public:
     m_Threshold = threshold;
     }
 
-  void operator=( const ThresholdingPixelAccessor & vpa )
+  ThresholdingPixelAccessor &
+    operator=( const ThresholdingPixelAccessor & vpa )
     {
     m_Threshold = vpa.m_Threshold;
+    return *this;
     }
 
 private:
   InternalType m_Threshold;
 };
+}
+
 // Software Guide : EndCodeSnippet
 
 
@@ -123,7 +128,7 @@ int main( int argc, char *argv[] )
 
 
 // Software Guide : BeginCodeSnippet
-  typedef ThresholdingPixelAccessor::InternalType     PixelType;
+  typedef itk::ThresholdingPixelAccessor::InternalType     PixelType;
   const   unsigned int   Dimension = 2;
   typedef itk::Image< PixelType,  Dimension >   ImageType;
 // Software Guide : EndCodeSnippet
@@ -139,8 +144,8 @@ int main( int argc, char *argv[] )
 
 
 // Software Guide : BeginCodeSnippet
-  typedef itk::ImageAdaptor<  ImageType,
-                              ThresholdingPixelAccessor > ImageAdaptorType;
+  typedef itk::ImageAdaptor< ImageType,
+                             itk::ThresholdingPixelAccessor > ImageAdaptorType;
 
   ImageAdaptorType::Pointer adaptor = ImageAdaptorType::New();
 // Software Guide : EndCodeSnippet
@@ -156,7 +161,7 @@ int main( int argc, char *argv[] )
 
 
 // Software Guide : BeginCodeSnippet
-  ThresholdingPixelAccessor  accessor;
+  itk::ThresholdingPixelAccessor  accessor;
   accessor.SetThreshold( atoi( argv[3] ) );
   adaptor->SetPixelAccessor( accessor );
 // Software Guide : EndCodeSnippet
@@ -201,9 +206,9 @@ int main( int argc, char *argv[] )
   //  Software Guide : BeginLatex
   //
   // \begin{figure} \center
-  // \includegraphics[width=0.32\textwidth]{BrainProtonDensitySlice.eps}
-  // \includegraphics[width=0.32\textwidth]{ImageAdaptorThresholdingA.eps}
-  // \includegraphics[width=0.32\textwidth]{ImageAdaptorThresholdingB.eps}
+  // \includegraphics[width=0.32\textwidth]{BrainProtonDensitySlice}
+  // \includegraphics[width=0.32\textwidth]{ImageAdaptorThresholdingA}
+  // \includegraphics[width=0.32\textwidth]{ImageAdaptorThresholdingB}
   // \itkcaption[Image Adaptor for performing computations]{Using
   // ImageAdaptor to perform a simple image computation. An
   // ImageAdaptor is used to perform binary thresholding on

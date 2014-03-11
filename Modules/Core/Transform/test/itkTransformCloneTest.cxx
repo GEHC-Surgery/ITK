@@ -82,7 +82,7 @@ int itkTransformCloneTest(int, char *[])
     std::cerr << "Failed to downcast return value from Clone to "
               << "AffineTransform, reported type is "
               << clonePtr->GetTransformTypeAsString()
-              << std::cerr;
+              << std::endl;
     return EXIT_FAILURE;
     }
   const AffineTransformType::MatrixType &cloneMatrix =
@@ -118,10 +118,10 @@ int itkTransformCloneTest(int, char *[])
     }
   for(unsigned i = 0; i < compositeXfrm->GetNumberOfTransforms(); ++i)
     {
-    AffineTransformType::Pointer originalXfrm =
-      dynamic_cast<AffineTransformType *>(compositeXfrm->GetNthTransform(i).GetPointer());
-    AffineTransformType::Pointer  cloneXfrm =
-      dynamic_cast<AffineTransformType *>(cloneCompositeXfrm->GetNthTransform(i).GetPointer());
+    AffineTransformType::ConstPointer originalXfrm =
+      dynamic_cast<const AffineTransformType *>(compositeXfrm->GetNthTransformConstPointer(i));
+    AffineTransformType::ConstPointer  cloneXfrm =
+      dynamic_cast<const AffineTransformType *>(cloneCompositeXfrm->GetNthTransformConstPointer(i));
 
     if(originalXfrm.IsNull() || cloneXfrm.IsNull())
       {

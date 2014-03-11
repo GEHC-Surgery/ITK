@@ -23,7 +23,7 @@
 
 // This routine is used to make sure that we call the "const" version
 // of GetPixel() (via the operator[])
-template <class T, unsigned int VImageDimension>
+template <typename T, unsigned int VImageDimension>
 void TestConstPixelAccess(const itk::Image<T, VImageDimension> &in,
                           itk::Image<T, VImageDimension> &out)
 {
@@ -86,7 +86,7 @@ int itkImageIteratorTest(int, char* [] )
   (*o3)[regionEndIndex3D] = (*o3)[regionStartIndex3D];
   TestConstPixelAccess(*o3, *o3);
 
-  typedef itk::Vector< unsigned short, 5 >  VectorPixelType;
+  typedef itk::Vector< unsigned short, 5 >               VectorPixelType;
   typedef itk::Image< VectorPixelType, ImageDimension >  VectorImageType;
 
   typedef itk::ImageIterator<      VectorImageType >  VectorImageIterator;

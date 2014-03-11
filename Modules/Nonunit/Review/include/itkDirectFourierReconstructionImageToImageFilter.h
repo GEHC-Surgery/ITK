@@ -47,8 +47,8 @@ namespace itk
  * \ingroup ImageFilters
  * \ingroup ITKReview
  */
-template< class TInputImage, class TOutputImage=TInputImage >
-class ITK_EXPORT DirectFourierReconstructionImageToImageFilter:
+template< typename TInputImage, typename TOutputImage=TInputImage >
+class DirectFourierReconstructionImageToImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:

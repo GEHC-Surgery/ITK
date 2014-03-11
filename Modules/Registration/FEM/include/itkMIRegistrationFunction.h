@@ -49,8 +49,8 @@ namespace itk
  * \ingroup FiniteDifferenceFunctions
  * \ingroup ITKFEMRegistration
  */
-template< class TFixedImage, class TMovingImage, class TDisplacementField >
-class ITK_EXPORT MIRegistrationFunction:
+template< typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+class MIRegistrationFunction:
   public PDEDeformableRegistrationFunction< TFixedImage,
                                             TMovingImage, TDisplacementField >
 {

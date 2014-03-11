@@ -25,8 +25,8 @@
  *  \class RegistrationParameterScalesFromJacobianTestMetric for test.
  *  Create a simple metric to use for testing here.
  */
-template< class TFixedImage,class TMovingImage,class TVirtualImage = TFixedImage >
-class ITK_EXPORT RegistrationParameterScalesFromJacobianTestMetric:
+template< typename TFixedImage,typename TMovingImage,typename TVirtualImage = TFixedImage >
+class RegistrationParameterScalesFromJacobianTestMetric:
   public itk::ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage>
 {
 public:

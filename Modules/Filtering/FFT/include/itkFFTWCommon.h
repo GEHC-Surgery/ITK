@@ -19,7 +19,7 @@
 #define __itkFFTWCommon_h
 
 #include "itkFFTWGlobalConfiguration.h"
-#if defined( USE_FFTWF ) || defined( USE_FFTWD )
+#if defined( ITK_USE_FFTWF ) || defined( ITK_USE_FFTWD )
 #include "fftw3.h"
 #endif
 
@@ -57,7 +57,7 @@ protected:
   ~Proxy() {};
 };
 
-#if defined( USE_FFTWF )
+#if defined( ITK_USE_FFTWF )
 
 template< >
 class Proxy< float >
@@ -148,7 +148,7 @@ public:
           }
         ComplexType * din = new ComplexType[total];
         fftwf_plan_dft_c2r(rank,n,din,out,flags);
-        delete [] din;
+        delete[] din;
         // and then create the final plan - this time it shouldn't fail
         plan = fftwf_plan_dft_c2r(rank,n,in,out,roflags);
         }
@@ -240,7 +240,7 @@ public:
           }
         PixelType * din = new PixelType[total];
         fftwf_plan_dft_r2c(rank,n,din,out,flags);
-        delete [] din;
+        delete[] din;
         // and then create the final plan - this time it shouldn't fail
         plan = fftwf_plan_dft_r2c(rank,n,in,out,roflags);
         }
@@ -334,7 +334,7 @@ public:
           }
         ComplexType * din = new ComplexType[total];
         fftwf_plan_dft(rank,n,din,out,sign,flags);
-        delete [] din;
+        delete[] din;
         // and then create the final plan - this time it shouldn't fail
         plan = fftwf_plan_dft(rank,n,in,out,sign,roflags);
         }
@@ -356,10 +356,10 @@ public:
   }
 };
 
-#endif // USE_FFTWF
+#endif // ITK_USE_FFTWF
 
 
-#if defined( USE_FFTWD )
+#if defined( ITK_USE_FFTWD )
 template< >
 class Proxy< double >
 {
@@ -449,7 +449,7 @@ public:
           }
         ComplexType * din = new ComplexType[total];
         fftw_plan_dft_c2r(rank,n,din,out,flags);
-        delete [] din;
+        delete[] din;
         // and then create the final plan - this time it shouldn't fail
         plan = fftw_plan_dft_c2r(rank,n,in,out,roflags);
         }
@@ -540,7 +540,7 @@ public:
           }
         PixelType * din = new PixelType[total];
         fftw_plan_dft_r2c(rank,n,din,out,flags);
-        delete [] din;
+        delete[] din;
         // and then create the final plan - this time it shouldn't fail
         plan = fftw_plan_dft_r2c(rank,n,in,out,roflags);
         }
@@ -634,7 +634,7 @@ public:
           }
         ComplexType * din = new ComplexType[total];
         fftw_plan_dft(rank,n,din,out,sign,flags);
-        delete [] din;
+        delete[] din;
         // and then create the final plan - this time it shouldn't fail
         plan = fftw_plan_dft(rank,n,in,out,sign,roflags);
         }

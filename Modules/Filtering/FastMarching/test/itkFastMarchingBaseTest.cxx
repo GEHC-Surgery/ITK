@@ -20,7 +20,7 @@
 
 namespace itk
 {
-template< class TInput, class TOutput >
+template< typename TInput, typename TOutput >
 class FastMarchingBaseTestHelper :
     public FastMarchingBase< TInput, TOutput >
 {
@@ -99,13 +99,13 @@ int itkFastMarchingBaseTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  const unsigned Dimension = 3;
   typedef float PixelType;
 
   bool exception_caught = false;
 
   if( atoi( argv[1] ) == 0 )
     {
+    const unsigned Dimension = 3;
     typedef itk::Image<PixelType, Dimension> ImageType;
 
     typedef itk::FastMarchingStoppingCriterionBase< ImageType, ImageType >

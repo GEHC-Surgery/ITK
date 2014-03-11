@@ -45,7 +45,7 @@ typename TImage::Pointer ReadImage( const std::string &fileName )
     {
     std::cout << "Caught an exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
-    throw err;
+    throw;
     }
   catch ( ... )
     {
@@ -57,7 +57,7 @@ typename TImage::Pointer ReadImage( const std::string &fileName )
 }
 
 /** write an image using ITK */
-template <class ImageType>
+template <typename ImageType>
 void
 WriteImage(typename ImageType::Pointer &image,
            const std::string &fileName)

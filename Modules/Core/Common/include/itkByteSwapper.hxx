@@ -37,14 +37,14 @@ namespace itk
 //
 // Machine definitions
 #ifdef CMAKE_WORDS_BIGENDIAN
-template< class T >
+template< typename T >
 bool ByteSwapper< T >::SystemIsBigEndian() { return true; }
-template< class T >
+template< typename T >
 bool ByteSwapper< T >::SystemIsLittleEndian() { return false; }
 #else
-template< class T >
+template< typename T >
 bool ByteSwapper< T >::SystemIsBigEndian() { return false; }
-template< class T >
+template< typename T >
 bool ByteSwapper< T >::SystemIsLittleEndian() { return true; }
 #endif
 
@@ -52,12 +52,12 @@ bool ByteSwapper< T >::SystemIsLittleEndian() { return true; }
 
 // Use different swap methods based on type
 #ifdef CMAKE_WORDS_BIGENDIAN
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapFromSystemToBigEndian(T *){}
 #else
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapFromSystemToBigEndian(T *p)
@@ -83,7 +83,7 @@ ByteSwapper< T >
 #endif
 
 #ifdef CMAKE_WORDS_BIGENDIAN
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapRangeFromSystemToBigEndian(T *, BufferSizeType)
@@ -96,7 +96,7 @@ ByteSwapper< T >
 #ifdef __INTEL_COMPILER
 #pragma warning disable 280 //remark #280: selector expression is constant
 #endif
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapRangeFromSystemToBigEndian(T *p, BufferSizeType num)
@@ -123,7 +123,7 @@ ByteSwapper< T >
 #endif
 
 #ifdef CMAKE_WORDS_BIGENDIAN
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapWriteRangeFromSystemToBigEndian(T *p, int num, OStreamType *fp)
@@ -133,7 +133,7 @@ ByteSwapper< T >
 }
 
 #else
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapWriteRangeFromSystemToBigEndian(T *p, int num, OStreamType *fp)
@@ -161,7 +161,7 @@ ByteSwapper< T >
 //------Little Endian methods----------------------------------------------
 
 #ifdef CMAKE_WORDS_BIGENDIAN
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapFromSystemToLittleEndian(T *p)
@@ -185,14 +185,14 @@ ByteSwapper< T >
 }
 
 #else
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapFromSystemToLittleEndian(T *){}
 #endif
 
 #ifdef CMAKE_WORDS_BIGENDIAN
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapRangeFromSystemToLittleEndian(T *p, BufferSizeType num)
@@ -216,14 +216,14 @@ ByteSwapper< T >
 }
 
 #else
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapRangeFromSystemToLittleEndian(T *, BufferSizeType) {}
 #endif
 
 #ifdef CMAKE_WORDS_BIGENDIAN
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapWriteRangeFromSystemToLittleEndian(T *p, int num, OStreamType *fp)
@@ -247,7 +247,7 @@ ByteSwapper< T >
 }
 
 #else
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapWriteRangeFromSystemToLittleEndian(T *p, int num, OStreamType *fp)
@@ -264,32 +264,27 @@ ByteSwapper< T >
 //------2-byte methods----------------------------------------------
 
 // Swap 2 byte word.
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::Swap2(void *pin)
 {
-  unsigned short h1, h2;
-  short *        p = reinterpret_cast< short * >( pin );
-
-  h1 = static_cast< unsigned short >( *p ) << 8;
-  h2 = static_cast< unsigned short >( *p ) >> 8;
-  *p = (short)h1 | h2;
+  unsigned short *      p = reinterpret_cast< unsigned short * >( pin );
+  const unsigned short h1 = (*p) << static_cast<short unsigned int>(8);
+  const unsigned short h2 = (*p) >> static_cast<short unsigned int>(8);
+  *p = h1 | h2;
 }
 
 // Swap bunch of bytes. Num is the number of two byte words to swap.
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::Swap2Range(void *ptr, BufferSizeType num)
 {
-  char           one_byte;
-  char *         pos = reinterpret_cast< char * >( ptr );
-  BufferSizeType i;
-
-  for ( i = 0; i < num; i++ )
+  char * pos = reinterpret_cast< char * >( ptr );
+  for ( BufferSizeType i = 0; i < num; i++ )
     {
-    one_byte = pos[0];
+    const char one_byte = pos[0];
     pos[0] = pos[1];
     pos[1] = one_byte;
     pos = pos + 2;
@@ -297,36 +292,30 @@ ByteSwapper< T >
 }
 
 // Swap bunch of bytes. Num is the number of four byte words to swap.
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapWrite2Range(void *ptr, BufferSizeType num, OStreamType *fp)
 {
-  char           one_byte;
-  char *         pos;
-  BufferSizeType i;
-  char *         cpy;
   BufferSizeType chunkSize = 1000000;
-
   if ( num < chunkSize )
     {
     chunkSize = num;
     }
-  cpy = new char[chunkSize * 2];
-
+  char * cpy = new char[chunkSize * 2];
   while ( num )
     {
     memcpy(cpy, ptr, chunkSize * 2);
 
-    pos = cpy;
-    for ( i = 0; i < chunkSize; i++ )
+    char * pos = cpy;
+    for ( BufferSizeType i = 0; i < chunkSize; i++ )
       {
-      one_byte = pos[0];
+      const char one_byte = pos[0];
       pos[0] = pos[1];
       pos[1] = one_byte;
       pos = pos + 2;
       }
-    fp->write( (char *)cpy, 2 * chunkSize );
+    fp->write( (char *)cpy, static_cast<std::streamsize>(2 * chunkSize) );
     ptr = (char *)ptr + chunkSize * 2;
     num -= chunkSize;
     if ( num < chunkSize )
@@ -340,7 +329,7 @@ ByteSwapper< T >
 //------4-byte methods----------------------------------------------
 
 // Swap four byte word.
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::Swap4(void *ptr)
@@ -358,18 +347,16 @@ ByteSwapper< T >
 }
 
 // Swap bunch of bytes. Num is the number of four byte words to swap.
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::Swap4Range(void *ptr, BufferSizeType num)
 {
-  char           one_byte;
   char *         pos = reinterpret_cast< char * >( ptr );
-  BufferSizeType i;
 
-  for ( i = 0; i < num; i++ )
+  for ( BufferSizeType i = 0; i < num; i++ )
     {
-    one_byte = pos[0];
+    char one_byte = pos[0];
     pos[0] = pos[3];
     pos[3] = one_byte;
 
@@ -381,31 +368,27 @@ ByteSwapper< T >
 }
 
 // Swap bunch of bytes. Num is the number of four byte words to swap.
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapWrite4Range(void *ptr, BufferSizeType num, OStreamType *fp)
 {
-  char           one_byte;
-  char *         pos;
-  BufferSizeType i;
-  char *         cpy;
   BufferSizeType chunkSize = 1000000;
 
   if ( num < chunkSize )
     {
     chunkSize = num;
     }
-  cpy = new char[chunkSize * 4];
+  char * cpy = new char[chunkSize * 4];
 
   while ( num )
     {
     memcpy(cpy, ptr, chunkSize * 4);
 
-    pos = cpy;
-    for ( i = 0; i < chunkSize; i++ )
+    char * pos = cpy;
+    for ( BufferSizeType i = 0; i < chunkSize; i++ )
       {
-      one_byte = pos[0];
+      char one_byte = pos[0];
       pos[0] = pos[3];
       pos[3] = one_byte;
 
@@ -414,7 +397,7 @@ ByteSwapper< T >
       pos[2] = one_byte;
       pos = pos + 4;
       }
-    fp->write( (char *)cpy, 4 * chunkSize );
+    fp->write( (char *)cpy, static_cast<std::streamsize>(4 * chunkSize) );
     ptr  = (char *)ptr + chunkSize * 4;
     num -= chunkSize;
     if ( num < chunkSize )
@@ -428,7 +411,7 @@ ByteSwapper< T >
 //------8-byte methods----------------------------------------------
 
 // Swap 8 byte double precision
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::Swap8(void *ptr)
@@ -454,18 +437,16 @@ ByteSwapper< T >
 }
 
 // Swap bunch of bytes. Num is the number of eight byte words to swap.
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::Swap8Range(void *ptr, BufferSizeType num)
 {
-  char           one_byte;
   char *         pos = reinterpret_cast< char * >( ptr );
-  BufferSizeType i;
 
-  for ( i = 0; i < num; i++ )
+  for ( BufferSizeType i = 0; i < num; i++ )
     {
-    one_byte    = pos[0];
+    char one_byte    = pos[0];
     pos[0] = pos[7];
     pos[7] = one_byte;
 
@@ -485,48 +466,25 @@ ByteSwapper< T >
 }
 
 // Swap bunch of bytes. Num is the number of four byte words to swap.
-template< class T >
+template< typename T >
 void
 ByteSwapper< T >
 ::SwapWrite8Range(void *ptr, BufferSizeType num, OStreamType *fp)
 {
-  char           one_byte;
-  char *         pos;
-  BufferSizeType i;
-  char *         cpy;
   BufferSizeType chunkSize = 1000000;
-
   if ( num < chunkSize )
     {
     chunkSize = num;
     }
-  cpy = new char[chunkSize * 8];
+  char * cpy = new char[chunkSize * 8];
 
   while ( num )
     {
     memcpy(cpy, ptr, chunkSize * 8);
 
-    pos = cpy;
-    for ( i = 0; i < chunkSize; i++ )
-      {
-      one_byte    = pos[0];
-      pos[0] = pos[7];
-      pos[7] = one_byte;
+    ByteSwapper< T >::Swap8Range( (void *)cpy, chunkSize );
 
-      one_byte    = pos[1];
-      pos[1] = pos[6];
-      pos[6] = one_byte;
-
-      one_byte    = pos[2];
-      pos[2] = pos[5];
-      pos[5] = one_byte;
-
-      one_byte    = pos[3];
-      pos[3] = pos[4];
-      pos[4] = one_byte;
-      pos = pos + 8;
-      }
-    fp->write( (char *)cpy, 8 * chunkSize );
+    fp->write( (char *)cpy, static_cast<std::streamsize>(8 * chunkSize) );
     ptr  = (char *)ptr + chunkSize * 8;
     num -= chunkSize;
     if ( num < chunkSize )

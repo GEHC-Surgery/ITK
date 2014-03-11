@@ -21,7 +21,6 @@
 //    INPUTS:  {BrainT1Slice_labelled.png}
 //    OUTPUTS: {ScalarImageMarkovRandomField1Output.png}
 //    ARGUMENTS:    50 3 3 14.8 91.6 134.9
-//    NORMALIZE_EPS_OUTPUT_OF: {ScalarImageMarkovRandomField1Output.png}
 //  Software Guide : EndCommandLineArgs
 
 // Software Guide : BeginLatex
@@ -102,7 +101,6 @@ int main( int argc, char * argv [] )
     }
 
 
-
   // Software Guide : BeginLatex
   //
   // First we define the pixel type and dimension of the image that we intend to
@@ -126,7 +124,6 @@ int main( int argc, char * argv [] )
   // Software Guide : EndCodeSnippet
 
 
-
   // Software Guide : BeginLatex
   //
   // As a second step we define the pixel type and dimension of the image of
@@ -145,7 +142,6 @@ int main( int argc, char * argv [] )
   LabelReaderType::Pointer labelReader = LabelReaderType::New();
   labelReader->SetFileName( inputLabelImageFileName );
   // Software Guide : EndCodeSnippet
-
 
 
   // Software Guide : BeginLatex
@@ -192,7 +188,6 @@ int main( int argc, char * argv [] )
   // Software Guide : EndCodeSnippet
 
 
-
   // Software Guide : BeginLatex
   //
   // We set now some of the parameters for the MRF filter. In particular, the
@@ -209,7 +204,6 @@ int main( int argc, char * argv [] )
   // Software Guide : EndCodeSnippet
 
 
-
   // Software Guide : BeginLatex
   //
   // The smoothing factor represents the tradeoff between fidelity to the
@@ -224,8 +218,6 @@ int main( int argc, char * argv [] )
   // Software Guide : BeginCodeSnippet
   mrfFilter->SetSmoothingFactor( smoothingFactor );
   // Software Guide : EndCodeSnippet
-
-
 
 
   // Software Guide : BeginLatex
@@ -246,7 +238,6 @@ int main( int argc, char * argv [] )
   SupervisedClassifierType::Pointer classifier =
                                          SupervisedClassifierType::New();
   // Software Guide : EndCodeSnippet
-
 
 
   // Software Guide : BeginLatex
@@ -316,7 +307,6 @@ int main( int argc, char * argv [] )
   // Software Guide : EndCodeSnippet
 
 
-
   // Software Guide : BeginLatex
   //
   // and we set the neighborhood radius that will define the size of the clique
@@ -380,15 +370,13 @@ int main( int argc, char * argv [] )
     totalWeight += *wcIt;
     }
   for(std::vector< double >::iterator wIt = weights.begin();
-      wIt != weights.end(); wIt++ )
+      wIt != weights.end(); ++wIt )
     {
     *wIt = static_cast< double > ( (*wIt) * meanDistance / (2 * totalWeight));
     }
 
   mrfFilter->SetMRFNeighborhoodWeight( weights );
   // Software Guide : EndCodeSnippet
-
-
 
 
   // Software Guide : BeginLatex
@@ -400,8 +388,6 @@ int main( int argc, char * argv [] )
   // Software Guide : BeginCodeSnippet
     mrfFilter->SetClassifier( classifier );
   // Software Guide : EndCodeSnippet
-
-
 
 
   // Software Guide : BeginLatex
@@ -439,8 +425,6 @@ int main( int argc, char * argv [] )
   // Software Guide : EndCodeSnippet
 
 
-
-
   // Software Guide : BeginLatex
   //
   // We are now ready for triggering the execution of the pipeline. This is done
@@ -474,7 +458,7 @@ int main( int argc, char * argv [] )
   //  Software Guide : BeginLatex
   //
   // \begin{figure} \center
-  // \includegraphics[width=0.44\textwidth]{ScalarImageMarkovRandomField1Output.eps}
+  // \includegraphics[width=0.44\textwidth]{ScalarImageMarkovRandomField1Output}
   // \itkcaption[Output of the ScalarImageMarkovRandomField]{Effect of the
   // MRF filter on a T1 slice of the brain.}
   // \label{fig:ScalarImageMarkovRandomFieldInputOutput}

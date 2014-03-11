@@ -23,7 +23,7 @@
 //
 //
 // \begin{figure} \center
-// \includegraphics[width=0.9\textwidth]{SpatialObjectTransforms.eps}
+// \includegraphics[width=0.9\textwidth]{SpatialObjectTransforms}
 // \itkcaption[SpatialObject Transformations]{Set of transformations associated
 // with a Spatial Object}
 // \label{fig:SpatialObjectTransforms}
@@ -138,7 +138,6 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 
-
 // Software Guide : BeginLatex
 //
 // We can now display the ObjectToWorldTransform for both objects.  One
@@ -189,7 +188,6 @@ int main( int , char *[] )
 // Software Guide : EndCodeSnippet
 
 
-
 // Software Guide : BeginLatex
 //
 // Then, we decide to translate the first object which is the parent of the
@@ -224,7 +222,7 @@ int main( int , char *[] )
 //
 //
 // \begin{figure} \center
-// \includegraphics[width=0.5\textwidth]{SpatialObjectExampleTransforms.eps}
+// \includegraphics[width=0.5\textwidth]{SpatialObjectExampleTransforms}
 // \itkcaption[SpatialObject Transform Computations]{Physical positions of the
 // two objects in the world frame (shapes are merely for illustration
 // purposes).}

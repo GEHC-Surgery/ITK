@@ -54,8 +54,8 @@ namespace itk
  * \ingroup MeshFilters
  * \ingroup MeshSegmentation
  */
-template< class TInputMesh, class TOutputMesh >
-class ITK_EXPORT BalloonForceFilter:public MeshToMeshFilter< TInputMesh, TOutputMesh >
+template< typename TInputMesh, typename TOutputMesh >
+class BalloonForceFilter:public MeshToMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
   /** Standard class typedefs. */

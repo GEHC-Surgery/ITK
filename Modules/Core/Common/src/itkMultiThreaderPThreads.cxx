@@ -28,7 +28,7 @@
 #include "itkMultiThreader.h"
 #include "itkObjectFactory.h"
 #include "itksys/SystemTools.hxx"
-#include <stdlib.h>
+#include <unistd.h>
 
 #ifdef __APPLE__
 #include <sys/types.h>
@@ -48,9 +48,9 @@ ThreadIdType MultiThreader::GetGlobalDefaultNumberOfThreadsByPlatform()
     // Default the number of threads to be the number of available
     // processors if we are using pthreads()
 #ifdef _SC_NPROCESSORS_ONLN
-    num = sysconf(_SC_NPROCESSORS_ONLN);
+    num = static_cast<ThreadIdType>( sysconf(_SC_NPROCESSORS_ONLN));
 #elif defined( _SC_NPROC_ONLN )
-    num = sysconf(_SC_NPROC_ONLN);
+    num = static_cast<ThreadIdType>( sysconf(_SC_NPROC_ONLN) );
 #else
     num = 1;
 #endif
@@ -143,9 +143,9 @@ void MultiThreader::MultipleMethodExecute()
 
 }
 
-int MultiThreader::SpawnThread(ThreadFunctionType f, void *UserData)
+ThreadIdType MultiThreader::SpawnThread(ThreadFunctionType f, void *UserData)
 {
-  int id = 0;
+  ThreadIdType id = 0;
 
   while ( id < ITK_MAX_THREADS )
     {

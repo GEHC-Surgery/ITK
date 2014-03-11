@@ -61,8 +61,6 @@ void LinearSystemWrapper::ScaleMatrix(Float scale, unsigned int matrixIndex)
       this->SetMatrixValue(i, j, scale * GetMatrixValue(i, j, matrixIndex), matrixIndex);
       }
     }
-
-  return;
 }
 
 void LinearSystemWrapper::ScaleVector(Float scale, unsigned int vectorIndex)
@@ -79,8 +77,6 @@ void LinearSystemWrapper::ScaleVector(Float scale, unsigned int vectorIndex)
     {
     this->SetVectorValue(i, scale * GetVectorValue(i, vectorIndex), vectorIndex);
     }
-
-  return;
 }
 
 void LinearSystemWrapper::ScaleSolution(Float scale, unsigned int solutionIndex)
@@ -96,8 +92,6 @@ void LinearSystemWrapper::ScaleSolution(Float scale, unsigned int solutionIndex)
     {
     this->SetSolutionValue(i, scale * GetSolutionValue(i, solutionIndex), solutionIndex);
     }
-
-  return;
 }
 
 void LinearSystemWrapper::AddVectorValue(unsigned int i, Float value, unsigned int vectorIndex)
@@ -202,7 +196,7 @@ LinearSystemWrapper
   for( r = 0; r < this->m_Order; r++ )
     {
     this->GetColumnsOfNonZeroMatrixElementsInRow(r, cols, matrixIndex1);
-    for( LinearSystemWrapper::ColumnArray::iterator c = cols.begin(); c != cols.end(); c++ )
+    for( LinearSystemWrapper::ColumnArray::iterator c = cols.begin(); c != cols.end(); ++c )
       {
       this->SetMatrixValue(r, *c, this->GetMatrixValue(r, *c, matrixIndex1), matrixIndex2);
       }
@@ -218,7 +212,7 @@ LinearSystemWrapper
   for( r = 0; r < this->m_Order; r++ )
     {
     this->GetColumnsOfNonZeroMatrixElementsInRow(r, cols, matrixIndex2);
-    for( LinearSystemWrapper::ColumnArray::iterator c = cols.begin(); c != cols.end(); c++ )
+    for( LinearSystemWrapper::ColumnArray::iterator c = cols.begin(); c != cols.end(); ++c )
       {
       this->AddMatrixValue(r, *c, this->GetMatrixValue(r, *c, matrixIndex2), matrixIndex1);
       }
@@ -422,8 +416,6 @@ void LinearSystemWrapper::FollowConnectionsCuthillMckeeOrdering(unsigned int row
     nextRows.clear();
     nextRows = bufferArray;
     }
-
-  return;
 }
 
 FEMExceptionLinearSystem::FEMExceptionLinearSystem(const char *file, unsigned int lineNumber, std::string location,

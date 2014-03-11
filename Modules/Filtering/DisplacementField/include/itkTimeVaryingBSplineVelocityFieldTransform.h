@@ -64,8 +64,8 @@ namespace itk
  * \ingroup Transforms
  * \ingroup ITKDisplacementField
  */
-template<class TScalar, unsigned int NDimensions>
-class ITK_EXPORT TimeVaryingBSplineVelocityFieldTransform :
+template<typename TScalar, unsigned int NDimensions>
+class TimeVaryingBSplineVelocityFieldTransform :
   public VelocityFieldTransform<TScalar, NDimensions>
 {
 public:
@@ -126,7 +126,7 @@ public:
   /** Get the time-varying velocity field control point lattice. */
   typename VelocityFieldType::Pointer GetTimeVaryingVelocityFieldControlPointLattice()
     {
-    return this->GetVelocityField();
+    return this->GetModifiableVelocityField();
     }
 
   /** Set the time-varying velocity field control point lattice.  */

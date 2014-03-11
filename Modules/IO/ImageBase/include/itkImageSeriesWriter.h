@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkImageSeriesWriter_h
 #define __itkImageSeriesWriter_h
+#include "ITKIOImageBaseExport.h"
 
 #include "itkImageRegion.h"
 #include "itkImageFileWriter.h"
@@ -77,8 +78,8 @@ public:
  * \ingroup IOFilters
  * \ingroup ITKIOImageBase
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT ImageSeriesWriter:public ProcessObject
+template< typename TInputImage, typename TOutputImage >
+class ITKIOImageBase_HIDDEN ImageSeriesWriter:public ProcessObject
 {
 public:
   /** Standard class typedefs. */
@@ -122,7 +123,7 @@ public:
    * when the factory mechanism may not work (e.g., for raw files or
    * for non-standard file suffix). */
   itkSetObjectMacro(ImageIO, ImageIOBase);
-  itkGetObjectMacro(ImageIO, ImageIOBase);
+  itkGetModifiableObjectMacro(ImageIO, ImageIOBase);
 
   /** A special version of the Update() method for writers.  It
    * invokes start and end events and handles releasing data. It

@@ -31,7 +31,7 @@
 
 namespace {
 
-template<class TCoordRepType, unsigned int NDimensions>
+template<typename TCoordRepType, unsigned int NDimensions>
 class NonlinearAffineTransform:
   public itk::AffineTransform<TCoordRepType,NDimensions>
 {
@@ -43,7 +43,7 @@ public:
   typedef itk::SmartPointer< const Self >                    ConstPointer;
 
   /** New macro for creation of through a smart pointer. */
-  itkNewMacro(Self);
+  itkSimpleNewMacro(Self);
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(NonlinearAffineTransform, AffineTransform);
@@ -84,7 +84,9 @@ int itkResampleImageTest2(int argc, char * argv [] )
   typedef ImageType::RegionType                  ImageRegionType;
   typedef ImageType::SizeType                    ImageSizeType;
   typedef double                                 CoordRepType;
-  typedef itk::AffineTransform<CoordRepType,NDimensions>   AffineTransformType;
+
+  typedef itk::AffineTransform<CoordRepType,NDimensions>
+                                                 AffineTransformType;
   typedef NonlinearAffineTransform<CoordRepType,NDimensions>
                                                  NonlinearAffineTransformType;
   typedef itk::LinearInterpolateImageFunction<ImageType,CoordRepType>

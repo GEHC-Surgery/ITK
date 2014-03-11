@@ -140,7 +140,8 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   typedef itk::ImageLinearIteratorWithIndex< ImageType2D > LinearIteratorType;
-  typedef itk::ImageSliceConstIteratorWithIndex< ImageType3D >  SliceIteratorType;
+  typedef itk::ImageSliceConstIteratorWithIndex< ImageType3D
+                                                          > SliceIteratorType;
   // Software Guide : EndCodeSnippet
 
   typedef itk::ImageFileReader< ImageType3D > ReaderType;
@@ -230,8 +231,9 @@ int main( int argc, char *argv[] )
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  SliceIteratorType  inputIt(  inputImage,  inputImage->GetRequestedRegion() );
-  LinearIteratorType outputIt( outputImage, outputImage->GetRequestedRegion() );
+  SliceIteratorType  inputIt(  inputImage, inputImage->GetRequestedRegion() );
+  LinearIteratorType outputIt( outputImage,
+                                          outputImage->GetRequestedRegion() );
 
   inputIt.SetFirstDirection(  direction[1] );
   inputIt.SetSecondDirection( direction[0] );
@@ -308,7 +310,7 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \centering
-  // \includegraphics[width=0.4\textwidth]{ImageSliceIteratorWithIndexOutput.eps}
+  // \includegraphics[width=0.4\textwidth]{ImageSliceIteratorWithIndexOutput}
   // \itkcaption[Maximum intensity projection using ImageSliceIteratorWithIndex]{The
   // maximum intensity projection through three slices of a volume.}
   // \protect\label{fig:ImageSliceIteratorWithIndexOutput}

@@ -50,8 +50,8 @@ namespace itk
  * \wikiexample{ImageProcessing/RegionalMinimaImageFilter,RegionalMinimaImageFilter}
  * \endwiki
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT RegionalMinimaImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class RegionalMinimaImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -119,12 +119,12 @@ public:
   itkBooleanMacro(FlatIsMinima);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasPixelTraitsCheck,
                    ( Concept::HasPixelTraits< InputImagePixelType > ) );
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputImagePixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

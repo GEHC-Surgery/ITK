@@ -33,7 +33,7 @@ namespace itk
 /**
  * Constructor
  */
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
 ::TimeVaryingBSplineVelocityFieldTransform()
 {
@@ -49,13 +49,13 @@ TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
 /**
  * Destructor
  */
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>::
 ~TimeVaryingBSplineVelocityFieldTransform()
 {
 }
 
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 void
 TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
 ::IntegrateVelocityField()
@@ -93,7 +93,7 @@ TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
 
   if( this->GetVelocityFieldInterpolator() )
     {
-    integrator->SetVelocityFieldInterpolator( this->GetVelocityFieldInterpolator() );
+    integrator->SetVelocityFieldInterpolator( this->GetModifiableVelocityFieldInterpolator() );
     }
 
   integrator->SetNumberOfIntegrationSteps( this->GetNumberOfIntegrationSteps() );
@@ -103,7 +103,7 @@ TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
   displacementField->DisconnectPipeline();
 
   this->SetDisplacementField( displacementField );
-  this->GetInterpolator()->SetInputImage( displacementField );
+  this->GetModifiableInterpolator()->SetInputImage( displacementField );
 
   typename IntegratorType::Pointer inverseIntegrator = IntegratorType::New();
   inverseIntegrator->SetInput( bspliner->GetOutput() );
@@ -111,7 +111,7 @@ TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
   inverseIntegrator->SetUpperTimeBound( this->GetLowerTimeBound() );
   if( this->GetVelocityFieldInterpolator() )
     {
-    inverseIntegrator->SetVelocityFieldInterpolator( this->GetVelocityFieldInterpolator() );
+    inverseIntegrator->SetVelocityFieldInterpolator( this->GetModifiableVelocityFieldInterpolator() );
     }
 
   inverseIntegrator->SetNumberOfIntegrationSteps( this->GetNumberOfIntegrationSteps() );
@@ -123,7 +123,7 @@ TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
   this->SetInverseDisplacementField( inverseDisplacementField );
 }
 
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 void
 TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
 ::UpdateTransformParameters( const DerivativeType & update, ScalarType factor )
@@ -166,7 +166,7 @@ TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
   this->IntegrateVelocityField();
 }
 
-template <class TScalar, unsigned int NDimensions>
+template <typename TScalar, unsigned int NDimensions>
 void
 TimeVaryingBSplineVelocityFieldTransform<TScalar, NDimensions>
 ::PrintSelf( std::ostream& os, Indent indent ) const

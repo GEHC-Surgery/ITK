@@ -130,6 +130,9 @@ public:
   /** Resize the input vector to the specified size */
   static void SetLength(std::vector< T > & m, const unsigned int s)
   {
+    // since std::vector often holds types that have no NumericTraits::Zero,
+    // allow resize() to call the type's default constructor
+    m.clear();
     m.resize(s);
   }
 
@@ -144,7 +147,7 @@ public:
     mv = v;
   }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     for( unsigned int i=0; i<GetLength(v); i++ )

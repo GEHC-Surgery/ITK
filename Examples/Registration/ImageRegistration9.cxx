@@ -160,22 +160,17 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::AffineTransform<
-                                  double,
-                                  Dimension  >     TransformType;
+  typedef itk::AffineTransform< double, Dimension  > TransformType;
   // Software Guide : EndCodeSnippet
 
 
   typedef itk::RegularStepGradientDescentOptimizer       OptimizerType;
   typedef itk::MeanSquaresImageToImageMetric<
-                                    FixedImageType,
-                                    MovingImageType >    MetricType;
+            FixedImageType, MovingImageType >            MetricType;
   typedef itk:: LinearInterpolateImageFunction<
-                                    MovingImageType,
-                                    double          >    InterpolatorType;
+            MovingImageType, double          >           InterpolatorType;
   typedef itk::ImageRegistrationMethod<
-                                    FixedImageType,
-                                    MovingImageType >    RegistrationType;
+            FixedImageType, MovingImageType >            RegistrationType;
 
   MetricType::Pointer         metric        = MetricType::New();
   OptimizerType::Pointer      optimizer     = OptimizerType::New();
@@ -232,10 +227,10 @@ int main( int argc, char *argv[] )
 
   // Software Guide : BeginCodeSnippet
   typedef itk::CenteredTransformInitializer<
-                                    TransformType,
-                                    FixedImageType,
-                                    MovingImageType >  TransformInitializerType;
-  TransformInitializerType::Pointer initializer = TransformInitializerType::New();
+            TransformType, FixedImageType,
+            MovingImageType >  TransformInitializerType;
+  TransformInitializerType::Pointer initializer
+                                            = TransformInitializerType::New();
   initializer->SetTransform(   transform );
   initializer->SetFixedImage(  fixedImageReader->GetOutput() );
   initializer->SetMovingImage( movingImageReader->GetOutput() );
@@ -471,8 +466,8 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceBorder20.eps}
-  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceR10X13Y17.eps}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceBorder20}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySliceR10X13Y17}
   // \itkcaption[AffineTransform registration]{Fixed and moving images
   // provided as input to the registration method using the AffineTransform.}
   // \label{fig:FixedMovingImageRegistration9}
@@ -481,9 +476,9 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.32\textwidth]{ImageRegistration9Output.eps}
-  // \includegraphics[width=0.32\textwidth]{ImageRegistration9DifferenceBefore.eps}
-  // \includegraphics[width=0.32\textwidth]{ImageRegistration9DifferenceAfter.eps}
+  // \includegraphics[width=0.32\textwidth]{ImageRegistration9Output}
+  // \includegraphics[width=0.32\textwidth]{ImageRegistration9DifferenceBefore}
+  // \includegraphics[width=0.32\textwidth]{ImageRegistration9DifferenceAfter}
   // \itkcaption[AffineTransform output images]{The resampled moving image
   // (left), and the difference between the fixed and moving images before (center)
   // and after (right) registration with the
@@ -498,9 +493,9 @@ int main( int argc, char *argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[height=0.32\textwidth]{ImageRegistration9TraceMetric.eps}
-  // \includegraphics[height=0.32\textwidth]{ImageRegistration9TraceAngle.eps}
-  // \includegraphics[height=0.32\textwidth]{ImageRegistration9TraceTranslations.eps}
+  // \includegraphics[height=0.32\textwidth]{ImageRegistration9TraceMetric}
+  // \includegraphics[height=0.32\textwidth]{ImageRegistration9TraceAngle}
+  // \includegraphics[height=0.32\textwidth]{ImageRegistration9TraceTranslations}
   // \itkcaption[AffineTransform output plots]{Metric values,
   // rotation angle and translations during the registration using the
   // AffineTransform transform.}

@@ -42,8 +42,8 @@ namespace itk
  * \wikiexample{IO/itkVtkImageConvertDICOM,Uses a custom user matrix to align the image with DICOM physical space}
  * \endwiki
  */
-template <class TInputImage >
-class ITK_EXPORT ImageToVTKImageFilter : public ProcessObject
+template <typename TInputImage >
+class ImageToVTKImageFilter : public ProcessObject
 {
 public:
   /** Standard class typedefs. */

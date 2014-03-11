@@ -31,7 +31,7 @@ namespace itk
 
   \ingroup ITKFastMarching
   */
-template< class TInput, class TOutput >
+template< typename TInput, typename TOutput >
 class FastMarchingStoppingCriterionBase : public StoppingCriterionBase
 {
 public:
@@ -66,7 +66,7 @@ public:
     }
 
   itkSetObjectMacro( Domain, OutputDomainType );
-  itkGetObjectMacro( Domain, OutputDomainType );
+  itkGetModifiableObjectMacro(Domain, OutputDomainType );
 
  protected:
   /** Constructor */

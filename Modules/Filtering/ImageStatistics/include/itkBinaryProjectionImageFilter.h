@@ -27,13 +27,11 @@ namespace itk
  * \brief Binary projection
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
- * the original paper can be found at
+ * The original paper can be found at
  *   http://hdl.handle.net/1926/164
- *
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  *  INRA de Jouy-en-Josas, France.
- *
  *
  * \sa ProjectionImageFilter
  * \sa MedianProjectionImageFilter
@@ -48,7 +46,7 @@ namespace itk
 
 namespace Functor
 {
-template< class TInputPixel, class TOutputPixel >
+template< typename TInputPixel, typename TOutputPixel >
 class BinaryAccumulator
 {
 public:
@@ -88,8 +86,8 @@ public:
 };
 } // end namespace Function
 
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT BinaryProjectionImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class BinaryProjectionImageFilter:
   public ProjectionImageFilter< TInputImage, TOutputImage,
                                 Functor::BinaryAccumulator<
                                   typename TInputImage::PixelType,
@@ -143,12 +141,12 @@ public:
   itkGetConstMacro(BackgroundValue, OutputPixelType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputPixelTypeGreaterThanComparable,
                    ( Concept::EqualityComparable< InputPixelType > ) );
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

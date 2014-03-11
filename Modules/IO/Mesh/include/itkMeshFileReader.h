@@ -17,6 +17,7 @@
  *=========================================================================*/
 #ifndef __itkMeshFileReader_h
 #define __itkMeshFileReader_h
+#include "ITKIOMeshExport.h"
 
 #include "itkMacro.h"
 #include "itkHexahedronCell.h"
@@ -41,7 +42,7 @@ namespace itk
  * \brief Base exception class for IO conflicts.
  * \ingroup ITKIOMesh
  */
-class ITK_ABI_EXPORT MeshFileReaderException:public ExceptionObject
+class ITKIOMesh_HIDDEN MeshFileReaderException:public ExceptionObject
 {
 public:
   /** Has to have empty throw(). */
@@ -97,10 +98,10 @@ public:
  * \author Wanlin Zhu. Uviversity of New South Wales, Australia.
  */
 
-template< class TOutputMesh,
-          class ConvertPointPixelTraits = MeshConvertPixelTraits< typename TOutputMesh::PixelType >,
+template< typename TOutputMesh,
+          typename ConvertPointPixelTraits = MeshConvertPixelTraits< typename TOutputMesh::PixelType >,
           class ConvertCellPixelTraits = MeshConvertPixelTraits< typename TOutputMesh::CellPixelType > >
-class ITK_EXPORT MeshFileReader:public MeshSource< TOutputMesh >
+class ITKIOMesh_HIDDEN MeshFileReader:public MeshSource< TOutputMesh >
 {
 public:
   /** Standard class typedefs. */
@@ -151,8 +152,7 @@ public:
   * to use to read a particular file in case the factory mechanism will
   * not work properly (e.g., unknown or unusual extension). */
   void  SetMeshIO(MeshIOBase *meshIO);
-
-  itkGetObjectMacro(MeshIO, MeshIOBase);
+  itkGetModifiableObjectMacro(MeshIO, MeshIOBase);
 
   /** Prepare the allocation of the output mesh during the first back
    * propagation of the pipeline. */

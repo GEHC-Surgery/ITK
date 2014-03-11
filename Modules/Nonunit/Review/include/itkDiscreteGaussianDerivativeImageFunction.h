@@ -43,8 +43,8 @@ namespace itk
  * \sa ImageFunction
  * \ingroup ITKReview
  */
-template< class TInputImage, class TOutput = double >
-class ITK_EXPORT DiscreteGaussianDerivativeImageFunction:
+template< typename TInputImage, typename TOutput = double >
+class DiscreteGaussianDerivativeImageFunction:
   public ImageFunction< TInputImage, TOutput, TOutput >
 {
 public:

@@ -28,7 +28,7 @@ namespace itk
  * \brief Helper class used to partition domain and efficiently compute overlap.
  * \ingroup ITKLevelSetsv4
  */
-template< class TImage >
+template< typename TImage >
 class LevelSetDomainPartitionImage : public LevelSetDomainPartitionBase< TImage >
 {
 public:
@@ -39,6 +39,9 @@ public:
   typedef SmartPointer< const Self >            ConstPointer;
 
   itkStaticConstMacro(ImageDimension, unsigned int, TImage::ImageDimension);
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
 
   itkTypeMacro( LevelSetDomainPartitionImage, LevelSetDomainPartitionBase );
 
@@ -68,33 +71,38 @@ public:
   typedef typename ListImageType::PointType             ListPointType;
   typedef ImageRegionIteratorWithIndex< ListImageType > ListIteratorType;
 
+  typedef std::vector< RegionType >                     LevelSetDomainRegionVectorType;
+
   /** Set the input image that will be used to compute an image with the list
    * of level sets domain overlaps. */
   itkSetConstObjectMacro( Image, ImageType );
-  itkGetConstObjectMacro( Image, ImageType );
+  itkGetConstObjectMacro(Image, ImageType );
 
   /** Get the image with the list of level set domains. */
-  itkGetConstObjectMacro( ListDomain, ListImageType );
+  itkGetModifiableObjectMacro(ListDomain, ListImageType );
 
-protected:
-  LevelSetDomainPartitionImage();
-  virtual ~LevelSetDomainPartitionImage();
+  void SetLevelSetDomainRegionVector( const LevelSetDomainRegionVectorType& domain );
+  const LevelSetDomainRegionVectorType& GetLevelSetDomainRegionVector() const;
 
   /** Populate a list image with each pixel being a list of overlapping
    *  level set support at that pixel */
   virtual void PopulateListDomain();
 
+protected:
+  LevelSetDomainPartitionImage();
+  virtual ~LevelSetDomainPartitionImage();
+
   /** Allocate a list image with each pixel being a list of overlapping
    *  level set support at that pixel */
   void AllocateListDomain();
 
+  ImageConstPointer               m_Image;
+  ListImagePointer                m_ListDomain;
+  LevelSetDomainRegionVectorType  m_LevelSetDomainRegionVector;
+
 private:
   LevelSetDomainPartitionImage(const Self &); //purposely not implemented
   void operator=(const Self &); //purposely not implemented
-
-  ImageConstPointer     m_Image;
-  ListImagePointer      m_ListDomain;
-
 };
 } //end namespace itk
 

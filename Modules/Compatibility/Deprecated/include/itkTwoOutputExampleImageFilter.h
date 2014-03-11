@@ -43,8 +43,8 @@ namespace itk
  * \ingroup IntensityImageFilters
  * \ingroup MultiThreaded
  */
-template< class TImage >
-class ITK_EXPORT TwoOutputExampleImageFilter:
+template< typename TImage >
+class TwoOutputExampleImageFilter:
   public ImageToImageFilter< TImage, TImage >
 {
 public:
@@ -96,12 +96,12 @@ public:
   { this->SetNthOutput(1, output); }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( ComparableCheck,
                    ( Concept::Comparable< PixelType > ) );
   itkConceptMacro( OStreamWritableCheck,
                    ( Concept::OStreamWritable< PixelType > ) );
-  /** Begin concept checking */
+  // Begin concept checking
 #endif
 
 protected:

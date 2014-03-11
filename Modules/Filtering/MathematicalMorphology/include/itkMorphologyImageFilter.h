@@ -61,15 +61,15 @@ namespace itk
  *
  * \sa BinaryErodeImageFilter
  * \sa BinaryDilateImageFilter
- * \sa GrayScaleErodeImageFilter
- * \sa GrayScaleDilateImageFilter
+ * \sa GrayscaleErodeImageFilter
+ * \sa GrayscaleDilateImageFilter
  * \sa NeighborhoodIterator
  * \sa Neighborhood
  * \ingroup ImageEnhancement  MathematicalMorphologyImageFilters
  * \ingroup ITKMathematicalMorphology
  */
-template< class TInputImage, class TOutputImage, class TKernel >
-class ITK_EXPORT MorphologyImageFilter:
+template< typename TInputImage, typename TOutputImage, typename TKernel >
+class MorphologyImageFilter:
   public KernelImageFilter< TInputImage, TOutputImage, TKernel >
 {
 public:

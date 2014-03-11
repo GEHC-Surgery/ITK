@@ -48,8 +48,8 @@ namespace itk
  * \ingroup ITKImageAdaptors
  */
 
-template< class T, class TContainer >
-class ITK_EXPORT NthElementPixelAccessor
+template< typename T, typename TContainer >
+class NthElementPixelAccessor
 {
 public:
   /** Standard class typedefs. */
@@ -104,11 +104,13 @@ private:
 };
 
 
-template< class TOutputPixelType, class TPixelType >
-class ITK_EXPORT NthElementPixelAccessor< TOutputPixelType, itk::VariableLengthVector<TPixelType> >
+template< typename TOutputPixelType, typename TPixelType >
+class NthElementPixelAccessor< TOutputPixelType, itk::VariableLengthVector<TPixelType> >
   : private DefaultVectorPixelAccessor< TPixelType >
 {
 public:
+  /** Standard class typedefs. */
+  typedef   NthElementPixelAccessor Self;
 
   typedef unsigned int VectorLengthType;
 
@@ -121,7 +123,7 @@ public:
 
   typedef VariableLengthVector< TPixelType > ActualPixelType;
 
-  inline void Set(ActualPixelType output, const ExternalType & input) const
+  inline void Set(ActualPixelType &output, const ExternalType & input) const
   {
     output[m_ElementNumber] = input;
   }
@@ -129,7 +131,11 @@ public:
   inline void Set(InternalType &output, const ExternalType & input,
                   const unsigned long offset) const
   {
-    return Set( Superclass::Get( output, offset ), input );
+    // note: v is a reference to the internal buffer, this method of
+    // access relies on return value optimization to work
+    ActualPixelType v = Superclass::Get( output, offset );
+
+    return Set( v, input );
   }
 
   inline ExternalType Get(const ActualPixelType & input) const
@@ -168,6 +174,21 @@ public:
     {
     Superclass::SetVectorLength( length );
     }
+
+  /** operator!=. This is needed to convert a pixel accessor to a functor.
+   * \sa AdaptImageFilter */
+  bool operator!=(const Self & accessor) const
+  {
+    return ( m_ElementNumber != accessor.m_ElementNumber );
+  }
+
+  /** Assignment operator */
+  NthElementPixelAccessor & operator=(const NthElementPixelAccessor & accessor)
+  {
+    m_ElementNumber = accessor.m_ElementNumber;
+    this->SetVectorLength( accessor.GetVectorLength() );
+    return *this;
+  }
 
 protected:
   typedef DefaultVectorPixelAccessor< TPixelType > Superclass;

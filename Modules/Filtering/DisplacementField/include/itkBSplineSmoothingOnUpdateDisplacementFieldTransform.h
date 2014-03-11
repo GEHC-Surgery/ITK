@@ -48,8 +48,8 @@ namespace itk
  *
  * \ingroup ITKDisplacementField
  */
-template<class TScalar, unsigned int NDimensions>
-class ITK_EXPORT BSplineSmoothingOnUpdateDisplacementFieldTransform :
+template<typename TScalar, unsigned int NDimensions>
+class BSplineSmoothingOnUpdateDisplacementFieldTransform :
   public DisplacementFieldTransform<TScalar, NDimensions>
 {
 public:
@@ -69,11 +69,12 @@ public:
   itkStaticConstMacro( Dimension, unsigned int, NDimensions );
 
   /** Types from superclass */
-  typedef typename Superclass::ScalarType               ScalarType;
-  typedef typename Superclass::DerivativeType           DerivativeType;
-  typedef typename DerivativeType::ValueType            DerivativeValueType;
-  typedef typename Superclass::DisplacementFieldType    DisplacementFieldType;
-  typedef typename Superclass::DisplacementFieldPointer DisplacementFieldPointer;
+  typedef typename Superclass::ScalarType                    ScalarType;
+  typedef typename Superclass::DerivativeType                DerivativeType;
+  typedef typename DerivativeType::ValueType                 DerivativeValueType;
+  typedef typename Superclass::DisplacementFieldType         DisplacementFieldType;
+  typedef typename Superclass::DisplacementFieldPointer      DisplacementFieldPointer;
+  typedef typename Superclass::DisplacementFieldConstPointer DisplacementFieldConstPointer;
 
   typedef typename Transform<TScalar,NDimensions,NDimensions>::Pointer
              TransformPointer;

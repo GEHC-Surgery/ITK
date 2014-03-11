@@ -64,7 +64,7 @@ target_link_libraries(DeformableRegistration7 ${ITK_LIBRARIES})
 add_executable(DeformableRegistration8 DeformableRegistration8.cxx )
 target_link_libraries(DeformableRegistration8 ${ITK_LIBRARIES})
 
-if( USE_FFTWD )
+if( ITK_USE_FFTWD )
   add_executable(DeformableRegistration9 DeformableRegistration9.cxx )
   target_link_libraries(DeformableRegistration9 ${ITK_LIBRARIES})
 
@@ -147,8 +147,8 @@ target_link_libraries(ImageRegistration2 ${ITK_LIBRARIES})
 add_executable(ImageRegistration17 ImageRegistration17.cxx )
 target_link_libraries(ImageRegistration17 ${ITK_LIBRARIES})
 
-#TODO needs updating to new statistics  add_executable(ImageRegistrationHistogramPlotter ImageRegistrationHistogramPlotter.cxx )
-#TODO needs updating to new statistics  target_link_libraries(ImageRegistrationHistogramPlotter ${ITK_LIBRARIES})
+add_executable(ImageRegistrationHistogramPlotter ImageRegistrationHistogramPlotter.cxx )
+target_link_libraries(ImageRegistrationHistogramPlotter ${ITK_LIBRARIES})
 
 add_executable(MeanSquaresImageMetric1  MeanSquaresImageMetric1.cxx )
 target_link_libraries(MeanSquaresImageMetric1 ${ITK_LIBRARIES})

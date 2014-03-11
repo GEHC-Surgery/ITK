@@ -89,7 +89,7 @@ int itkFEMRobustSolverTest(int, char *[])
   FEMObjectType::Pointer femObject = FEMObjectType::New();
 
   /** initialize material */
-  MaterialContainerType *materialContainer = femObject->GetMaterialContainer();
+  MaterialContainerType *materialContainer = femObject->GetModifiableMaterialContainer();
 
   if(!materialContainer)
     {
@@ -109,7 +109,7 @@ int itkFEMRobustSolverTest(int, char *[])
   itk::FEMFactoryBase::GetFactory()->RegisterDefaultTypes();
 
   /** initialize nodes */
-  NodeContainerType *nodeContainer = femObject->GetNodeContainer();
+  NodeContainerType *nodeContainer = femObject->GetModifiableNodeContainer();
 
   if(!nodeContainer)
     {
@@ -143,7 +143,7 @@ int itkFEMRobustSolverTest(int, char *[])
     }
 
   /** initialize elements */
-  ElementContainerType *elementContainer = femObject->GetElementContainer();
+  ElementContainerType *elementContainer = femObject->GetModifiableElementContainer();
 
   if(!elementContainer)
     {
@@ -181,7 +181,7 @@ int itkFEMRobustSolverTest(int, char *[])
     }
 
   /** initialize loads */
-  LoadContainerType *loadContainer = femObject->GetLoadContainer();
+  LoadContainerType *loadContainer = femObject->GetModifiableLoadContainer();
 
   if(!loadContainer)
     {
@@ -252,29 +252,29 @@ int itkFEMRobustSolverTest(int, char *[])
   femObject->FinalizeMesh();
 
   /** set interpolation grid */
-  InterpolationGridType::SizeType         size;
-  InterpolationGridType::IndexType        start;
-  InterpolationGridType::RegionType       region;
-  InterpolationGridType::PointType        origin;
-  InterpolationGridType::SpacingType      spacing;
-  InterpolationGridType::DirectionType    direction;
 
+  InterpolationGridType::PointType        origin;
   origin[0] = 0.0;
   origin[1] = 0.0;
   solver->SetOrigin(origin);
 
+  InterpolationGridType::SpacingType      spacing;
   spacing[0] = 1.0;
   spacing[1] = 1.0;
   solver->SetSpacing(spacing);
 
+  InterpolationGridType::SizeType         size;
   size[0] = 5;
   size[1] = 5;
+  InterpolationGridType::IndexType        start;
   start[0] = 0;
   start[1] = 0;
+  InterpolationGridType::RegionType       region;
   region.SetSize(size);
   region.SetIndex(start);
   solver->SetRegion(region);
 
+  InterpolationGridType::DirectionType    direction;
   direction[0][0] = 1.0;
   direction[0][1] = 0.0;
   direction[1][0] = 0.0;

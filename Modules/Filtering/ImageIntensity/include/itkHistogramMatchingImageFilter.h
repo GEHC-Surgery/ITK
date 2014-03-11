@@ -64,8 +64,8 @@ namespace itk
  */
 /* THistogramMeasurement -- The precision level for which to do
   HistogramMeasurmenets */
-template< class TInputImage, class TOutputImage, class THistogramMeasurement = typename TInputImage::PixelType >
-class ITK_EXPORT HistogramMatchingImageFilter:
+template< typename TInputImage, typename TOutputImage, typename THistogramMeasurement = typename TInputImage::PixelType >
+class HistogramMatchingImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -139,12 +139,12 @@ public:
   /** Methods to get the histograms of the source, reference, and
    * output. Objects are only valid after Update() has been called
    * on this filter. */
-  itkGetObjectMacro(SourceHistogram, HistogramType);
-  itkGetObjectMacro(ReferenceHistogram, HistogramType);
-  itkGetObjectMacro(OutputHistogram, HistogramType);
+  itkGetModifiableObjectMacro(SourceHistogram, HistogramType);
+  itkGetModifiableObjectMacro(ReferenceHistogram, HistogramType);
+  itkGetModifiableObjectMacro(OutputHistogram, HistogramType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( IntConvertibleToInputCheck,
                    ( Concept::Convertible< int, InputPixelType > ) );
   itkConceptMacro( SameDimensionCheck,
@@ -159,7 +159,7 @@ public:
                    ( Concept::Convertible< OutputPixelType, double > ) );
   itkConceptMacro( SameTypeCheck,
                    ( Concept::SameType< InputPixelType, OutputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

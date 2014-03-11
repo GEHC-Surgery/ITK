@@ -2,6 +2,7 @@ set(DOCUMENTATION "This module contains classes that read Philips
 REC/PAR image files.")
 
 itk_module(ITKIOPhilipsREC
+  ENABLE_SHARED
   DEPENDS
     ITKIOImageBase
     ITKZLIB
@@ -10,7 +11,7 @@ itk_module(ITKIOPhilipsREC
     ITKTransform
     ITKImageGrid
     ITKImageIntensity
-  EXCLUDE_FROM_ALL
+  EXCLUDE_FROM_DEFAULT
   DESCRIPTION
     "${DOCUMENTATION}")
 # Extra dependency of ITKTransform is introduced by itkPhilipsRECImageIOOrientationTest.

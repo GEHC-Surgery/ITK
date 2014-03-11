@@ -154,8 +154,6 @@ GE5ImageIO::SwapPixHdr(Ge5xPixelHeader *hdr)
   ByteSwapper< int >::SwapFromSystemToBigEndian ( &( hdr->GENESIS_IH_img_l_series ) );
   ByteSwapper< int >::SwapFromSystemToBigEndian ( &( hdr->GENESIS_IH_img_p_image ) );
   ByteSwapper< int >::SwapFromSystemToBigEndian ( &( hdr->GENESIS_IH_img_l_image ) );
-
-  return;
 }
 
 GEImageHeader *
@@ -238,7 +236,7 @@ GE5ImageIO::ReadHeader(const char  *FileNameToRead)
     {
     pixelHdrFlag = false;
     }
-  strncpy (curImage->filename, FileNameToRead, IOCommon::ITK_MAXPATHLEN + 1);
+  strncpy (curImage->filename, FileNameToRead, IOCommon::ITK_MAXPATHLEN);
 
   //
   // if there's no GE5 header on the file we have to assume
@@ -288,7 +286,7 @@ GE5ImageIO::ReadHeader(const char  *FileNameToRead)
   if(f.fail())
     {
     f.close();
-    delete [] buffer;
+    delete[] buffer;
     itkExceptionMacro("GE5ImageIO:Could not read exam header!");
     }
 

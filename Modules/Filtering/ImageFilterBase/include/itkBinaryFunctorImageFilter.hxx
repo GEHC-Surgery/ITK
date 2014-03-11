@@ -19,16 +19,17 @@
 #define __itkBinaryFunctorImageFilter_hxx
 
 #include "itkBinaryFunctorImageFilter.h"
-#include "itkImageRegionIterator.h"
+#include "itkImageScanlineIterator.h"
 #include "itkProgressReporter.h"
+
 
 namespace itk
 {
 /**
  * Constructor
  */
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::BinaryFunctorImageFilter()
 {
@@ -39,8 +40,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 /**
  * Connect one of the operands for pixel-wise addition
  */
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::SetInput1(const TInputImage1 *image1)
@@ -49,8 +50,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   this->SetNthInput( 0, const_cast< TInputImage1 * >( image1 ) );
 }
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::SetInput1(const DecoratedInput1ImagePixelType * input1)
@@ -59,8 +60,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   this->SetNthInput( 0, const_cast< DecoratedInput1ImagePixelType * >( input1 ) );
 }
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::SetInput1(const Input1ImagePixelType & input1)
@@ -71,8 +72,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   this->SetInput1(newInput);
 }
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::SetConstant1(const Input1ImagePixelType & input1)
@@ -80,8 +81,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   this->SetInput1(input1);
 }
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 const typename BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >::Input1ImagePixelType &
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::GetConstant1() const
@@ -100,8 +101,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 /**
  * Connect one of the operands for pixel-wise addition
  */
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::SetInput2(const TInputImage2 *image2)
@@ -110,8 +111,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   this->SetNthInput( 1, const_cast< TInputImage2 * >( image2 ) );
 }
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::SetInput2(const DecoratedInput2ImagePixelType * input2)
@@ -120,8 +121,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   this->SetNthInput( 1, const_cast< DecoratedInput2ImagePixelType * >( input2 ) );
 }
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::SetInput2(const Input2ImagePixelType & input2)
@@ -132,8 +133,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   this->SetInput2(newInput);
 }
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::SetConstant2(const Input2ImagePixelType & input2)
@@ -141,8 +142,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   this->SetInput2(input2);
 }
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 const typename BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >::Input2ImagePixelType &
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::GetConstant2() const
@@ -158,8 +159,8 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 }
 
 
-template< class TInputImage1, class TInputImage2,
-          class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2,
+          typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::GenerateOutputInformation()
@@ -199,7 +200,7 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 /**
  * ThreadedGenerateData Performs the pixel-wise addition
  */
-template< class TInputImage1, class TInputImage2, class TOutputImage, class TFunction  >
+template< typename TInputImage1, typename TInputImage2, typename TOutputImage, typename TFunction  >
 void
 BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -208,67 +209,84 @@ BinaryFunctorImageFilter< TInputImage1, TInputImage2, TOutputImage, TFunction >
   // We use dynamic_cast since inputs are stored as DataObjects.  The
   // ImageToImageFilter::GetInput(int) always returns a pointer to a
   // TInputImage1 so it cannot be used for the second input.
-  Input1ImagePointer inputPtr1 =
+  const TInputImage1 *inputPtr1 =
     dynamic_cast< const TInputImage1 * >( ProcessObject::GetInput(0) );
-  Input2ImagePointer inputPtr2 =
+  const TInputImage2 *inputPtr2 =
     dynamic_cast< const TInputImage2 * >( ProcessObject::GetInput(1) );
-  OutputImagePointer outputPtr = this->GetOutput(0);
+  TOutputImage *outputPtr = this->GetOutput(0);
+  const SizeValueType size0 = outputRegionForThread.GetSize(0);
+  if( size0 == 0)
+    {
+    return;
+    }
+  const size_t numberOfLinesToProcess = outputRegionForThread.GetNumberOfPixels() / size0;
 
   if( inputPtr1 && inputPtr2 )
     {
-    ImageRegionConstIterator< TInputImage1 > inputIt1(inputPtr1, outputRegionForThread);
-    ImageRegionConstIterator< TInputImage2 > inputIt2(inputPtr2, outputRegionForThread);
+    ImageScanlineConstIterator< TInputImage1 > inputIt1(inputPtr1, outputRegionForThread);
+    ImageScanlineConstIterator< TInputImage2 > inputIt2(inputPtr2, outputRegionForThread);
+    ImageScanlineIterator< TOutputImage > outputIt(outputPtr, outputRegionForThread);
 
-    ImageRegionIterator< TOutputImage > outputIt(outputPtr, outputRegionForThread);
 
-    ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
+    ProgressReporter progress( this, threadId, numberOfLinesToProcess );
 
-    inputIt1.GoToBegin();
-    inputIt2.GoToBegin();
-    outputIt.GoToBegin();
 
     while ( !inputIt1.IsAtEnd() )
       {
-      outputIt.Set( m_Functor( inputIt1.Get(), inputIt2.Get() ) );
-      ++inputIt2;
-      ++inputIt1;
-      ++outputIt;
+      while ( !inputIt1.IsAtEndOfLine() )
+        {
+        outputIt.Set( m_Functor( inputIt1.Get(), inputIt2.Get() ) );
+        ++inputIt2;
+        ++inputIt1;
+        ++outputIt;
+        }
+
+      inputIt1.NextLine();
+      inputIt2.NextLine();
+      outputIt.NextLine();
       progress.CompletedPixel(); // potential exception thrown here
       }
     }
   else if( inputPtr1 )
     {
-    ImageRegionConstIterator< TInputImage1 > inputIt1(inputPtr1, outputRegionForThread);
-    ImageRegionIterator< TOutputImage > outputIt(outputPtr, outputRegionForThread);
-    const Input2ImagePixelType & input2Value = this->GetConstant2();
-    ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
+    ImageScanlineConstIterator< TInputImage1 > inputIt1(inputPtr1, outputRegionForThread);
+    ImageScanlineIterator< TOutputImage > outputIt(outputPtr, outputRegionForThread);
 
-    inputIt1.GoToBegin();
-    outputIt.GoToBegin();
+    const Input2ImagePixelType & input2Value = this->GetConstant2();
+    ProgressReporter progress( this, threadId, numberOfLinesToProcess );
 
     while ( !inputIt1.IsAtEnd() )
       {
-      outputIt.Set( m_Functor( inputIt1.Get(), input2Value ) );
-      ++inputIt1;
-      ++outputIt;
+      while ( !inputIt1.IsAtEndOfLine() )
+        {
+        outputIt.Set( m_Functor( inputIt1.Get(), input2Value ) );
+        ++inputIt1;
+        ++outputIt;
+        }
+      inputIt1.NextLine();
+      outputIt.NextLine();
       progress.CompletedPixel(); // potential exception thrown here
       }
     }
   else if( inputPtr2 )
     {
-    ImageRegionConstIterator< TInputImage2 > inputIt2(inputPtr2, outputRegionForThread);
-    ImageRegionIterator< TOutputImage > outputIt(outputPtr, outputRegionForThread);
+    ImageScanlineConstIterator< TInputImage2 > inputIt2(inputPtr2, outputRegionForThread);
+    ImageScanlineIterator< TOutputImage > outputIt(outputPtr, outputRegionForThread);
+
     const Input1ImagePixelType & input1Value = this->GetConstant1();
     ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
-    inputIt2.GoToBegin();
-    outputIt.GoToBegin();
 
     while ( !inputIt2.IsAtEnd() )
       {
-      outputIt.Set( m_Functor( input1Value, inputIt2.Get() ) );
-      ++inputIt2;
-      ++outputIt;
+      while ( !inputIt2.IsAtEndOfLine() )
+        {
+        outputIt.Set( m_Functor( input1Value, inputIt2.Get() ) );
+        ++inputIt2;
+        ++outputIt;
+        }
+      inputIt2.NextLine();
+      outputIt.NextLine();
       progress.CompletedPixel(); // potential exception thrown here
       }
     }

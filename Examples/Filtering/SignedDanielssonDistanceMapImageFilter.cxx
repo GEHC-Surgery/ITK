@@ -133,7 +133,7 @@ int main( int argc, char * argv[] )
     {
     writer->Update();
     }
-  catch( itk::ExceptionObject exp )
+  catch( itk::ExceptionObject & exp )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr <<     exp    << std::endl;
@@ -156,7 +156,7 @@ int main( int argc, char * argv[] )
     {
     voronoiWriter->Update();
     }
-  catch( itk::ExceptionObject exp )
+  catch( itk::ExceptionObject & exp )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr <<     exp    << std::endl;
@@ -182,7 +182,7 @@ int main( int argc, char * argv[] )
     {
     offsetWriter->Update();
     }
-  catch( itk::ExceptionObject exp )
+  catch( itk::ExceptionObject & exp )
     {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr <<     exp    << std::endl;
@@ -192,8 +192,8 @@ int main( int argc, char * argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.32\textwidth]{Circle.eps}
-  // \includegraphics[width=0.32\textwidth]{SignedDanielssonDistanceMapImageFilterOutput.eps}
+  // \includegraphics[width=0.32\textwidth]{Circle}
+  // \includegraphics[width=0.32\textwidth]{SignedDanielssonDistanceMapImageFilterOutput}
   // \itkcaption[SignedDanielssonDistanceMapImageFilter
   // output]{SignedDanielssonDistanceMapImageFilter applied on a binary circle image.
   // The intensity has been rescaled for purposes of display.}

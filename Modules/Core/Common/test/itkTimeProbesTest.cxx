@@ -22,7 +22,7 @@
 #include <iostream>
 #include <fstream>
 
-template <class T>
+template <typename T>
 void TestTransformIndexToPhysicalPoint(T * image)
 {
   typename T::IndexType index3D;
@@ -43,7 +43,7 @@ void TestTransformIndexToPhysicalPoint(T * image)
     if (k == 5) std::cout << point3D << std::endl;
     }
 }
-template <class T>
+template <typename T>
 void TestTransformPhysicalPointToIndex(T * image)
 {
   typename T::IndexType index3D;
@@ -88,12 +88,10 @@ int itkTimeProbesTest(int, char* [] )
       {
       dummy[j] = j;
       }
-    delete [] dummy;
+    delete[] dummy;
     }
   }
   collector.Stop("Loop1");
-
-
 
   collector.Start("Loop2"); // label that identify the range of the probe
 
@@ -106,7 +104,7 @@ int itkTimeProbesTest(int, char* [] )
       {
       dummy[j] = j;
       }
-    delete [] dummy;
+    delete[] dummy;
     }
   }
   collector.Stop("Loop2");
@@ -118,7 +116,7 @@ int itkTimeProbesTest(int, char* [] )
 
   Image3DType::PointType point3D;
 
-  typedef itk::ImageRegion< 3 >  Region3DType;
+  typedef itk::ImageRegion< 3 >   Region3DType;
   typedef Region3DType::IndexType Index3DType;
   typedef Region3DType::SizeType  Size3DType;
   Region3DType region3D;

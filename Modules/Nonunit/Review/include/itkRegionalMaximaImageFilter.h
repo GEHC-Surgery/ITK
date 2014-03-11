@@ -50,8 +50,8 @@ namespace itk
  * \wikiexample{ImageProcessing/RegionalMaximaImageFilter,RegionalMaximaImageFilter}
  * \endwiki
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT RegionalMaximaImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class RegionalMaximaImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -120,12 +120,12 @@ public:
   itkBooleanMacro(FlatIsMaxima);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasPixelTraitsCheck,
                    ( Concept::HasPixelTraits< InputImagePixelType > ) );
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< InputImagePixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

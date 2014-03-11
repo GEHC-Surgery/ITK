@@ -164,23 +164,27 @@ namespace itk
  *
  * \ingroup ITKMetricsv4
  */
-template<class TFixedImage,class TMovingImage,class TVirtualImage = TFixedImage,
-         typename TMetricTraits = DefaultImageToImageMetricTraitsv4< TFixedImage, TMovingImage, TVirtualImage > >
-class ITK_EXPORT ImageToImageMetricv4 : public ObjectToObjectMetric<TFixedImage::ImageDimension, TMovingImage::ImageDimension, TVirtualImage>
+template<typename TFixedImage,typename TMovingImage,typename TVirtualImage = TFixedImage,
+         typename TInternalComputationValueType = double,
+         typename TMetricTraits = DefaultImageToImageMetricTraitsv4< TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType >
+         >
+class ImageToImageMetricv4
+  : public ObjectToObjectMetric<TFixedImage::ImageDimension, TMovingImage::ImageDimension, TVirtualImage, TInternalComputationValueType>
 {
 public:
 
   /** Standard class typedefs. */
-  typedef ImageToImageMetricv4                                                                            Self;
-  typedef ObjectToObjectMetric<TFixedImage::ImageDimension, TMovingImage::ImageDimension, TVirtualImage>  Superclass;
-  typedef SmartPointer<Self>                                                                              Pointer;
-  typedef SmartPointer<const Self>                                                                        ConstPointer;
+  typedef ImageToImageMetricv4                                                                                                     Self;
+  typedef ObjectToObjectMetric<TFixedImage::ImageDimension, TMovingImage::ImageDimension, TVirtualImage, TInternalComputationValueType>  Superclass;
+  typedef SmartPointer<Self>                                                                                                       Pointer;
+  typedef SmartPointer<const Self>                                                                                                 ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ImageToImageMetricv4, ObjectToObjectMetric);
 
   /** Type used internally for computations */
-  typedef typename Superclass::InternalComputationValueType InternalComputationValueType;
+  /** It should be possible to derive the internal computation type from the class object. */
+  typedef TInternalComputationValueType                     InternalComputationValueType;
 
   /** Type used for representing parameter values  */
   typedef typename Superclass::CoordinateRepresentationType CoordinateRepresentationType;
@@ -353,25 +357,23 @@ public:
    * any given iteration of the optimizer. */
   typedef typename Superclass::NumberOfParametersType   NumberOfParametersType;
 
-  /* Set/get images */
-  /** Connect the Fixed Image.  */
+  /* Get/Set the Fixed Image.  */
   itkSetConstObjectMacro(FixedImage, FixedImageType);
-  /** Get the Fixed Image. */
   itkGetConstObjectMacro(FixedImage, FixedImageType);
-  /** Connect the Moving Image.  */
+
+  /** Get/Set the Moving Image.  */
   itkSetConstObjectMacro(MovingImage, MovingImageType);
-  /** Get the Moving Image. */
   itkGetConstObjectMacro(MovingImage, MovingImageType);
 
   /** Connect the fixed interpolator. */
   itkSetObjectMacro(FixedInterpolator, FixedInterpolatorType);
   /** Get a pointer to the fixed interpolator.  */
-  itkGetConstObjectMacro(FixedInterpolator, FixedInterpolatorType);
+  itkGetModifiableObjectMacro(FixedInterpolator, FixedInterpolatorType);
 
   /** Connect the Moving interpolator. */
   itkSetObjectMacro(MovingInterpolator, MovingInterpolatorType);
   /** Get a pointer to the Moving interpolator.  */
-  itkGetConstObjectMacro(MovingInterpolator, MovingInterpolatorType);
+  itkGetModifiableObjectMacro(MovingInterpolator, MovingInterpolatorType);
 
   /** Set/Get the moving image mask. */
   itkSetObjectMacro(MovingImageMask, MovingImageMaskType);
@@ -396,19 +398,19 @@ public:
   itkBooleanMacro(UseFixedSampledPointSet);
 
   /** Get the virtual domain sampling point set */
-  itkGetConstObjectMacro(VirtualSampledPointSet, VirtualPointSetType);
+  itkGetModifiableObjectMacro(VirtualSampledPointSet, VirtualPointSetType);
 
   /** Set/Get the gradient filter */
   itkSetObjectMacro( FixedImageGradientFilter, FixedImageGradientFilterType );
-  itkGetObjectMacro( FixedImageGradientFilter, FixedImageGradientFilterType );
+  itkGetModifiableObjectMacro(FixedImageGradientFilter, FixedImageGradientFilterType );
   itkSetObjectMacro( MovingImageGradientFilter, MovingImageGradientFilterType );
-  itkGetObjectMacro( MovingImageGradientFilter, MovingImageGradientFilterType );
+  itkGetModifiableObjectMacro(MovingImageGradientFilter, MovingImageGradientFilterType );
 
   /** Set/Get gradient calculators */
   itkSetObjectMacro( FixedImageGradientCalculator, FixedImageGradientCalculatorType);
-  itkGetObjectMacro( FixedImageGradientCalculator, FixedImageGradientCalculatorType);
+  itkGetModifiableObjectMacro(FixedImageGradientCalculator, FixedImageGradientCalculatorType);
   itkSetObjectMacro( MovingImageGradientCalculator, MovingImageGradientCalculatorType);
-  itkGetObjectMacro( MovingImageGradientCalculator, MovingImageGradientCalculatorType);
+  itkGetModifiableObjectMacro(MovingImageGradientCalculator, MovingImageGradientCalculatorType);
 
   /** Set/Get gradient computation via an image filter,
    * for fixed image. */
@@ -433,9 +435,10 @@ public:
   virtual ThreadIdType GetMaximumNumberOfThreads() const;
 
   /** Get Fixed Gradient Image. */
-  itkGetConstObjectMacro(FixedImageGradientImage, FixedImageGradientImageType);
+  itkGetModifiableObjectMacro(FixedImageGradientImage, FixedImageGradientImageType);
+
   /** Get Moving Gradient Image. */
-  itkGetConstObjectMacro(MovingImageGradientImage, MovingImageGradientImageType);
+  itkGetModifiableObjectMacro(MovingImageGradientImage, MovingImageGradientImageType);
 
   /** Get number of valid points from most recent update */
   itkGetConstMacro( NumberOfValidPoints, SizeValueType );
@@ -647,6 +650,48 @@ protected:
 private:
   /** Map the fixed point set samples to the virtual domain */
   void MapFixedSampledPointSetToVirtual( void );
+
+  /** Transform a point. Avoid cast if possible */
+  void LocalTransformPoint(const typename FixedTransformType::OutputPointType &virtualPoint,
+                           typename FixedTransformType::OutputPointType &mappedFixedPoint) const
+    {
+      mappedFixedPoint = this->m_FixedTransform->TransformPoint(virtualPoint);
+    }
+  // cast the virtual point
+  template <typename TVirtualPoint>
+  void LocalTransformPoint(const TVirtualPoint &virtualPoint,
+                           typename FixedTransformType::OutputPointType  &mappedFixedPoint) const
+    {
+      typename FixedTransformType::OutputPointType localVirtualPoint;
+
+      localVirtualPoint.CastFrom(virtualPoint);
+
+      mappedFixedPoint = this->m_FixedTransform->TransformPoint( localVirtualPoint );
+    }
+  // cast the mapped Fixed Point
+  template <typename TFixedImagePoint>
+  void LocalTransformPoint(const typename FixedTransformType::OutputPointType &virtualPoint,
+                           TFixedImagePoint &mappedFixedPoint) const
+    {
+      typename FixedTransformType::OutputPointType localMappedFixedPoint;
+      localMappedFixedPoint.CastFrom(mappedFixedPoint);
+      localMappedFixedPoint = this->m_FixedTransform->TransformPoint( virtualPoint );
+      mappedFixedPoint.CastFrom(localMappedFixedPoint);
+    }
+  // cast both mapped and fixed point.
+  template <typename TVirtualPoint,typename TFixedImagePoint>
+  void LocalTransformPoint(const TVirtualPoint &virtualPoint,
+                           TFixedImagePoint &mappedFixedPoint) const
+    {
+      typename FixedTransformType::OutputPointType localVirtualPoint;
+      typename FixedTransformType::OutputPointType localMappedFixedPoint;
+
+      localVirtualPoint.CastFrom(virtualPoint);
+      localMappedFixedPoint.CastFrom(mappedFixedPoint);
+
+      localMappedFixedPoint = this->m_FixedTransform->TransformPoint( localVirtualPoint );
+      mappedFixedPoint.CastFrom(localMappedFixedPoint);
+    }
 
   /** Flag for warning about use of GetValue. Will be removed when
    *  GetValue implementation is improved. */

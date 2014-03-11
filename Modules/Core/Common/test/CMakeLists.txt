@@ -1,5 +1,6 @@
 itk_module_test()
 set(ITKCommon1Tests
+itkAbortProcessObjectTest.cxx
 itkAdaptorComparisonTest.cxx
 itkCellInterfaceTest.cxx
 itkCovariantVectorGeometryTest.cxx
@@ -70,6 +71,7 @@ itkBSplineKernelFunctionTest.cxx
 itkArrayTest.cxx
 itkImageIteratorTest.cxx
 itkImageRegionIteratorTest.cxx
+itkImageScanlineIteratorTest1.cxx
 itkCrossHelperTest.cxx
 itkImageIteratorWithIndexTest.cxx
 itkDirectoryTest.cxx
@@ -96,6 +98,7 @@ itkSinRegularizedHeavisideStepFunctionTest1.cxx
 itkPixelAccessTest.cxx
 itkPointGeometryTest.cxx
 itkMersenneTwisterRandomVariateGeneratorTest.cxx
+itkNumberToStringTest.cxx
 )
 
 set(ITKCommon2Tests
@@ -162,9 +165,12 @@ itkImageRegionConstIteratorWithOnlyIndexTest.cxx
 itkImageRandomConstIteratorWithOnlyIndexTest.cxx
 itkConstNeighborhoodIteratorWithOnlyIndexTest.cxx
 itkImageToImageToleranceTest.cxx
+itkImageRegionSplitterSlowDimensionTest.cxx
+itkImageRegionSplitterDirectionTest.cxx
+itkImageRegionSplitterMultidimensionalTest.cxx
 )
 
-CreateTestDriver(ITKCommon1 "${ITKCommon_LIBRARIES}" "${ITKCommon1Tests}")
+CreateTestDriver(ITKCommon1 "${ITKCommon_LIBRARIES}" "${ITKCommon1Tests}" itkFloatingPointExceptionsExtern.cxx)
 CreateTestDriver(ITKCommon2 "${ITKCommon_LIBRARIES}" "${ITKCommon2Tests}")
 
 set(BASELINE "${ITK_DATA_ROOT}/Baseline/Common")
@@ -191,6 +197,7 @@ if(ITK_BUILD_SHARED_LIBS)
   add_dependencies(ITKCommon2TestDriver FactoryTestLib)
 endif()
 
+itk_add_test(NAME itkAbortProcessObjectTest COMMAND ITKCommon1TestDriver itkAbortProcessObjectTest)
 itk_add_test(NAME itkAdaptorComparisonTest COMMAND ITKCommon1TestDriver itkAdaptorComparisonTest)
 itk_add_test(NAME itkThreadedIndexedContainerPartitionerTest COMMAND ITKCommon2TestDriver itkThreadedIndexedContainerPartitionerTest)
 itk_add_test(NAME itkThreadedIteratorRangePartitionerTest COMMAND ITKCommon2TestDriver itkThreadedIteratorRangePartitionerTest)
@@ -268,6 +275,7 @@ itk_add_test(NAME itkCrossHelperTest COMMAND ITKCommon1TestDriver itkCrossHelper
 itk_add_test(NAME itkImageIteratorTest COMMAND ITKCommon1TestDriver itkImageIteratorTest)
 itk_add_test(NAME itkImageIteratorWithIndexTest COMMAND ITKCommon1TestDriver itkImageIteratorWithIndexTest)
 itk_add_test(NAME itkImageRegionIteratorTest COMMAND ITKCommon1TestDriver itkImageRegionIteratorTest)
+itk_add_test(NAME itkImageScanlineIteratorTest1 COMMAND ITKCommon1TestDriver itkImageScanlineIteratorTest1)
 itk_add_test(NAME itkImageRegionTest COMMAND ITKCommon1TestDriver itkImageRegionTest)
 itk_add_test(NAME itkImageRegionExclusionIteratorWithIndexTest COMMAND ITKCommon2TestDriver itkImageRegionExclusionIteratorWithIndexTest)
 itk_add_test(NAME itkImageReverseIteratorTest COMMAND ITKCommon1TestDriver itkImageReverseIteratorTest)
@@ -347,10 +355,11 @@ itk_add_test(NAME itkNumericsTest COMMAND ITKCommon1TestDriver itkNumericsTest)
 itk_add_test(NAME itkNumericTraitsTest COMMAND  ITKCommon1TestDriver --full-output itkNumericTraitsTest)
 itk_add_test(NAME itkIntTypesTest COMMAND ITKCommon1TestDriver itkIntTypesTest)
 itk_add_test(NAME itkOctreeTest COMMAND ITKCommon2TestDriver itkOctreeTest)
-
+itk_add_test(NAME itkNumberToStringTest COMMAND ITKCommon1TestDriver itkNumberToStringTest)
 
 if(ITK_BUILD_SHARED_LIBS)
-itk_add_test(NAME itkObjectFactoryTest2 COMMAND ITKCommon2TestDriver itkObjectFactoryTest2 ${ITK_TEST_OUTPUT_DIR})
+  itk_add_test(NAME itkObjectFactoryTest2 COMMAND ITKCommon2TestDriver itkObjectFactoryTest2 ${ITK_TEST_OUTPUT_DIR} ${ITK_TEST_OUTPUT_DIR})
+
 set_tests_properties(itkObjectFactoryTest2 PROPERTIES RUN_SERIAL 1)
 endif()
 
@@ -410,6 +419,7 @@ itk_add_test(NAME itkConstantBoundaryConditionTest COMMAND ITKCommon2TestDriver 
    itkMemoryProbesCollecterBaseTest)
 if( "${ITK_COMPUTER_MEMORY_SIZE}" GREATER 4 )
   itk_add_test(NAME itkImageFillBufferTest4.1 COMMAND ITKCommon2TestDriver itkImageFillBufferTest 4.1)
+  set_property(TEST itkImageFillBufferTest4.1 APPEND PROPERTY LABELS RUNS_LONG)
   set_tests_properties( itkImageFillBufferTest4.1 PROPERTIES RESOURCE_LOCK MEMORY_SIZE )
 endif()
 
@@ -447,7 +457,7 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     PROPERTIES WILL_FAIL TRUE
     )
 
-  set(CTEST_CUSTOM_MEMCHECK_IGNORE ${CTEST_CUSTOM_MEMCHECK_IGNORE} itkFloatingPointExceptionsTest5 CACHE INTERNAL "tests excluded from memcheck" FORCE)
+  itk_memcheck_ignore(itkFloatingPointExceptionsTest5)
 
 endif()
 
@@ -461,4 +471,10 @@ itk_add_test(NAME itkImageRegionConstIteratorWithOnlyIndexTest COMMAND ITKCommon
 itk_add_test(NAME itkImageRandomConstIteratorWithOnlyIndexTest COMMAND ITKCommon2TestDriver itkImageRandomConstIteratorWithOnlyIndexTest)
 itk_add_test(NAME itkConstNeighborhoodIteratorWithOnlyIndexTest COMMAND ITKCommon2TestDriver itkConstNeighborhoodIteratorWithOnlyIndexTest)
 
-itk_add_test(NAME itkImageToImageToleranceTest COMMAND ITKCommon2TestDriver itkImageTOImageToleranceTest)
+itk_add_test(NAME itkImageToImageToleranceTest COMMAND
+  ITKCommon2TestDriver itkImageTOImageToleranceTest)
+
+
+itk_add_test(NAME itkRegionSplitterSlowDimensionTest COMMAND ITKCommon2TestDriver itkImageRegionSplitterSlowDimensionTest)
+itk_add_test(NAME itkRegionSplitterDirectionTest COMMAND ITKCommon2TestDriver itkImageRegionSplitterDirectionTest)
+itk_add_test(NAME itkRegionSplitterMultidimensionalTest COMMAND ITKCommon2TestDriver itkImageRegionSplitterMultidimensionalTest)

@@ -26,7 +26,7 @@ namespace itk
  * \brief Deformable transform using a BSpline representation
  *
  * This class encapsulates a deformable transform of points from one
- * N-dimensional one space to another N-dimensional space.
+ * N-dimensional space to another N-dimensional space.
  * The deformation field is modelled using B-splines.
  * A deformation is defined on a sparse regular grid of control points
  * \f$ \vec{\lambda}_j \f$ and is varied by defining a deformation
@@ -105,17 +105,17 @@ namespace itk
  * \wikiexample{Registration/ImageRegistrationMethodBSpline,
  *   A global registration of two images}
  */
-template <class TScalarType = double, unsigned int NDimensions = 3,
+template <typename TScalar = double, unsigned int NDimensions = 3,
           unsigned int VSplineOrder = 3>
-class ITK_EXPORT BSplineTransform :
-  public BSplineBaseTransform<TScalarType,NDimensions,VSplineOrder>
+class BSplineTransform :
+  public BSplineBaseTransform<TScalar,NDimensions,VSplineOrder>
 {
 public:
   /** Standard class typedefs. */
-  typedef BSplineTransform                                           Self;
-  typedef BSplineBaseTransform<TScalarType,NDimensions,VSplineOrder> Superclass;
-  typedef SmartPointer<Self>                                         Pointer;
-  typedef SmartPointer<const Self>                                   ConstPointer;
+  typedef BSplineTransform                                       Self;
+  typedef BSplineBaseTransform<TScalar,NDimensions,VSplineOrder> Superclass;
+  typedef SmartPointer<Self>                                     Pointer;
+  typedef SmartPointer<const Self>                               ConstPointer;
 
   /** New macro for creation of through the object factory. */
   itkNewMacro( Self );

@@ -25,7 +25,7 @@ namespace itk
 {
 namespace Statistics
 {
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 RBFLayer<TMeasurementVector,TTargetVector>
 ::RBFLayer()
 {
@@ -42,13 +42,13 @@ RBFLayer<TMeasurementVector,TTargetVector>
 }
 
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 RBFLayer<TMeasurementVector,TTargetVector>
 ::~RBFLayer()
 {
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetRBF(RBFType* f)
@@ -56,7 +56,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   m_RBF = f;
   this->Modified();
 }
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetRBF_Dim(unsigned int dim)
@@ -65,7 +65,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   m_DistanceMetric->SetMeasurementVectorSize(m_RBF_Dim);
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetNumberOfNodes(unsigned int c)
@@ -93,7 +93,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetInputValue(unsigned int i, ValueType value)
@@ -102,14 +102,14 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType
 RBFLayer<TMeasurementVector,TTargetVector>
 ::GetInputValue(unsigned int i) const
 {
   return m_NodeInputValues[i];
 }
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetOutputValue(unsigned int i, ValueType value)
@@ -118,7 +118,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType
 RBFLayer<TMeasurementVector,TTargetVector>
 ::GetOutputValue(unsigned int i) const
@@ -126,7 +126,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   return m_NodeOutputValues(i);
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetOutputVector(TMeasurementVector value)
@@ -135,7 +135,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType *
 RBFLayer<TMeasurementVector,TTargetVector>
 ::GetOutputVector()
@@ -143,7 +143,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   return m_NodeOutputValues.data_block();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetRadii(ValueType c,unsigned int i)
@@ -152,7 +152,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType
 RBFLayer<TMeasurementVector,TTargetVector>
 ::GetRadii(unsigned int i) const
@@ -160,7 +160,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   return m_Radii.GetElement(i);
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetCenter(TMeasurementVector c,unsigned int i)
@@ -174,7 +174,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::InternalVectorType
 RBFLayer<TMeasurementVector,TTargetVector>
 ::GetCenter(unsigned int i) const
@@ -189,7 +189,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
     }
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType
 RBFLayer<TMeasurementVector,TTargetVector>
 ::GetInputErrorValue(unsigned int n) const
@@ -197,7 +197,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   return m_InputErrorValues[n];
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType *
 RBFLayer<TMeasurementVector,TTargetVector>
 ::GetInputErrorVector()
@@ -205,7 +205,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   return m_InputErrorValues.data_block();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetInputErrorValue(ValueType v, unsigned int i)
@@ -214,7 +214,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::ForwardPropagate()
@@ -225,13 +225,13 @@ RBFLayer<TMeasurementVector,TTargetVector>
     {
     typename TransferFunctionInterfaceType::Pointer transferfunction;
 
-    inputfunction = this->GetNodeInputFunction();
-    transferfunction = this->GetActivationFunction();
-    inputweightset = this->GetInputWeightSet();
+    inputfunction = this->GetModifiableNodeInputFunction();
+    transferfunction = this->GetModifiableActivationFunction();
+    inputweightset = this->GetModifiableInputWeightSet();
     ValueType * inputvalues = inputweightset->GetOutputValues();
 
-    int rows = this->m_NumberOfNodes;
-    int cols = this->m_InputWeightSet->GetNumberOfInputNodes();
+    const int rows = this->m_NumberOfNodes;
+    const int cols = this->m_InputWeightSet->GetNumberOfInputNodes();
     vnl_matrix<ValueType> inputmatrix;
     inputmatrix.set_size(rows, cols);
     inputmatrix.copy_in(inputvalues);
@@ -248,8 +248,8 @@ RBFLayer<TMeasurementVector,TTargetVector>
     }
   else
     {
-    inputweightset = this->GetInputWeightSet();
-    inputfunction = this->GetNodeInputFunction();
+    inputweightset = this->GetModifiableInputWeightSet();
+    inputfunction = this->GetModifiableNodeInputFunction();
 
     vnl_vector<ValueType> temp;
     ValueType * inputvalues = inputweightset->GetInputValues();
@@ -314,7 +314,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
     }
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetDistanceMetric(DistanceMetricType* f)
@@ -323,13 +323,12 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::ForwardPropagate(TMeasurementVector samplevector)
 {
-  typename TransferFunctionInterfaceType::Pointer transferfunction;
-  transferfunction = this->GetActivationFunction();
+  typename TransferFunctionInterfaceType::Pointer transferfunction = this->GetModifiableActivationFunction();
 
   for (unsigned int i = 0; i < samplevector.Size(); i++)
     {
@@ -339,7 +338,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
 }
 
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::SetOutputErrorValues(TTargetVector errors)
@@ -351,7 +350,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   this->Modified();
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType
 RBFLayer<TMeasurementVector,TTargetVector>
 ::GetOutputErrorValue(unsigned int i) const
@@ -360,17 +359,15 @@ RBFLayer<TMeasurementVector,TTargetVector>
 }
 
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::BackwardPropagate()
 {
-  unsigned int num_nodes = this->GetNumberOfNodes();
+  const unsigned int num_nodes = this->GetNumberOfNodes();
 
-  typename Superclass::WeightSetType::Pointer outputweightset;
-  typename Superclass::WeightSetType::Pointer inputweightset;
-  outputweightset = Superclass::GetOutputWeightSet();
-  inputweightset = Superclass::GetInputWeightSet();
+  typename Superclass::WeightSetType::Pointer outputweightset = Superclass::GetModifiableOutputWeightSet();
+  typename Superclass::WeightSetType::Pointer inputweightset = Superclass::GetModifiableInputWeightSet();
 
   vnl_vector<ValueType> OutputLayerInput(outputweightset->GetInputValues(),num_nodes);
 
@@ -378,8 +375,8 @@ RBFLayer<TMeasurementVector,TTargetVector>
   ValueType * deltavalues = outputweightset->GetDeltaValues();
   ValueType * weightvalues = outputweightset->GetWeightValues();
 
-  unsigned int cols = num_nodes;
-  unsigned int rows = outputweightset->GetNumberOfOutputNodes();
+  const unsigned int cols = num_nodes;
+  const unsigned int rows = outputweightset->GetNumberOfOutputNodes();
 
   vnl_matrix<ValueType> weightmatrix(weightvalues, rows, cols);
 
@@ -451,7 +448,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   inputweightset->SetDeltaBValues(width_gradient.data_block());
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType
 RBFLayer<TMeasurementVector,TTargetVector>
 ::Activation(ValueType n)
@@ -459,7 +456,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
   return this->m_ActivationFunction->Evaluate(n);
 }
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 typename RBFLayer<TMeasurementVector,TTargetVector>::ValueType
 RBFLayer<TMeasurementVector,TTargetVector>
 ::DActivation(ValueType n)
@@ -468,7 +465,7 @@ RBFLayer<TMeasurementVector,TTargetVector>
 }
 
 /** Print the object */
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 void
 RBFLayer<TMeasurementVector,TTargetVector>
 ::PrintSelf( std::ostream& os, Indent indent ) const

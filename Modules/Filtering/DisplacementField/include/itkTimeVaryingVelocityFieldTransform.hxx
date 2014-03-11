@@ -28,7 +28,7 @@ namespace itk
 /**
  * Constructor
  */
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 TimeVaryingVelocityFieldTransform<TScalar, NDimensions>
 ::TimeVaryingVelocityFieldTransform()
 {
@@ -37,13 +37,13 @@ TimeVaryingVelocityFieldTransform<TScalar, NDimensions>
 /**
  * Destructor
  */
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 TimeVaryingVelocityFieldTransform<TScalar, NDimensions>::
 ~TimeVaryingVelocityFieldTransform()
 {
 }
 
-template<class TScalar, unsigned int NDimensions>
+template<typename TScalar, unsigned int NDimensions>
 void
 TimeVaryingVelocityFieldTransform<TScalar, NDimensions>
 ::IntegrateVelocityField()
@@ -60,7 +60,7 @@ TimeVaryingVelocityFieldTransform<TScalar, NDimensions>
 
     if( this->GetVelocityFieldInterpolator() )
       {
-      integrator->SetVelocityFieldInterpolator( this->GetVelocityFieldInterpolator() );
+      integrator->SetVelocityFieldInterpolator( this->GetModifiableVelocityFieldInterpolator() );
       }
 
     integrator->SetNumberOfIntegrationSteps( this->GetNumberOfIntegrationSteps() );
@@ -70,7 +70,7 @@ TimeVaryingVelocityFieldTransform<TScalar, NDimensions>
     displacementField->DisconnectPipeline();
 
     this->SetDisplacementField( displacementField );
-    this->GetInterpolator()->SetInputImage( displacementField );
+    this->GetModifiableInterpolator()->SetInputImage( displacementField );
 
     typename IntegratorType::Pointer inverseIntegrator = IntegratorType::New();
     inverseIntegrator->SetInput( this->GetVelocityField() );
@@ -78,7 +78,7 @@ TimeVaryingVelocityFieldTransform<TScalar, NDimensions>
     inverseIntegrator->SetUpperTimeBound( this->GetLowerTimeBound() );
     if( !this->GetVelocityFieldInterpolator() )
       {
-      inverseIntegrator->SetVelocityFieldInterpolator( this->GetVelocityFieldInterpolator() );
+      inverseIntegrator->SetVelocityFieldInterpolator( this->GetModifiableVelocityFieldInterpolator() );
       }
 
     inverseIntegrator->SetNumberOfIntegrationSteps( this->GetNumberOfIntegrationSteps() );

@@ -90,7 +90,7 @@ ITKCommon_EXPORT std::istream &  operator>>(std::istream & in, SmapsRecord & rec
       lastPos = in.tellg();
       }
     }
-  catch ( ExceptionObject excp )
+  catch ( ExceptionObject & excp )
     {
     record.Reset();
     // propagate the exception
@@ -147,7 +147,7 @@ ITKCommon_EXPORT std::istream & operator>>(std::istream & in, VMMapSummaryRecord
                                << ", bad right bracket: " << bracket);
       }
     }
-  catch ( ExceptionObject excp )
+  catch ( ExceptionObject & excp )
     {
     record.Reset();
     // propagate the exception
@@ -253,7 +253,7 @@ ITKCommon_EXPORT std::istream & operator>>(std::istream & in, VMMapRecord & reco
       }
     if ( bracket.length() > 1 )
       { //bracket contains the size, ie "[1024K]"
-      record.m_Tokens["Size"] = atoi( bracket.substr(1, bracket.length() - 3).c_str() );
+      record.m_Tokens["Size"] = static_cast<itk::SizeValueType>( atoi( bracket.substr(1, bracket.length() - 3).c_str() ) );
       }
     else
       {
@@ -271,7 +271,7 @@ ITKCommon_EXPORT std::istream & operator>>(std::istream & in, VMMapRecord & reco
                                << ", bad end of line: " << line);
       }
     }
-  catch ( ExceptionObject excp )
+  catch ( ExceptionObject & excp )
     {
     record.Reset();
     // propagate the exception
@@ -285,7 +285,7 @@ ITKCommon_EXPORT std::istream & operator>>(std::istream & in, VMMapRecord & reco
 
 /** Binary functor to accumulate memory usage in kB
  */
-template< class TFirstType >
+template< typename TFirstType >
 struct MapRecordPlusor {
   MapRecordPlusor< TFirstType >(const char *token = "Size"):
     m_Token(token)
@@ -303,7 +303,7 @@ struct MapRecordPlusor {
 /** Binary functor to accumulate memory usage in kB
  *  The record must match (insensitively) the filter in order to be taken into account
  */
-template< class TFirstType >
+template< typename TFirstType >
 struct MapRecordConditionalPlusor {
   MapRecordConditionalPlusor< TFirstType >(const char *filter, const char *token = "Size"):
     m_Filter(filter), m_Token(token)
@@ -368,7 +368,7 @@ void MapData::Reset()
 SmapsData_2_6::~SmapsData_2_6()
 {}
 
-ITK_EXPORT std::istream & operator>>(std::istream & smapsStream, SmapsData_2_6 & data)
+std::istream & operator>>(std::istream & smapsStream, SmapsData_2_6 & data)
 {
   SmapsRecord *record = NULL;
 
@@ -384,7 +384,7 @@ ITK_EXPORT std::istream & operator>>(std::istream & smapsStream, SmapsData_2_6 &
       record = new SmapsRecord;
       }
     }
-  catch ( ExceptionObject excp )
+  catch ( ExceptionObject & excp )
     {
     // in case of error, erase the records.
     data.Reset();
@@ -426,7 +426,7 @@ VMMapData_10_2
 ::~VMMapData_10_2()
 {}
 
-ITK_EXPORT std::istream & operator>>(std::istream & stream, VMMapData_10_2 & data)
+std::istream & operator>>(std::istream & stream, VMMapData_10_2 & data)
 {
   MapRecord *record = NULL;
 
@@ -507,7 +507,7 @@ ITK_EXPORT std::istream & operator>>(std::istream & stream, VMMapData_10_2 & dat
         }
       }
     }
-  catch ( ExceptionObject excp )
+  catch ( ExceptionObject & excp )
     {
     // in case of error, erase the records.
     data.Reset();

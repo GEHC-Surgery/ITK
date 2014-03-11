@@ -37,7 +37,7 @@
 namespace itk
 {
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 ImageFileWriter< TInputImage >
 ::ImageFileWriter():
   m_PasteIORegion(TInputImage::ImageDimension)
@@ -51,13 +51,13 @@ ImageFileWriter< TInputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 ImageFileWriter< TInputImage >
 ::~ImageFileWriter()
 {}
 
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 void
 ImageFileWriter< TInputImage >
 ::SetInput(const InputImageType *input)
@@ -68,7 +68,7 @@ ImageFileWriter< TInputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 const typename ImageFileWriter< TInputImage >::InputImageType *
 ImageFileWriter< TInputImage >
 ::GetInput(void)
@@ -77,7 +77,7 @@ ImageFileWriter< TInputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 const typename ImageFileWriter< TInputImage >::InputImageType *
 ImageFileWriter< TInputImage >
 ::GetInput(unsigned int idx)
@@ -86,7 +86,7 @@ ImageFileWriter< TInputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 void
 ImageFileWriter< TInputImage >
 ::SetIORegion(const ImageIORegion & region)
@@ -101,7 +101,7 @@ ImageFileWriter< TInputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 void
 ImageFileWriter< TInputImage >
 ::Write()
@@ -124,26 +124,25 @@ ImageFileWriter< TInputImage >
     }
 
 #if !defined(SPECIFIC_IMAGEIO_MODULE_TEST)
-  if ( m_ImageIO.IsNull() ) //try creating via factory
+  if ( m_ImageIO.IsNull() ||
+       ( m_FactorySpecifiedImageIO && !m_ImageIO->CanWriteFile( m_FileName.c_str() ) ) )
     {
-    itkDebugMacro(<< "Attempting factory creation of ImageIO for file: "
-                  << m_FileName);
-    m_ImageIO = ImageIOFactory::CreateImageIO(m_FileName.c_str(),
-                                              ImageIOFactory::WriteMode);
-    m_FactorySpecifiedImageIO = true;
-    }
-  else
-    {
-    if ( m_FactorySpecifiedImageIO && !m_ImageIO->CanWriteFile( m_FileName.c_str() ) )
+    //try creating via factory
+    if ( m_ImageIO.IsNull() )
+      {
+      itkDebugMacro(<< "Attempting factory creation of ImageIO for file: "
+                    << m_FileName);
+      }
+    else // ( m_FactorySpecifiedImageIO && !m_ImageIO->CanWriteFile( m_FileName.c_str() )
       {
       itkDebugMacro(<< "ImageIO exists but doesn't know how to write file:"
                     << m_FileName);
       itkDebugMacro(<< "Attempting creation of ImageIO with a factory for file:"
                     << m_FileName);
-      m_ImageIO = ImageIOFactory::CreateImageIO(m_FileName.c_str(),
-                                                ImageIOFactory::WriteMode);
-      m_FactorySpecifiedImageIO = true;
       }
+    m_ImageIO = ImageIOFactory::CreateImageIO(m_FileName.c_str(),
+                                              ImageIOFactory::WriteMode);
+    m_FactorySpecifiedImageIO = true;
     }
 #endif
 
@@ -349,7 +348,7 @@ ImageFileWriter< TInputImage >
     // write the data
     this->GenerateData();
 
-    this->UpdateProgress( (float)( piece + 1 ) / numDivisions );
+    this->UpdateProgress( static_cast<float>( piece + 1 ) / static_cast<float>( numDivisions ) );
     }
 
   // Notify end event observers
@@ -360,7 +359,7 @@ ImageFileWriter< TInputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 void
 ImageFileWriter< TInputImage >
 ::GenerateData(void)
@@ -417,7 +416,7 @@ ImageFileWriter< TInputImage >
 }
 
 //---------------------------------------------------------
-template< class TInputImage >
+template< typename TInputImage >
 void
 ImageFileWriter< TInputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

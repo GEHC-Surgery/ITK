@@ -149,6 +149,11 @@ int itkSmartPointerTest(int, char* [] )
   }
   std::cout <<"end second test" << std::endl << std::endl;
 
+
+  // check test of null pointer
+  itkTestObject::Pointer q(NULL);
+  std::cout << q;
+
   std::cout <<"first test" << std::endl;
   {
   itkTestObject::Pointer o1 = itkTestObject::New();
@@ -160,5 +165,3 @@ int itkSmartPointerTest(int, char* [] )
   std::cout <<"end first test" << std::endl << std::endl;
   return EXIT_SUCCESS;
 }
-
-

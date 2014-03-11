@@ -31,7 +31,7 @@ namespace itk
 /*
  * DisplacementFieldToBSplineImageFilter class definitions
  */
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 DisplacementFieldToBSplineImageFilter<TInputImage, TOutputImage>
 ::DisplacementFieldToBSplineImageFilter() :
   m_EstimateInverse( false ),
@@ -46,18 +46,19 @@ DisplacementFieldToBSplineImageFilter<TInputImage, TOutputImage>
   this->m_DisplacementFieldControlPointLattice = NULL;
 }
 
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 DisplacementFieldToBSplineImageFilter<TInputImage, TOutputImage>
 ::~DisplacementFieldToBSplineImageFilter()
 {
 }
 
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 void
 DisplacementFieldToBSplineImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
   const InputFieldType * inputField = this->GetInput();
+  const RealImageType * confidenceImage = this->GetConfidenceImage();
 
   typename InputFieldType::DirectionType identity;
   identity.SetIdentity();
@@ -103,8 +104,6 @@ DisplacementFieldToBSplineImageFilter<TInputImage, TOutputImage>
     {
     typename DisplacementFieldType::IndexType index = It.GetIndex();
 
-    typename WeightsContainerType::Element weight = 1.0;
-
     bool isOnStationaryBoundary = false;
     if( this->m_EnforceStationaryBoundary )
       {
@@ -116,6 +115,18 @@ DisplacementFieldToBSplineImageFilter<TInputImage, TOutputImage>
           break;
           }
         }
+      }
+
+    if( confidenceImage && confidenceImage->GetPixel( index ) <= 0.0 && !isOnStationaryBoundary )
+      {
+      continue;
+      }
+
+    typename WeightsContainerType::Element weight = 1.0;
+
+    if( confidenceImage && confidenceImage->GetPixel( index ) > 0.0 )
+      {
+      weight = static_cast<typename WeightsContainerType::Element>( confidenceImage->GetPixel( index ) );
       }
 
     VectorType data;
@@ -197,7 +208,7 @@ DisplacementFieldToBSplineImageFilter<TInputImage, TOutputImage>
   this->SetNthOutput( 0, bspliner->GetOutput() );
 }
 
-template<class TInputImage, class TOutputImage>
+template<typename TInputImage, typename TOutputImage>
 void
 DisplacementFieldToBSplineImageFilter<TInputImage, TOutputImage>
 ::PrintSelf( std::ostream& os, Indent indent ) const

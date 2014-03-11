@@ -21,7 +21,7 @@
 #include "itkImage.h"
 #include "itkTimeProbesCollectorBase.h"
 
-template <class TImage>
+template <typename TImage>
 void ComputeIndex(TImage *image, unsigned int count, unsigned int repeat)
 {
   typename TImage::IndexType index;
@@ -35,7 +35,7 @@ void ComputeIndex(TImage *image, unsigned int count, unsigned int repeat)
   std::cout << "Last index: " << index << std::endl;
 }
 
-template <class TImage>
+template <typename TImage>
 void ComputeFastIndex(TImage *image, unsigned int count, unsigned int repeat)
 {
   typename TImage::IndexType index;
@@ -56,7 +56,7 @@ void ComputeFastIndex(TImage *image, unsigned int count, unsigned int repeat)
   std::cout << "Last index: " << index << std::endl;
 }
 
-template <class TImage>
+template <typename TImage>
 void ComputeOffset(TImage *image, unsigned int count, unsigned int repeat)
 {
   typename TImage::OffsetValueType offset = 0;
@@ -79,7 +79,7 @@ void ComputeOffset(TImage *image, unsigned int count, unsigned int repeat)
   std::cout << "Last offset: " << offset << ": " << accum << std::endl;
 }
 
-template <class TImage>
+template <typename TImage>
 void ComputeFastOffset(TImage *image, unsigned int count, unsigned int repeat)
 {
   typename TImage::OffsetValueType offset = 0;
@@ -114,11 +114,11 @@ int itkImageComputeOffsetAndIndexTest(int, char* [] )
 
 #define TRY_FAST_INDEX(dim) \
   { \
-  typedef char PixelType; \
+  typedef char                        PixelType; \
   typedef itk::Image< PixelType, dim> ImageType; \
   ImageType::Pointer myImage = ImageType::New(); \
-  ImageType::SizeType size; \
-  ImageType::IndexType index; \
+  ImageType::SizeType   size; \
+  ImageType::IndexType  index; \
   ImageType::RegionType region; \
   size.Fill(50); \
   index.Fill(0); \
@@ -140,11 +140,11 @@ int itkImageComputeOffsetAndIndexTest(int, char* [] )
   }
 #define TRY_INDEX(dim) \
   { \
-  typedef char PixelType; \
+  typedef char                        PixelType; \
   typedef itk::Image< PixelType, dim> ImageType; \
   ImageType::Pointer myImage = ImageType::New(); \
-  ImageType::SizeType size; \
-  ImageType::IndexType index; \
+  ImageType::SizeType   size; \
+  ImageType::IndexType  index; \
   ImageType::RegionType region; \
   size.Fill(50); \
   index.Fill(0); \
@@ -167,11 +167,11 @@ int itkImageComputeOffsetAndIndexTest(int, char* [] )
 
 #define TRY_FAST_OFFSET(dim) \
   { \
-  typedef char PixelType; \
+  typedef char                        PixelType; \
   typedef itk::Image< PixelType, dim> ImageType; \
   ImageType::Pointer myImage = ImageType::New(); \
-  ImageType::SizeType size; \
-  ImageType::IndexType index; \
+  ImageType::SizeType   size; \
+  ImageType::IndexType  index; \
   ImageType::RegionType region; \
   size.Fill(50); \
   index.Fill(0); \
@@ -191,11 +191,11 @@ int itkImageComputeOffsetAndIndexTest(int, char* [] )
   }
 #define TRY_OFFSET(dim) \
   { \
-  typedef char PixelType; \
+  typedef char                        PixelType; \
   typedef itk::Image< PixelType, dim> ImageType; \
   ImageType::Pointer myImage = ImageType::New(); \
-  ImageType::SizeType size; \
-  ImageType::IndexType index; \
+  ImageType::SizeType   size; \
+  ImageType::IndexType  index; \
   ImageType::RegionType region; \
   size.Fill(50); \
   index.Fill(0); \

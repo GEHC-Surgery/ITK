@@ -21,8 +21,6 @@
 #include "itkImageIOBase.h"
 #include <fstream>
 
-#include "itk_tiff.h"
-
 namespace itk
 {
 //BTX
@@ -41,7 +39,7 @@ class TIFFReaderInternal;
  * \wikiexample{IO/TIFFImageIO,Write a TIFF image}
  * \endwiki
  */
-class ITK_EXPORT TIFFImageIO:public ImageIOBase
+class TIFFImageIO:public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -61,7 +59,7 @@ public:
    * file specified. */
   virtual bool CanReadFile(const char *);
 
-  /** Set the spacing and diemention information for the set filename. */
+  /** Set the spacing and dimension information for the set filename. */
   virtual void ReadImageInformation();
 
   /** Reads the data from disk into the memory buffer provided. */
@@ -154,13 +152,8 @@ protected:
   // Check that tag t can be found
   bool  CanFindTIFFTag(unsigned int t);
 
-// This method, used obtaining the data from custom tags, requires the
-// "private" libtiff tif_def.h, which is not installed in a system
-// installation.
-#ifndef ITK_USE_SYSTEM_TIFF
   // Read and returns the raw bytes of tag t
-  void * ReadRawByteFromTag(unsigned int t, short & value_count);
-#endif // ITK_USE_SYSTEM_TIFF
+  void * ReadRawByteFromTag(unsigned int t, unsigned int & value_count);
 
   TIFFReaderInternal *m_InternalImage;
 

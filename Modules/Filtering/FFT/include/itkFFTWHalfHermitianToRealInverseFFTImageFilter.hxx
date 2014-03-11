@@ -26,14 +26,14 @@
 namespace itk
 {
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
 ::FFTWHalfHermitianToRealInverseFFTImageFilter()
 {
   m_PlanRigor = FFTWGlobalConfiguration::GetPlanRigor();
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
 ::BeforeThreadedGenerateData()
@@ -99,9 +99,12 @@ FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
                                       !m_CanUseDestructiveAlgorithm );
   if( !m_CanUseDestructiveAlgorithm )
     {
-    memcpy( in,
-            inputPtr->GetBufferPointer(),
-            totalInputSize * sizeof(typename FFTWProxyType::ComplexType) );
+    // complex<double> and double[2] types are compatible memory layouts.
+    // The reinterpret_cast is used here to
+    // make the "C" fftw libary compatible with the c++ complex<double>.
+    std::copy( inputPtr->GetBufferPointer(),
+               inputPtr->GetBufferPointer()+totalInputSize,
+               reinterpret_cast< typename InputImageType::PixelType * > (in) );
     }
   FFTWProxyType::Execute( plan );
 
@@ -109,11 +112,11 @@ FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
   FFTWProxyType::DestroyPlan( plan );
   if( !m_CanUseDestructiveAlgorithm )
     {
-    delete [] in;
+    delete[] in;
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
 ::ThreadedGenerateData(const OutputRegionType& outputRegionForThread,
@@ -129,7 +132,7 @@ FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
 ::UpdateOutputData(DataObject * output)
@@ -141,7 +144,7 @@ FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
   Superclass::UpdateOutputData( output );
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 FFTWHalfHermitianToRealInverseFFTImageFilter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const

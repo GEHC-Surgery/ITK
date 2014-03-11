@@ -181,12 +181,11 @@ int itkTransformFactoryBaseTest (int, char*[])
   defaultTransforms.push_back("VersorRigid3DTransform_float_3_3");
   defaultTransforms.push_back("VersorTransform_float_3_3");
 
-  //Float types not yet supported due to base class optimizer hard coded to double in TransformBase
-  //defaultTransforms.push_back("DisplacementFieldTransform_float_2_2");
-  //defaultTransforms.push_back("DisplacementFieldTransform_float_3_3");
-
   defaultTransforms.push_back("DisplacementFieldTransform_double_2_2");
   defaultTransforms.push_back("DisplacementFieldTransform_double_3_3");
+
+  defaultTransforms.push_back("DisplacementFieldTransform_float_2_2");
+  defaultTransforms.push_back("DisplacementFieldTransform_float_3_3");
 
 
   // check to make sure that all default transforms have been registered
@@ -198,7 +197,7 @@ int itkTransformFactoryBaseTest (int, char*[])
   std::list<std::string>::iterator defaultsIt;
   for (namesIt = names.begin(), defaultsIt = defaultTransforms.begin();
        namesIt != names.end() && defaultsIt != defaultTransforms.end();
-       namesIt++, defaultsIt++)
+       ++namesIt, ++defaultsIt)
     {
     if (strcmp((*namesIt).c_str(), (*defaultsIt).c_str()) != 0)
       {

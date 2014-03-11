@@ -26,6 +26,17 @@
 
 namespace itk
 {
+
+
+template< typename TInputImage, typename TOutputImage >
+LabelVotingImageFilter< TInputImage, TOutputImage >
+::LabelVotingImageFilter()
+{
+  this->m_HasLabelForUndecidedPixels = false;
+  this->m_LabelForUndecidedPixels = 0;
+  this->m_TotalLabelCount = 0;
+}
+
 template< typename TInputImage, typename TOutputImage >
 void
 LabelVotingImageFilter< TInputImage, TOutputImage >
@@ -71,10 +82,15 @@ LabelVotingImageFilter< TInputImage, TOutputImage >
   Superclass::BeforeThreadedGenerateData();
 
   // determine the maximum label in all input images
-  this->m_TotalLabelCount = this->ComputeMaximumInputValue() + 1;
+  this->m_TotalLabelCount =
+    static_cast<size_t>(this->ComputeMaximumInputValue()) + 1;
 
   if ( !this->m_HasLabelForUndecidedPixels )
     {
+    if (this->m_TotalLabelCount > itk::NumericTraits<OutputPixelType>::max())
+      {
+      itkWarningMacro("No new label for undecided pixels, using zero.");
+      }
     this->m_LabelForUndecidedPixels = this->m_TotalLabelCount;
     }
 
@@ -112,28 +128,28 @@ LabelVotingImageFilter< TInputImage, TOutputImage >
   for ( out.GoToBegin(); !out.IsAtEnd(); ++out )
     {
     // reset number of votes per label for all labels
-    for ( InputPixelType l = 0; l < this->m_TotalLabelCount; ++l )
-      {
-      votesByLabel[l] = 0;
-      }
+    std::fill_n( votesByLabel, this->m_TotalLabelCount, 0 );
 
     // count number of votes for the labels
     for ( unsigned int i = 0; i < numberOfInputFiles; ++i )
       {
       const InputPixelType label = it[i].Get();
-      ++votesByLabel[label];
+      if ( NumericTraits<InputPixelType>::IsNonnegative( label ) )
+        {
+        ++votesByLabel[label];
+        }
       ++( it[i] );
       }
 
     // determine the label with the most votes for this pixel
     out.Set(0);
     unsigned int maxVotes = votesByLabel[0];
-    for ( InputPixelType l = 1; l < this->m_TotalLabelCount; ++l )
+    for ( size_t l = 1; l < this->m_TotalLabelCount; ++l )
       {
       if ( votesByLabel[l] > maxVotes )
         {
         maxVotes = votesByLabel[l];
-        out.Set(l);
+        out.Set(static_cast<OutputPixelType>(l));
         }
       else
         {

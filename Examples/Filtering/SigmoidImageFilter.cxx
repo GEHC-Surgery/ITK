@@ -47,8 +47,8 @@
 //  of each parameter.
 //
 // \begin{figure} \center
-// \includegraphics[width=0.44\textwidth]{SigmoidParameterAlpha.eps}
-// \includegraphics[width=0.44\textwidth]{SigmoidParameterBeta.eps}
+// \includegraphics[width=0.44\textwidth]{SigmoidParameterAlpha}
+// \includegraphics[width=0.44\textwidth]{SigmoidParameterBeta}
 // \itkcaption[Sigmoid Parameters]{Effects of the various parameters in the
 // SigmoidImageFilter.  The alpha parameter defines the width of the intensity
 // window.  The beta parameter defines the center of the intensity window.}
@@ -65,7 +65,6 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-
 
 
 //  Software Guide : BeginLatex
@@ -205,8 +204,8 @@ int main( int argc, char * argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySlice.eps}
-  // \includegraphics[width=0.44\textwidth]{SigmoidImageFilterOutput.eps}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySlice}
+  // \includegraphics[width=0.44\textwidth]{SigmoidImageFilterOutput}
   // \itkcaption[Effect of the Sigmoid filter.]{Effect of the Sigmoid filter on a
   // slice from a MRI proton density brain image.}
   // \label{fig:SigmoidImageFilterOutput}
@@ -244,4 +243,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

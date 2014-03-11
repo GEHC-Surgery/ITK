@@ -44,8 +44,8 @@ namespace itk
  * \ingroup ITKIORAW
  */
 
-template< class TPixel, unsigned int VImageDimension = 2 >
-class ITK_EXPORT RawImageIO:public ImageIOBase
+template< typename TPixel, unsigned int VImageDimension = 2 >
+class RawImageIO:public ImageIOBase
 {
 public:
   /** Standard class typedefs. */
@@ -153,8 +153,8 @@ private:
   unsigned short m_ImageMask;
 };
 
-template< class TPixel, unsigned int VImageDimension >
-class ITK_EXPORT RawImageIOFactory:public ObjectFactoryBase
+template< typename TPixel, unsigned int VImageDimension >
+class RawImageIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */

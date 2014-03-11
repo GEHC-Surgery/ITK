@@ -51,9 +51,9 @@ namespace itk
  * \ingroup GeometricTransform
  * \ingroup ITKReview
  */
-template< class TOutputImage,
-          class TTransformPrecisionType = double >
-class ITK_EXPORT TransformToDisplacementFieldSource:
+template< typename TOutputImage,
+          typename TTransformPrecisionType = double >
+class TransformToDisplacementFieldSource:
   public ImageSource< TOutputImage >
 {
 public:
@@ -98,7 +98,7 @@ public:
   /** Typedefs for base image. */
   typedef ImageBase< itkGetStaticConstMacro(ImageDimension) > ImageBaseType;
 
-  /** Set the coordinate transformation.
+  /** Get/Set the coordinate transformation.
    * Set the coordinate transform to use for resampling.  Note that this must
    * be in physical coordinates and it is the output-to-input transform, NOT
    * the input-to-output transform that you might naively expect.  By default
@@ -106,8 +106,6 @@ public:
    * transform here, before attempting to run the filter, if you do not want to
    * use the default Identity transform. */
   itkSetConstObjectMacro(Transform, TransformType);
-
-  /** Get a pointer to the coordinate transform. */
   itkGetConstObjectMacro(Transform, TransformType);
 
   /** Set the size of the output image. */
@@ -160,12 +158,12 @@ public:
   ModifiedTimeType GetMTime(void) const;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkStaticConstMacro(PixelDimension, unsigned int,
                       PixelType::Dimension);
   itkConceptMacro( SameDimensionCheck,
                    ( Concept::SameDimension< ImageDimension, PixelDimension > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

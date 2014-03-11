@@ -123,7 +123,7 @@ namespace fem
  * \ingroup ITKFEM
  */
 
-template<class TInputPointSet, class TInputMesh, class TOutputImage, class TInputConfidencePointSet, class TInputTensorPointSet>
+template<typename TInputPointSet, typename TInputMesh, typename TOutputImage, typename TInputConfidencePointSet, typename TInputTensorPointSet>
 class FEMScatteredDataPointSetToImageFilter:
   public PointSetToImageFilter< TInputPointSet, TOutputImage >
 {
@@ -162,28 +162,28 @@ public:
   typedef typename TensorPointDataContainerType::Iterator                     TensorPointDataIterator;
 
   /** Mesh typedef support */
-  typedef TInputMesh                                           MeshType;
-  typedef typename MeshType::CellType                          CellType;
-  typedef typename CellType::CellAutoPointer                   CellAutoPointer;
-  typedef typename MeshType::CellsContainer                    CellsContainer;
-  typedef typename CellsContainer::ConstIterator               CellIterator;
+  typedef TInputMesh                              MeshType;
+  typedef typename MeshType::CellType             CellType;
+  typedef typename CellType::CellAutoPointer      CellAutoPointer;
+  typedef typename MeshType::CellsContainer       CellsContainer;
+  typedef typename CellsContainer::ConstIterator  CellIterator;
 
-  typedef TriangleCell<CellType>                            TriangleType;
-  typedef TetrahedronCell<CellType>                         TetrahedronType;
-  typedef QuadrilateralCell<CellType>                       QuadrilateralType;
-  typedef HexahedronCell<CellType>                          HexahedronType;
-  typedef typename CellType::PointIdIterator                PointIdIterator;
+  typedef TriangleCell<CellType>                  TriangleType;
+  typedef TetrahedronCell<CellType>               TetrahedronType;
+  typedef QuadrilateralCell<CellType>             QuadrilateralType;
+  typedef HexahedronCell<CellType>                HexahedronType;
+  typedef typename CellType::PointIdIterator      PointIdIterator;
 
   /** Image typedef support */
-  typedef TOutputImage                              ImageType;
-  typedef typename ImageType::PixelType             PixelType;
-  typedef typename ImageType::RegionType            RegionType;
-  typedef typename ImageType::SizeType              SizeType;
-  typedef typename ImageType::IndexType             IndexType;
-  typedef typename ImageType::SpacingType           SpacingType;
-  typedef ContinuousIndex<double, ImageDimension>   ContinuousIndexType;
+  typedef TOutputImage                                        ImageType;
+  typedef typename ImageType::PixelType                       PixelType;
+  typedef typename ImageType::RegionType                      RegionType;
+  typedef typename ImageType::SizeType                        SizeType;
+  typedef typename ImageType::IndexType                       IndexType;
+  typedef typename ImageType::SpacingType                     SpacingType;
+  typedef ContinuousIndex<SpacePrecisionType, ImageDimension> ContinuousIndexType;
 
-  typedef ImageToRectilinearFEMObjectFilter<ImageType>      ImageToRectilinearFEMObjectFilterType;
+  typedef ImageToRectilinearFEMObjectFilter<ImageType> ImageToRectilinearFEMObjectFilterType;
 
   /** FEMObject typedef support */
   typedef FEMObject<ImageDimension>                 FEMObjectType;
@@ -219,16 +219,14 @@ public:
 
   /** Helper functions */
   itkSetConstObjectMacro(ConfidencePointSet, ConfidencePointSetType);
-  itkGetConstObjectMacro(ConfidencePointSet, ConfidencePointSetType);
 
   itkSetConstObjectMacro(TensorPointSet, TensorPointSetType);
-  itkGetConstObjectMacro(TensorPointSet, TensorPointSetType);
 
   itkSetObjectMacro(Mesh, MeshType);
-  itkGetObjectMacro(Mesh, MeshType);
+  itkGetModifiableObjectMacro(Mesh, MeshType);
 
   itkSetObjectMacro(FEMSolver, FEMSolverType);
-  itkGetObjectMacro(FEMSolver, FEMSolverType);
+  itkGetModifiableObjectMacro(FEMSolver, FEMSolverType);
 
   /** Get/Set the number of voxels/pixels in each dimension used during the mesh generation */
   itkGetConstReferenceMacro(PixelsPerElement, ContinuousIndexType);

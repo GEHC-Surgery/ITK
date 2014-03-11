@@ -42,8 +42,8 @@ namespace itk
  * \ingroup ITKIOCSV
  */
 
-template <class TData>
-class ITK_EXPORT CSVArray2DDataObject:public DataObject
+template <typename TData>
+class CSVArray2DDataObject:public DataObject
 {
 public:
   /* Standard class typedefs */

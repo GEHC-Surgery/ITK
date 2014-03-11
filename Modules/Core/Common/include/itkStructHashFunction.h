@@ -36,8 +36,8 @@ namespace itk
  *  general classes.
  * \ingroup ITKCommon
  */
-template< class TInput >
-class ITK_EXPORT StructHashFunction
+template< typename TInput >
+class StructHashFunction
 {
 public:
 
@@ -50,17 +50,17 @@ public:
   IdentifierType operator()(const InputType & key) const;
 };
 
-template< class TInput >
+template< typename TInput >
 inline IdentifierType
 StructHashFunction< TInput >
 ::operator()(const InputType & key) const
 {
   IdentifierType len = static_cast< IdentifierType >( sizeof( InputType ) );
   const char * p = reinterpret_cast< const char * >( &key );
-  IdentifierType hash = 0;
+  IdentifierType hash = 0UL;
   while ( len-- )
     {
-    hash = hash * 65 + *p++;
+    hash = hash * 65UL + static_cast<IdentifierType>(*p++);
     }
   hash += ( hash >> 5 );
   return hash;

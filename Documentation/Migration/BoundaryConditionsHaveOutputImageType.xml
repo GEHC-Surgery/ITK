@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE Change SYSTEM "http://ij.itk.org/itkfaq/ITKMigration.dtd">
+<!DOCTYPE Change SYSTEM "http://itk.org/migrationv4/ITKMigration.dtd">
 
 <!--**
 **
@@ -66,7 +66,7 @@
       <Old>
         <![CDATA[
 template< class TInputImage >
-class ITK_EXPORT BoundaryConditionSubclass :
+class BoundaryConditionSubclass :
   public ImageBoundaryCondition< TInputImage > {
   ...
   typedef typename Superclass::PixelType        PixelType;
@@ -102,7 +102,7 @@ class ITK_EXPORT BoundaryConditionSubclass :
       <New>
         <![CDATA[
 template< class TInputImage, class TOutputImage = TInputImage >
-class ITK_EXPORT BoundaryConditionSubclass :
+class BoundaryConditionSubclass :
   public ImageBoundaryCondition< TInputImage, TOutputImage >
   ...
   typedef typename Superclass::PixelType        PixelType;

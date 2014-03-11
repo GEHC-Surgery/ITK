@@ -27,7 +27,7 @@
  *
  */
 
-template<class ImagePointerType, class DerivativeType>
+template<typename ImagePointerType, typename DerivativeType>
 void ANTSNeighborhoodCorrelationImageToImageMetricv4Test_PrintDerivativeAsVectorImage(
     ImagePointerType image, DerivativeType &derivative, itk::SizeValueType vecdim){
 
@@ -57,11 +57,10 @@ void ANTSNeighborhoodCorrelationImageToImageMetricv4Test_PrintDerivativeAsVector
       }
       std::cout << std::endl;
     }
-  return;
 }
 
 
-template<class ImageType>
+template<typename ImageType>
 void ANTSNeighborhoodCorrelationImageToImageMetricv4Test_PrintImage(ImageType *imageP) {
 
   typedef typename ImageType::ConstPointer ImageConstPointerType;
@@ -86,10 +85,9 @@ void ANTSNeighborhoodCorrelationImageToImageMetricv4Test_PrintImage(ImageType *i
       }
       std::cout << std::endl;
     }
-  return;
 }
 
-template<class ImagePointerType>
+template<typename ImagePointerType>
 void ANTSNeighborhoodCorrelationImageToImageMetricv4Test_PrintImage(const ImagePointerType &image) {
 
   typedef typename ImagePointerType::ObjectType ImageType;
@@ -112,7 +110,6 @@ void ANTSNeighborhoodCorrelationImageToImageMetricv4Test_PrintImage(const ImageP
       }
       std::cout << std::endl;
     }
-  return;
 }
 
 int itkANTSNeighborhoodCorrelationImageToImageMetricv4Test( int, char ** const )
@@ -208,9 +205,8 @@ int itkANTSNeighborhoodCorrelationImageToImageMetricv4Test( int, char ** const )
     }
 
   VectorType zero;
-  float def_value = 2.5;
+  float def_value = -0.5;
 
-  def_value = -0.5;
   zero.Fill(def_value);
   FieldType::Pointer field = FieldType::New();
   field->SetRegions(fixedImage->GetLargestPossibleRegion());

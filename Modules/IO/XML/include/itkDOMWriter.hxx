@@ -27,7 +27,7 @@
 namespace itk
 {
 
-template< class TInput >
+template< typename TInput >
 DOMWriter<TInput>::DOMWriter() : m_Input( NULL )
 {
   // Create the logger.
@@ -46,7 +46,7 @@ DOMWriter<TInput>::DOMWriter() : m_Input( NULL )
 }
 
 /** Set the input object to be written. */
-template< class TInput >
+template< typename TInput >
 void
 DOMWriter<TInput>::SetInput( const InputType* input )
 {
@@ -56,7 +56,7 @@ DOMWriter<TInput>::SetInput( const InputType* input )
 }
 
 /** Get the input object to be written. */
-template< class TInput >
+template< typename TInput >
 const typename DOMWriter<TInput>::InputType *
 DOMWriter<TInput>::GetInput() const
 {
@@ -68,7 +68,7 @@ DOMWriter<TInput>::GetInput() const
  * Some derived writers may accept an incomplete input object during the writing process, in those cases
  * the optional argument 'userdata' can be used to provide the missed information.
  */
-template< class TInput >
+template< typename TInput >
 void
 DOMWriter<TInput>::Update( DOMNodeType* outputdom, const void* userdata )
 {
@@ -107,16 +107,14 @@ DOMWriter<TInput>::Update( DOMNodeType* outputdom, const void* userdata )
 /**
  * Function called by end-users to write the input object to the output XML file.
  */
-template< class TInput >
+template< typename TInput >
 void
 DOMWriter<TInput>::Update()
 {
-  DOMNodeType* domobj = this->GetIntermediateDOM();
-  if ( domobj == NULL )
+  if ( this->m_IntermediateDOM.IsNull() )
     {
-    DOMNodePointer node = DOMNodeType::New();
-    domobj = (DOMNodeType*)node;
-    this->SetIntermediateDOM( domobj );
+    typename DOMNodeType::Pointer temp= DOMNodeType::New();
+    this->SetIntermediateDOM( temp );
     }
 
   FancyString fn( this->m_FileName );
@@ -130,7 +128,7 @@ DOMWriter<TInput>::Update()
   FancyString sNewWorkingDir = itksys::SystemTools::GetFilenamePath( fn );
   itksys::SystemTools::ChangeDirectory( sNewWorkingDir );
 
-  this->Update( domobj );
+  this->Update( this->m_IntermediateDOM );
 
   // change the WD back to the previously saved
   itksys::SystemTools::ChangeDirectory( sOldWorkingDir );
@@ -138,7 +136,7 @@ DOMWriter<TInput>::Update()
   // write the newly updated DOM object to the output XML file
   typename DOMNodeXMLWriter::Pointer writer = DOMNodeXMLWriter::New();
   writer->SetFileName( fn );
-  writer->SetInput( domobj );
+  writer->SetInput( this->m_IntermediateDOM );
   writer->Update();
 }
 

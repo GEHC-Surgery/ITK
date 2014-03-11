@@ -47,10 +47,10 @@ namespace itk
  * \ingroup ITKReview
  */
 
-template< class TInputImage,
-          class TMaskImage = Image< unsigned char, TInputImage::ImageDimension >,
+template< typename TInputImage,
+          typename TMaskImage = Image< unsigned char, TInputImage::ImageDimension >,
           class TOutputImage = TInputImage >
-class ITK_EXPORT KappaSigmaThresholdImageFilter:
+class KappaSigmaThresholdImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -107,12 +107,12 @@ public:
   itkGetConstMacro(NumberOfIterations, unsigned int);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( OutputComparableCheck,
                    ( Concept::Comparable< OutputPixelType > ) );
   itkConceptMacro( OutputOStreamWritableCheck,
                    ( Concept::OStreamWritable< OutputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
   /** Set the mask image */

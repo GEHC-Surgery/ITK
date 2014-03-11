@@ -65,7 +65,7 @@ namespace itk
 template< typename TCoordRep,
           unsigned int VSpaceDimension,
           typename TImage = Image< double, VSpaceDimension > >
-class ITK_EXPORT PCAShapeSignedDistanceFunction:
+class PCAShapeSignedDistanceFunction:
   public ShapeSignedDistanceFunction< TCoordRep, VSpaceDimension >
 {
 public:
@@ -134,7 +134,7 @@ public:
 
   /** Set/Get the mean image. */
   itkSetObjectMacro(MeanImage, ImageType);
-  itkGetObjectMacro(MeanImage, ImageType);
+  itkGetModifiableObjectMacro(MeanImage, ImageType);
 
   /** Set/Get the principal component images. */
   void SetPrincipalComponentImages(ImagePointerVector v)
@@ -149,7 +149,7 @@ public:
 
   /** Set/Get transform. */
   itkSetObjectMacro(Transform, TransformType);
-  itkGetObjectMacro(Transform, TransformType);
+  itkGetModifiableObjectMacro(Transform, TransformType);
 
   /** A PCAShape is defined by a set of shape and pose parameters. */
   virtual void SetParameters(const ParametersType &);

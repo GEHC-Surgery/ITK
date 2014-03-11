@@ -15,10 +15,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
 #include <iostream>
 #include "itkDataObject.h"
 #include "itkProcessObject.h"
@@ -94,12 +90,12 @@ public:
   using Superclass::ReleaseInputs;
   using Superclass::CacheInputReleaseDataFlags;
   using Superclass::RestoreInputReleaseDataFlags;
-  using Superclass::NameComparator;
   using Superclass::GetRequiredInputNames;
   using Superclass::AddRequiredInputName;
   using Superclass::RemoveRequiredInputName;
   using Superclass::IsRequiredInputName;
   using Superclass::SetRequiredInputNames;
+  using Superclass::VerifyPreconditions;
 #if !defined(ITK_LEGACY_REMOVE)
   using Superclass::SetNumberOfInputs;
   using Superclass::SetNumberOfOutputs;
@@ -110,13 +106,6 @@ public:
 
 int itkDataObjectAndProcessObjectTest(int, char* [] )
 {
-  itk::TestProcessObject::NameComparator comparator;
-  TEST_SET_GET_VALUE( true, comparator("Primary", "Foo") );
-  TEST_SET_GET_VALUE( false, comparator("Primary", "Primary") );
-  TEST_SET_GET_VALUE( false, comparator("Foo", "Primary") );
-  TEST_SET_GET_VALUE( false, comparator("Foo", "Bar") );
-  TEST_SET_GET_VALUE( false, comparator("Foo", "Foo") );
-  TEST_SET_GET_VALUE( true, comparator("Bar", "Foo") );
 
   // create a TestProcessObject
   itk::TestProcessObject::Pointer process = itk::TestProcessObject::New();
@@ -162,6 +151,8 @@ int itkDataObjectAndProcessObjectTest(int, char* [] )
   TEST_SET_GET_VALUE( true, dataObject.IsNotNull() );
   dataObject = process->MakeOutput( 2 );
   TEST_SET_GET_VALUE( true, dataObject.IsNotNull() );
+  dataObject = process->MakeOutput( "Not an Index" );
+  TEST_SET_GET_VALUE( true, dataObject.IsNotNull() );
 
   TEST_SET_GET_VALUE( false, process->GetAbortGenerateData() );
   process->SetAbortGenerateData( true );
@@ -174,22 +165,12 @@ int itkDataObjectAndProcessObjectTest(int, char* [] )
   TEST_SET_GET_VALUE( false, process->GetAbortGenerateData() );
 
   TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
-  process->SetProgress( 1.0 );
+  process->UpdateProgress( 1.0 );
   TEST_SET_GET_VALUE( 1.0, process->GetProgress() );
-  process->SetProgress( 10000.0 );
+  process->UpdateProgress( 10000.0 );
   TEST_SET_GET_VALUE( 1.0, process->GetProgress() );
-  process->SetProgress( -1.0 );
-  TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
-  process->SetProgress( 0.0 );
-  TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
-
-  // UpdateProgress() doesn't clamp the value - is it really what we want?
-  process->UpdateProgress( 0.5 );
-  TEST_SET_GET_VALUE( 0.5, process->GetProgress() );
-  process->UpdateProgress( 100.0 );
-  TEST_SET_GET_VALUE( 100.0, process->GetProgress() );
   process->UpdateProgress( -1.0 );
-  TEST_SET_GET_VALUE( -1.0, process->GetProgress() );
+  TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
   process->UpdateProgress( 0.0 );
   TEST_SET_GET_VALUE( 0.0, process->GetProgress() );
 
@@ -265,22 +246,29 @@ int itkDataObjectAndProcessObjectTest(int, char* [] )
 
   process->Print(std::cout);
   process->SetInput( "Primary", input0 );
+  names = process->GetInputNames();
+  TEST_SET_GET_VALUE( 1, names.size() );
+
   TEST_SET_GET( input0, process->GetPrimaryInput() );
   TEST_SET_GET( input0, process->GetInput(0) );
   TEST_SET_GET( input0, process->GetInput("Primary") );
   TEST_SET_GET_VALUE( 1, process->GetNumberOfIndexedInputs() );
   process->SetPrimaryInput( NULL );
+
   TEST_SET_GET_NULL_VALUE( process->GetPrimaryInput() );
   TEST_SET_GET_NULL_VALUE( process->GetInput(0) );
   TEST_SET_GET_NULL_VALUE( process->GetInput("Primary") );
   process->SetNthInput( 0, input0 );
+
   TEST_SET_GET( input0, process->GetPrimaryInput() );
   TEST_SET_GET( input0, process->GetInput(0) );
   TEST_SET_GET( input0, process->GetInput("Primary") );
   process->SetPrimaryInputName("First");
+
   TEST_SET_GET( input0, process->GetPrimaryInput() );
   TEST_SET_GET( input0, process->GetInput(0) );
   TEST_SET_GET( input0, process->GetInput("First") );
+
 
   process->SetNthInput( 1, input1 );
   TEST_SET_GET( input1, process->GetInput(1) );
@@ -315,6 +303,7 @@ int itkDataObjectAndProcessObjectTest(int, char* [] )
   process->SetNumberOfRequiredInputs(0);
   process->Print( std::cout );
   TRY_EXPECT_NO_EXCEPTION( process->Update() );
+  TRY_EXPECT_EXCEPTION( process->SetInput( "", input1 ) );
 
   names = process->GetRequiredInputNames();
   TEST_SET_GET_VALUE( 2, names.size() );
@@ -327,6 +316,145 @@ int itkDataObjectAndProcessObjectTest(int, char* [] )
   process->SetPrimaryOutputName( "Outy" );
   const std::string primaryOutputName = process->GetPrimaryOutputName();
   TEST_EXPECT_EQUAL( "Outy", primaryOutputName );
+
+  process = itk::TestProcessObject::New();
+  process->SetPrimaryInputName("Image1");
+  TRY_EXPECT_EXCEPTION( process->AddRequiredInputName( "" ) );
+  process->Print(std::cout);
+  TEST_EXPECT_EQUAL( 1, process->GetNumberOfRequiredInputs() );
+  process->AddRequiredInputName("Image2");
+  TEST_EXPECT_EQUAL( 1, process->GetNumberOfRequiredInputs() );
+  TEST_EXPECT_EQUAL( 0, process->GetNumberOfValidRequiredInputs() );
+  TRY_EXPECT_EXCEPTION( process->VerifyPreconditions() );
+  process->SetInput( "Image1", input0 );
+  TEST_EXPECT_EQUAL( 1, process->GetNumberOfValidRequiredInputs() );
+  TRY_EXPECT_EXCEPTION( process->VerifyPreconditions() );
+  process->SetInput( "Image2", input0 );
+  TEST_EXPECT_EQUAL( 1, process->GetNumberOfValidRequiredInputs() );
+  TRY_EXPECT_NO_EXCEPTION(process->VerifyPreconditions() );
+
+  process->SetNumberOfRequiredInputs(2);
+  process->SetInput( "Image2", NULL );
+  process->SetNthInput( 10, input0 );
+  TEST_EXPECT_EQUAL( 1, process->GetNumberOfValidRequiredInputs() );
+  TRY_EXPECT_EXCEPTION(process->VerifyPreconditions() );
+  process->AddInput( input0 );
+  TEST_EXPECT_EQUAL( 2, process->GetNumberOfValidRequiredInputs() );
+  TRY_EXPECT_EXCEPTION(process->VerifyPreconditions() );
+  process->SetInput( "Image2", input0 );
+  TEST_EXPECT_EQUAL( 2, process->GetNumberOfValidRequiredInputs() );
+  TRY_EXPECT_NO_EXCEPTION(process->VerifyPreconditions() );
+
+  process = itk::TestProcessObject::New();
+  process->SetNumberOfRequiredInputs(2);
+  process->SetPrimaryInputName("Image1");
+  process->AddRequiredInputName("Image2");
+  TEST_EXPECT_EQUAL( 2, process->GetNumberOfRequiredInputs() );
+  TEST_EXPECT_EQUAL( 0, process->GetNumberOfValidRequiredInputs() );
+  process->SetInput( "Image1", input0 );
+  TEST_EXPECT_EQUAL( 1, process->GetNumberOfValidRequiredInputs() );
+  process->SetInput( "Image2", input0 );
+  process->RemoveRequiredInputName( "Image2" );
+
+  TRY_EXPECT_EXCEPTION( process->AddRequiredInputName( "", 1 ) );
+  process->AddRequiredInputName("Image2", 1 );
+  process->Print(std::cout);
+  TEST_EXPECT_EQUAL( 2, process->GetNumberOfRequiredInputs() );
+  TEST_EXPECT_EQUAL( 2, process->GetNumberOfValidRequiredInputs() );
+  TRY_EXPECT_NO_EXCEPTION(process->VerifyPreconditions() );
+
+  // testing SetNumberOfIndexedInputs
+  process = itk::TestProcessObject::New();
+  process->SetNumberOfIndexedInputs( 1 );
+  TEST_SET_GET_VALUE( 0, process->GetNumberOfIndexedInputs() );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryInput() );
+
+  process->SetPrimaryInput( input0 );
+  TEST_SET_GET_VALUE( 1, process->GetNumberOfIndexedInputs() );
+  TEST_SET_GET_VALUE( input0, process->GetPrimaryInput() );
+
+
+  process->SetNumberOfIndexedInputs( 0 );
+  TEST_SET_GET_VALUE( 0, process->GetNumberOfIndexedInputs() );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryInput() );
+
+
+  process->SetNumberOfIndexedInputs( 3 );
+  TEST_SET_GET_VALUE( 3, process->GetNumberOfIndexedInputs() );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryInput() );
+  process->SetNthInput( 1, input1 );
+  TEST_SET_GET_VALUE( input1, process->GetInput(1) );
+  process->SetNthInput( 2, input1 );
+  TEST_SET_GET_VALUE( input1, process->GetInput(2) );
+  process->SetNumberOfIndexedInputs( 1 );
+  TEST_SET_GET_VALUE( 0, process->GetNumberOfIndexedInputs() );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryInput() );
+
+
+  // testing RemoveInput
+  process = itk::TestProcessObject::New();
+  process->SetNumberOfIndexedInputs( 2 );
+  process->SetPrimaryInput( input0 );
+  TEST_SET_GET_VALUE( 2, process->GetNumberOfIndexedInputs() );
+  process->RemoveInput( "Primary" );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryInput() );
+  TEST_SET_GET_VALUE( 2, process->GetNumberOfIndexedInputs() );
+  TEST_SET_GET_VALUE( 1, process->GetNumberOfInputs() );
+
+
+  process->AddRequiredInputName("Req");
+  process->SetInput( "Req", input0 );
+  TEST_SET_GET_VALUE( input0, process->GetInput("Req") );
+  process->RemoveInput( "Req" );
+  TEST_SET_GET_NULL_VALUE( process->GetInput("Req") );
+  TEST_EXPECT_TRUE( process->IsRequiredInputName("Req") );
+
+  process->SetInput( "name", input0 );
+  TEST_SET_GET_VALUE( input0, process->GetInput("name") );
+  process->RemoveInput( "name" );
+  TEST_SET_GET_NULL_VALUE( process->GetInput("name") );
+  TEST_SET_GET_VALUE( 2, process->GetNumberOfInputs() );
+
+  process->RemoveInput( 99 );
+  TEST_SET_GET_NULL_VALUE( process->GetInput("Req") );
+  TEST_EXPECT_TRUE( process->IsRequiredInputName("Req") );
+  TEST_SET_GET_VALUE( 2, process->GetNumberOfIndexedInputs() );
+
+  process->RemoveInput( 1 );
+  TEST_SET_GET_VALUE( 0, process->GetNumberOfIndexedInputs() );
+
+  // testing SetNumberOfIndexedOutputs
+  process = itk::TestProcessObject::New();
+  process->SetNumberOfIndexedOutputs( 1 );
+  TEST_SET_GET_VALUE( 0, process->GetNumberOfIndexedOutputs() );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryOutput() );
+
+  process->SetPrimaryOutput( input0 );
+  TEST_SET_GET_VALUE( 1, process->GetNumberOfIndexedOutputs() );
+  TEST_SET_GET_VALUE( input0, process->GetPrimaryOutput() );
+
+
+  process->SetNumberOfIndexedOutputs( 0 );
+  TEST_SET_GET_VALUE( 0, process->GetNumberOfIndexedOutputs() );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryOutput() );
+
+
+  process->SetNumberOfIndexedOutputs( 3 );
+  TEST_SET_GET_VALUE( 3, process->GetNumberOfIndexedOutputs() );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryOutput() );
+  process->SetNthOutput( 1, input1 );
+  TEST_SET_GET_VALUE( input1, process->GetOutput(1) );
+  process->SetNthOutput( 2, input1 );
+  TEST_SET_GET_VALUE( input1, process->GetOutput(2) );
+  process->SetNumberOfIndexedOutputs( 1 );
+  TEST_SET_GET_VALUE( 0, process->GetNumberOfIndexedOutputs() );
+  TEST_SET_GET_NULL_VALUE( process->GetPrimaryOutput() );
+
+
+  process->SetNumberOfRequiredOutputs(1);
+  std::cout << process;
+  process->SetPrimaryOutput( input0 );
+  std::cout << process;
 
   return (EXIT_SUCCESS);
 }

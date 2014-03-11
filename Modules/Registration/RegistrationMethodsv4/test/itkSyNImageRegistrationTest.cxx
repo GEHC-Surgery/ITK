@@ -28,14 +28,22 @@
 #include "itkDisplacementFieldTransformParametersAdaptor.h"
 #include "itkVector.h"
 
-template<class TFilter>
+template<typename TFilter>
 class CommandIterationUpdate : public itk::Command
 {
 public:
-  typedef CommandIterationUpdate   Self;
-  typedef itk::Command             Superclass;
-  typedef itk::SmartPointer<Self>  Pointer;
+  typedef CommandIterationUpdate                                          Self;
+  typedef itk::Command                                                    Superclass;
+  typedef itk::SmartPointer<Self>                                         Pointer;
   itkNewMacro( Self );
+
+  typedef typename TFilter::FixedImageType                                FixedImageType;
+  itkStaticConstMacro( ImageDimension, unsigned int, FixedImageType::ImageDimension ); /** ImageDimension constants */
+
+  typedef itk::ShrinkImageFilter<FixedImageType, FixedImageType>          ShrinkFilterType;
+  typedef typename TFilter::OutputTransformType::ScalarType               RealType;
+  typedef itk::DisplacementFieldTransform<RealType, ImageDimension>       DisplacementFieldTransformType;
+  typedef typename DisplacementFieldTransformType::DisplacementFieldType  DisplacementFieldType;
 
 protected:
   CommandIterationUpdate() {};
@@ -55,14 +63,41 @@ public:
       { return; }
 
     unsigned int currentLevel = filter->GetCurrentLevel();
-    typename TFilter::ShrinkFactorsArrayType shrinkFactors = filter->GetShrinkFactorsPerLevel();
+    typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
     typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
     typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
 
     std::cout << "  Current level = " << currentLevel << std::endl;
-    std::cout << "    shrink factor = " << shrinkFactors[currentLevel] << std::endl;
-    std::cout << "    smoothing variance = " << smoothingSigmas[currentLevel] << std::endl;
+    std::cout << "    shrink factor = " << shrinkFactors << std::endl;
+    std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
     std::cout << "    required fixed parameters = " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
+
+    /*
+    testing "itkGetConstObjectMacro" at each iteration
+    */
+    typename ShrinkFilterType::Pointer shrinkFilter = ShrinkFilterType::New();
+    shrinkFilter->SetShrinkFactors( shrinkFactors );
+    shrinkFilter->SetInput( filter->GetFixedImage() );
+    shrinkFilter->Update();
+
+    const typename FixedImageType::SizeType ImageSize = shrinkFilter->GetOutput()->GetBufferedRegion().GetSize();
+
+    const typename DisplacementFieldType::SizeType FixedDisplacementFieldSize =
+      const_cast<DisplacementFieldTransformType *>( filter->GetFixedToMiddleTransform() )->GetDisplacementField()->GetBufferedRegion().GetSize();
+
+    const typename DisplacementFieldType::SizeType MovingDisplacementFieldSize =
+      const_cast<DisplacementFieldTransformType *>( filter->GetMovingToMiddleTransform() )->GetDisplacementField()->GetBufferedRegion().GetSize();
+
+    if( ( FixedDisplacementFieldSize == ImageSize ) && ( MovingDisplacementFieldSize == ImageSize ) )
+      {
+      std::cout << " *Filter returns its internal transforms properly*" << std::endl;
+      }
+    else
+      {
+      itkExceptionMacro( "Internal transforms should be consistent with input image size at each iteration.  "
+         << "Image size = " << ImageSize << ".  Fixed field size = " << FixedDisplacementFieldSize
+         << ".  Moving field size = " << MovingDisplacementFieldSize << "." );
+      }
     }
 };
 
@@ -110,11 +145,11 @@ int PerformDisplacementFieldImageRegistration( int itkNotUsed( argc ), char *arg
   typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
   GradientDescentOptimizerv4Type * optimizer = reinterpret_cast<GradientDescentOptimizerv4Type *>(
     const_cast<typename AffineRegistrationType::OptimizerType *>( affineSimple->GetOptimizer() ) );
+#ifdef NDEBUG
   optimizer->SetNumberOfIterations( 100 );
-
-  typedef CommandIterationUpdate<AffineRegistrationType> AffineCommandType;
-  typename AffineCommandType::Pointer affineObserver = AffineCommandType::New();
-  affineSimple->AddObserver( itk::IterationEvent(), affineObserver );
+#else
+  optimizer->SetNumberOfIterations( 1 );
+#endif
 
   try
     {
@@ -198,10 +233,15 @@ int PerformDisplacementFieldImageRegistration( int itkNotUsed( argc ), char *arg
 
   typename DisplacementFieldRegistrationType::NumberOfIterationsArrayType numberOfIterationsPerLevel;
   numberOfIterationsPerLevel.SetSize( 3 );
+#ifdef NDEBUG
   numberOfIterationsPerLevel[0] = atoi( argv[5] );
   numberOfIterationsPerLevel[1] = 2;
   numberOfIterationsPerLevel[2] = 1;
-
+#else
+  numberOfIterationsPerLevel[0] = 1;
+  numberOfIterationsPerLevel[1] = 1;
+  numberOfIterationsPerLevel[2] = 1;
+#endif
   RealType varianceForUpdateField = 1.75;
   RealType varianceForTotalField = 0.5;
 
@@ -216,7 +256,6 @@ int PerformDisplacementFieldImageRegistration( int itkNotUsed( argc ), char *arg
   smoothingSigmasPerLevel[0] = 2;
   smoothingSigmasPerLevel[1] = 1;
   smoothingSigmasPerLevel[2] = 0;
-
 
   for( unsigned int level = 0; level < numberOfLevels; level++ )
     {
@@ -260,6 +299,10 @@ int PerformDisplacementFieldImageRegistration( int itkNotUsed( argc ), char *arg
   displacementFieldRegistration->SetTransformParametersAdaptorsPerLevel( adaptors );
   displacementFieldRegistration->SetGaussianSmoothingVarianceForTheUpdateField( varianceForUpdateField );
   displacementFieldRegistration->SetGaussianSmoothingVarianceForTheTotalField( varianceForTotalField );
+
+  typedef CommandIterationUpdate<DisplacementFieldRegistrationType> DisplacementFieldCommandType;
+  typename DisplacementFieldCommandType::Pointer DisplacementFieldObserver = DisplacementFieldCommandType::New();
+  displacementFieldRegistration->AddObserver( itk::IterationEvent(), DisplacementFieldObserver );
 
   try
     {

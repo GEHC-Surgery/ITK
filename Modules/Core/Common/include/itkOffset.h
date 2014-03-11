@@ -182,7 +182,11 @@ public:
    * memory that is the appropriate size.
    * \sa GetOffset() */
   void SetOffset(const OffsetValueType val[VOffsetDimension])
-  { memcpy(m_Offset, val, sizeof( OffsetValueType ) * VOffsetDimension); }
+  {
+    std::copy(val,
+              val+VOffsetDimension,
+              m_Offset);
+  }
 
   /** Return a basis vector of the form [0, ..., 0, 1, 0, ... 0] where the "1"
    * is positioned in the location specified by the parameter "dim". Valid

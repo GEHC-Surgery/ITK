@@ -56,8 +56,8 @@ namespace itk
  * \wikiexample{ImageProcessing/LabelStatisticsImageFilter,Get statistical properties of labeled regions in an image}
  * \endwiki
  */
-template< class TInputImage, class TLabelImage >
-class ITK_EXPORT LabelStatisticsImageFilter:
+template< typename TInputImage, typename TLabelImage >
+class LabelStatisticsImageFilter:
   public ImageToImageFilter< TInputImage, TInputImage >
 {
 public:
@@ -199,18 +199,22 @@ public:
     }
 
     // added for completeness
-    void operator= (const LabelStatistics& l)
+    LabelStatistics &operator= (const LabelStatistics& l)
     {
-      m_Count = l.m_Count;
-      m_Minimum = l.m_Minimum;
-      m_Maximum = l.m_Maximum;
-      m_Mean = l.m_Mean;
-      m_Sum = l.m_Sum;
-      m_SumOfSquares = l.m_SumOfSquares;
-      m_Sigma = l.m_Sigma;
-      m_Variance = l.m_Variance;
-      m_BoundingBox = l.m_BoundingBox;
-      m_Histogram = l.m_Histogram;
+      if(this != &l)
+        {
+        m_Count = l.m_Count;
+        m_Minimum = l.m_Minimum;
+        m_Maximum = l.m_Maximum;
+        m_Mean = l.m_Mean;
+        m_Sum = l.m_Sum;
+        m_SumOfSquares = l.m_SumOfSquares;
+        m_Sigma = l.m_Sigma;
+        m_Variance = l.m_Variance;
+        m_BoundingBox = l.m_BoundingBox;
+        m_Histogram = l.m_Histogram;
+        }
+      return *this;
     }
 
     IdentifierType  m_Count;
@@ -315,10 +319,10 @@ public:
                               RealType upperBound);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

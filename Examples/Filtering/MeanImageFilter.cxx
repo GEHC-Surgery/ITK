@@ -63,7 +63,6 @@
 #include "itkImageFileWriter.h"
 
 
-
 //  Software Guide : BeginLatex
 //
 //  The header file corresponding to this filter should be included first.
@@ -179,8 +178,8 @@ int main( int argc, char * argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySlice.eps}
-  // \includegraphics[width=0.44\textwidth]{MeanImageFilterOutput.eps}
+  // \includegraphics[width=0.44\textwidth]{BrainProtonDensitySlice}
+  // \includegraphics[width=0.44\textwidth]{MeanImageFilterOutput}
   // \itkcaption[Effect of the MedianImageFilter]{Effect of the MeanImageFilter on a slice
   // from a MRI proton density brain image.}
   // \label{fig:MeanImageFilterOutput}
@@ -197,4 +196,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

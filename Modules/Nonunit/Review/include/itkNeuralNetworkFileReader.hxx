@@ -24,7 +24,7 @@
 namespace itk
 {
 /** Constructor */
-template< class TNetwork >
+template< typename TNetwork >
 NeuralNetworkFileReader< TNetwork >
 ::NeuralNetworkFileReader()
 {
@@ -34,7 +34,7 @@ NeuralNetworkFileReader< TNetwork >
   this->m_BinaryDataByteOrderMSB = true;
 }
 
-template< class TNetwork >
+template< typename TNetwork >
 TNetwork *
 NeuralNetworkFileReader< TNetwork >
 ::GetOutput() const
@@ -43,26 +43,26 @@ NeuralNetworkFileReader< TNetwork >
 }
 
 /** Destructor */
-template< class TNetwork >
+template< typename TNetwork >
 NeuralNetworkFileReader< TNetwork >
 ::~NeuralNetworkFileReader()
 {
   this->ClearFields();
 }
 
-template< class TNetwork >
+template< typename TNetwork >
 void
 NeuralNetworkFileReader< TNetwork >
 ::ClearFields()
 {
   for ( FieldsContainerType::size_type i = 0; i <  this->m_Fields.size(); i++ )
     {
-    delete  this->m_Fields[i];
+    delete this->m_Fields[i];
     }
   this->m_Fields.clear();
 }
 
-template< class TNetwork >
+template< typename TNetwork >
 void
 NeuralNetworkFileReader< TNetwork >
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -75,7 +75,7 @@ NeuralNetworkFileReader< TNetwork >
 }
 
 /** Update the Reader */
-template< class TNetwork >
+template< typename TNetwork >
 void
 NeuralNetworkFileReader< TNetwork >
 ::Update()

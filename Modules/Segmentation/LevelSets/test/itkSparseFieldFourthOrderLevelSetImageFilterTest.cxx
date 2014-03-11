@@ -78,16 +78,17 @@ void evaluate_function(itk::Image<float, 2> *im,
 } // end namespace
 
 namespace itk {
-template <class TInputImage, class TOutputImage>
-class ITK_EXPORT IsotropicDiffusionLevelSetFilter
+template <typename TInputImage, typename TOutputImage>
+class IsotropicDiffusionLevelSetFilter
   : public SparseFieldFourthOrderLevelSetImageFilter <TInputImage, TOutputImage>
 {
 public:
   typedef IsotropicDiffusionLevelSetFilter Self;
   typedef SparseFieldFourthOrderLevelSetImageFilter <TInputImage,
-                                                     TOutputImage> Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+                                                     TOutputImage>
+                                           Superclass;
+  typedef SmartPointer<Self>               Pointer;
+  typedef SmartPointer<const Self>         ConstPointer;
 
   itkTypeMacro(IsotropicDiffusionLevelSetFilter,SparseFieldFourthOrderLevelSetImageFilter);
   itkNewMacro (Self);
@@ -120,8 +121,14 @@ protected:
 
   virtual bool Halt ()
   {
-    if (this->GetElapsedIterations()==50) return true;
-    else return false;
+    if (this->GetElapsedIterations() == 50)
+      {
+      return true;
+      }
+    else
+      {
+      return false;
+      }
   }
 };
 

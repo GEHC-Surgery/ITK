@@ -24,17 +24,20 @@
  *  \class RegistrationParameterScalesEstimatorTestMetric for test.
  *  Create a simple metric to use for testing here.
  */
-template< class TFixedImage,class TMovingImage,class TVirtualImage = TFixedImage >
-class ITK_EXPORT RegistrationParameterScalesEstimatorTestMetric:
-  public itk::ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage>
+template< typename TFixedImage,typename TMovingImage,typename TVirtualImage = TFixedImage,
+          typename TInternalComputationValueType = double,
+          typename TMetricTraits = itk::DefaultImageToImageMetricTraitsv4<TFixedImage,TMovingImage,TVirtualImage,TInternalComputationValueType>
+          >
+class RegistrationParameterScalesEstimatorTestMetric:
+  public itk::ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputationValueType, TMetricTraits>
 {
 public:
   /** Standard class typedefs. */
-  typedef RegistrationParameterScalesEstimatorTestMetric          Self;
-  typedef itk::ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage>
-                                                                  Superclass;
-  typedef itk::SmartPointer< Self >                               Pointer;
-  typedef itk::SmartPointer< const Self >                         ConstPointer;
+  typedef RegistrationParameterScalesEstimatorTestMetric                  Self;
+  typedef itk::ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage,
+                             TInternalComputationValueType,TMetricTraits> Superclass;
+  typedef itk::SmartPointer< Self >                                       Pointer;
+  typedef itk::SmartPointer< const Self >                                 ConstPointer;
 
   typedef typename Superclass::MeasureType          MeasureType;
   typedef typename Superclass::DerivativeType       DerivativeType;
@@ -103,8 +106,8 @@ private:
  *  \class RegistrationParameterScalesEstimatorTest for test.
  *  Create a simple scales estimator class to use for testing here.
  */
-template < class TMetric >
-class ITK_EXPORT RegistrationParameterScalesEstimatorTest:
+template < typename TMetric >
+class RegistrationParameterScalesEstimatorTest:
   public itk::RegistrationParameterScalesEstimator< TMetric >
 {
 public:

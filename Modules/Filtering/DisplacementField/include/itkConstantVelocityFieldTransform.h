@@ -34,7 +34,7 @@ namespace itk
  */
 template
 <class TScalar, unsigned int NDimensions>
-class ITK_EXPORT ConstantVelocityFieldTransform :
+class ConstantVelocityFieldTransform :
   public DisplacementFieldTransform<TScalar, NDimensions>
 {
 public:
@@ -114,19 +114,19 @@ public:
   typedef ImageVectorOptimizerParametersHelper<ScalarType, Dimension, ConstantVelocityFieldDimension>
     OptimizerParametersHelperType;
 
-  /** Get/Set the velocity field. */
-  itkGetObjectMacro( ConstantVelocityField, ConstantVelocityFieldType );
-  /** Set the displacement field. Create special set accessor to update
+  /** Get/Set the velocity field.
+   * Set the displacement field. Create special set accessor to update
    * interpolator and assign displacement field to transform parameters
    * container. */
   virtual void SetConstantVelocityField( ConstantVelocityFieldType * );
+  itkGetModifiableObjectMacro(ConstantVelocityField, ConstantVelocityFieldType );
 
   virtual void SetFixedParameters( const ParametersType & );
 
-  /** Get/Set the interpolator. */
-  itkGetObjectMacro( ConstantVelocityFieldInterpolator, ConstantVelocityFieldInterpolatorType );
-  /* Create out own set accessor that assigns the velocity field */
+  /** Get/Set the interpolator.
+   * Create out own set accessor that assigns the velocity field */
   virtual void SetConstantVelocityFieldInterpolator( ConstantVelocityFieldInterpolatorType * );
+  itkGetModifiableObjectMacro(ConstantVelocityFieldInterpolator, ConstantVelocityFieldInterpolatorType );
 
   /** Get the modification time of velocity field */
   itkGetConstReferenceMacro( ConstantVelocityFieldSetTime, ModifiedTimeType );

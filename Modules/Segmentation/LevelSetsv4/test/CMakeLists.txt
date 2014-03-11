@@ -14,11 +14,15 @@ itkLevelSetEquationChanAndVeseInternalTermTest.cxx
 itkLevelSetEquationCurvatureTermTest.cxx
 itkLevelSetEquationLaplacianTermTest.cxx
 itkLevelSetEquationPropagationTermTest.cxx
+itkLevelSetEquationBinaryMaskTermTest.cxx
+itkLevelSetEquationOverlapPenaltyTermTest.cxx
 itkLevelSetEquationRegionTermTest.cxx
 itkLevelSetEquationTermBaseTest.cxx
 itkLevelSetEquationTermContainerTest.cxx
 # domain partition classes
 itkLevelSetDomainPartitionBaseTest.cxx
+itkLevelSetDomainPartitionImageTest.cxx
+itkLevelSetDomainPartitionImageWithKdTreeTest.cxx
 itkLevelSetDomainMapImageFilterTest.cxx
 # level set container
 itkDenseLevelSetContainerTest.cxx
@@ -41,12 +45,20 @@ itkTwoLevelSetShiImage2DTest.cxx
 itkMultiLevelSetDenseImageTest.cxx
 itkMultiLevelSetChanAndVeseInternalTermTest.cxx
 itkMultiLevelSetEvolutionTest.cxx
+itkMultiLevelSetDenseImageSubset2DTest.cxx
+itkMultiLevelSetWhitakerImageSubset2DTest.cxx
+itkMultiLevelSetShiImageSubset2DTest.cxx
+itkMultiLevelSetMalcolmImageSubset2DTest.cxx
 # stopping criterion
 itkLevelSetEvolutionNumberOfIterationsStoppingCriterionTest.cxx
 )
 
 CreateTestDriver(ITKLevelSetsv4  "${ITKLevelSetsv4-Test_LIBRARIES}" "${ITKLevelSetsv4Tests}")
 
+itk_add_test(NAME itkLevelSetsv4EquationBinaryMaskTermTest
+      COMMAND ITKLevelSetsv4TestDriver itkLevelSetEquationBinaryMaskTermTest)
+itk_add_test(NAME itkLevelSetsv4EquationOverlapPenaltyTermTest
+      COMMAND ITKLevelSetsv4TestDriver itkLevelSetEquationOverlapPenaltyTermTest)
 itk_add_test(NAME itkLevelSetsv4DenseImageBaseTest
       COMMAND ITKLevelSetsv4TestDriver itkLevelSetDenseImageTest)
 itk_add_test(NAME itkWhitakerSparseLevelSetsv4BaseTest
@@ -78,6 +90,10 @@ itk_add_test(NAME itkBinaryImageToShiSparseLevelSetsv4AdaptorTest
 # domain partition classes
 itk_add_test(NAME itkLevelSetsv4DomainPartitionBaseTest
       COMMAND ITKLevelSetsv4TestDriver itkLevelSetDomainPartitionBaseTest)
+itk_add_test(NAME itkLevelSetsv4DomainPartitionImageTest
+      COMMAND ITKLevelSetsv4TestDriver itkLevelSetDomainPartitionImageTest)
+itk_add_test(NAME itkLevelSetsv4DomainPartitionImageWithKdTreeTest
+      COMMAND ITKLevelSetsv4TestDriver itkLevelSetDomainPartitionImageWithKdTreeTest)
 itk_add_test(NAME itkLevelSetsv4DomainMapImageFilterTest
       COMMAND ITKLevelSetsv4TestDriver itkLevelSetDomainMapImageFilterTest)
 # level set container
@@ -94,6 +110,7 @@ itk_add_test(NAME itkSingleLevelSetsv4DenseImage2DTest
       DATA{${ITK_DATA_ROOT}/Input/whiteSpot.png} 25 25 25
       ${ITK_TEST_OUTPUT_DIR}/whiteSpot_output_dense_single.mha
 )
+
 
 itk_add_test(NAME itkSingleLevelSetsv4DenseAdvectionImage2DTest_5
       COMMAND ITKLevelSetsv4TestDriver
@@ -114,6 +131,17 @@ itk_add_test(NAME itkSingleLevelSetsv4WhitakerImage2DTest
       50
       ${ITK_TEST_OUTPUT_DIR}/whiteSpot_output_sparse_single.mha
 )
+itk_add_test(NAME itkSingleLevelSetsv4WhitakerImage2DTestThreads
+      COMMAND ITKLevelSetsv4TestDriver
+      --with-threads 16
+      --compare DATA{Baseline/solution_whiteSpot_output_sparse_single.mha}
+                ${ITK_TEST_OUTPUT_DIR}/whiteSpot_output_sparse_single_threads.mha
+      itkSingleLevelSetWhitakerImage2DTest
+      DATA{${ITK_DATA_ROOT}/Input/whiteSpot.png}
+      50
+      ${ITK_TEST_OUTPUT_DIR}/whiteSpot_output_sparse_single_threads.mha
+)
+
 itk_add_test(NAME itkSingleLevelSetsv4MalcolmImage2DTest
       COMMAND ITKLevelSetsv4TestDriver
       --compare DATA{Baseline/solution_whiteSpot_output_malcolm_single.mha}
@@ -210,3 +238,15 @@ itk_add_test(NAME itkMultiLevelSetsv4SetEvolutionTest
       COMMAND ITKLevelSetsv4TestDriver itkMultiLevelSetEvolutionTest)
 itk_add_test(NAME itkMultiLevelSetsv4SetEvolutionTwoThreadsTest
       COMMAND ITKLevelSetsv4TestDriver --with-threads 2 itkMultiLevelSetEvolutionTest)
+itk_add_test(NAME itkMultiLevelSetsv4DenseImageSubset2DTest
+      COMMAND ITKLevelSetsv4TestDriver itkMultiLevelSetDenseImageSubset2DTest
+)
+itk_add_test(NAME itkMultiLevelSetsv4WhitakerImageSubset2DTest
+      COMMAND ITKLevelSetsv4TestDriver itkMultiLevelSetWhitakerImageSubset2DTest
+)
+itk_add_test(NAME itkMultiLevelSetsv4ShiImageSubset2DTest
+      COMMAND ITKLevelSetsv4TestDriver itkMultiLevelSetShiImageSubset2DTest
+)
+itk_add_test(NAME itkMultiLevelSetsv4MalcolmImageSubset2DTest
+      COMMAND ITKLevelSetsv4TestDriver itkMultiLevelSetMalcolmImageSubset2DTest
+)

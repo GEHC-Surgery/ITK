@@ -20,11 +20,11 @@
 
 #include "itkJoinSeriesImageFilter.h"
 #include "itkProgressReporter.h"
-#include "itkImageRegionIterator.h"
+#include "itkImageAlgorithm.h"
 
 namespace itk
 {
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 JoinSeriesImageFilter< TInputImage, TOutputImage >
 ::JoinSeriesImageFilter()
 {
@@ -32,7 +32,7 @@ JoinSeriesImageFilter< TInputImage, TOutputImage >
   m_Origin = 0.0;
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 JoinSeriesImageFilter< TInputImage, TOutputImage >
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -43,7 +43,7 @@ JoinSeriesImageFilter< TInputImage, TOutputImage >
   os << indent << "Origin: " << m_Origin << std::endl;
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 JoinSeriesImageFilter< TInputImage, TOutputImage >
 ::VerifyInputInformation()
@@ -88,7 +88,7 @@ JoinSeriesImageFilter< TInputImage, TOutputImage >
 /**
  * \sa UnaryFunctorImageFilter::GenerateOutputInformation()
  */
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 JoinSeriesImageFilter< TInputImage, TOutputImage >
 ::GenerateOutputInformation()
@@ -198,7 +198,7 @@ JoinSeriesImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 JoinSeriesImageFilter< TInputImage, TOutputImage >
 ::GenerateInputRequestedRegion()
@@ -242,7 +242,7 @@ JoinSeriesImageFilter< TInputImage, TOutputImage >
     }
 }
 
-template< class TInputImage, class TOutputImage >
+template< typename TInputImage, typename TOutputImage >
 void
 JoinSeriesImageFilter< TInputImage, TOutputImage >
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -250,7 +250,7 @@ JoinSeriesImageFilter< TInputImage, TOutputImage >
 {
   itkDebugMacro(<< "Actually executing");
 
-  ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
+  ProgressReporter progress( this, threadId, outputRegionForThread.GetSize(InputImageDimension) );
 
   OutputImageRegionType outputRegion = outputRegionForThread;
   outputRegion.SetSize(InputImageDimension, 1);
@@ -258,25 +258,17 @@ JoinSeriesImageFilter< TInputImage, TOutputImage >
   InputImageRegionType inputRegion;
   this->CallCopyOutputRegionToInputRegion(inputRegion, outputRegionForThread);
 
-  IndexValueType begin = outputRegionForThread.GetIndex(InputImageDimension);
-  IndexValueType end =
-    begin + outputRegionForThread.GetSize(InputImageDimension);
+  const IndexValueType begin = outputRegionForThread.GetIndex(InputImageDimension);
+  const IndexValueType end =  begin + outputRegionForThread.GetSize(InputImageDimension);
+
+
+  TOutputImage *output = this->GetOutput();
+
   for ( IndexValueType idx = begin; idx < end; ++idx )
     {
     outputRegion.SetIndex(InputImageDimension, idx);
-    ImageRegionIterator< OutputImageType > outIt(
-      this->GetOutput(), outputRegion);
-    ImageRegionConstIterator< InputImageType > inIt(
-      this->GetInput(idx), inputRegion);
-    outIt.GoToBegin();
-    inIt.GoToBegin();
-    while ( !outIt.IsAtEnd() )
-      {
-      outIt.Set( inIt.Get() );
-      ++outIt;
-      ++inIt;
-      progress.CompletedPixel();
-      }
+    ImageAlgorithm::Copy(this->GetInput(idx), output, inputRegion,  outputRegion);
+    progress.CompletedPixel();
     }
 }
 } // end namespace itk

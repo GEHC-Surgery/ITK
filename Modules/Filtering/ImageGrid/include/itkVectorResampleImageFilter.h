@@ -55,8 +55,8 @@ namespace itk
  * \wikiexample{VectorImages/VectorResampleImageFilter,Translate a vector image}
  * \endwiki
  */
-template< class TInputImage, class TOutputImage, class TInterpolatorPrecisionType = double >
-class ITK_EXPORT VectorResampleImageFilter:
+template< typename TInputImage, typename TOutputImage, typename TInterpolatorPrecisionType = double >
+class VectorResampleImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -118,22 +118,19 @@ public:
   typedef typename TOutputImage::PointType     OriginPointType;
   typedef typename TOutputImage::DirectionType DirectionType;
 
-  /** Set the coordinate transformation.
+  /** Get/Set the coordinate transformation.
    * Set the coordinate transform to use for resampling.  Note that this
    * must be in index coordinates and is the output-to-input transform,
    * NOT the input-to-output transform that you might naively expect.
    * The default is itk::AffineTransform<TInterpolatorPrecisionType, ImageDimension>. */
   itkSetConstObjectMacro(Transform, TransformType);
 
-  /** Get a pointer to the coordinate transform. */
-  itkGetConstObjectMacro(Transform, TransformType);
-
   /** Set the interpolator function.  The default is
    * itk::VectorLinearInterpolateImageFunction<InputImageType, TInterpolatorPrecisionType>.  */
   itkSetObjectMacro(Interpolator, InterpolatorType);
 
   /** Get a pointer to the interpolator function. */
-  itkGetConstObjectMacro(Interpolator, InterpolatorType);
+  itkGetModifiableObjectMacro(Interpolator, InterpolatorType);
 
   /** Set the size of the output image. */
   itkSetMacro(Size, SizeType);
@@ -156,11 +153,11 @@ public:
   itkGetConstReferenceMacro(OutputSpacing, SpacingType);
 
   /** Set the output image origin. */
-  itkSetMacro(OutputOrigin, PointType);
+  itkSetMacro(OutputOrigin, OriginPointType);
   virtual void SetOutputOrigin(const double *values);
 
   /** Get the output image origin. */
-  itkGetConstReferenceMacro(OutputOrigin, PointType);
+  itkGetConstReferenceMacro(OutputOrigin, OriginPointType);
 
   /** Set the output direciton cosine matrix. */
   itkSetMacro(OutputDirection, DirectionType);
@@ -199,12 +196,12 @@ public:
   ModifiedTimeType GetMTime(void) const;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename TInputImage::PixelType::ValueType > ) );
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< PixelComponentType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:
@@ -234,10 +231,10 @@ private:
   PixelType m_DefaultPixelValue;
   // default pixel value if the point
   // is outside the image
-  SpacingType   m_OutputSpacing;           // output image spacing
-  PointType     m_OutputOrigin;            // output image origin
-  DirectionType m_OutputDirection;         // output image direction cosines
-  IndexType     m_OutputStartIndex;        // output start index
+  SpacingType       m_OutputSpacing;           // output image spacing
+  OriginPointType   m_OutputOrigin;            // output image origin
+  DirectionType     m_OutputDirection;         // output image direction cosines
+  IndexType         m_OutputStartIndex;        // output start index
 };
 } // end namespace itk
 

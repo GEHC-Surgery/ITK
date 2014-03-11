@@ -212,7 +212,7 @@ int itkTubeSpatialObjectTest(int, char * [] )
     ChildrenListType::iterator it = childrenList.begin();
     ChildrenListType::iterator end = childrenList.end();
 
-    for(unsigned int i=0; it!=end; itTest++,it++,i++ )
+    for(unsigned int i=0; it!=end; ++itTest,++it,i++ )
       {
       if((*itTest) != (*it))
         {
@@ -257,7 +257,7 @@ int itkTubeSpatialObjectTest(int, char * [] )
 
     passed = true;
 
-    for(unsigned int i=0; it!=end; itTest++,it++,i++ )
+    for(unsigned int i=0; it!=end; ++itTest,++it,i++ )
       {
       if((*itTest) != (*it))
         {
@@ -419,11 +419,11 @@ int itkTubeSpatialObjectTest(int, char * [] )
   std::cout << "Set/GetParentPoint: ";
 
   tube->SetParentPoint(1);
-  if(tube->GetParentPoint() !=1)
-  {
+  if(tube->GetParentPoint() != 1)
+    {
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
-  }
+    }
   std::cout << "[PASSED]" << std::endl;
 
 

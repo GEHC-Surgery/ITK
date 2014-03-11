@@ -28,23 +28,21 @@ namespace itk
 namespace Statistics
 {
 
-template<class LayerType, class TTargetVector>
+template<typename LayerType, typename TTargetVector>
 ErrorBackPropagationLearningWithMomentum <LayerType,TTargetVector>
 ::ErrorBackPropagationLearningWithMomentum()
 {
   m_Momentum = 0.9; //Default
 }
 
-template<class LayerType, class TTargetVector>
+template<typename LayerType, typename TTargetVector>
 void
 ErrorBackPropagationLearningWithMomentum<LayerType,TTargetVector>
 ::Learn(LayerInterfaceType * layer, ValueType lr)
 {
   typedef typename LayerInterfaceType::WeightSetType::Pointer WeightSetPointer;
-  WeightSetPointer outputweightset;
-  WeightSetPointer inputweightset;
-  outputweightset = layer->GetOutputWeightSet();
-  inputweightset = layer->GetInputWeightSet();
+  //WeightSetConstPointer outputweightset = layer->GetOutputWeightSet();
+  WeightSetPointer inputweightset  = layer->GetModifiableInputWeightSet();
 
   typedef typename LayerInterfaceType::ValuePointer InterfaceValuePointer;
   InterfaceValuePointer DWvalues_m_1 = inputweightset->GetPrevDWValues();
@@ -53,8 +51,8 @@ ErrorBackPropagationLearningWithMomentum<LayerType,TTargetVector>
   InterfaceValuePointer DBValues = inputweightset->GetTotalDeltaBValues();
   InterfaceValuePointer PrevDBValues = inputweightset->GetPrevDBValues();
 
-  int input_cols = inputweightset->GetNumberOfInputNodes();
-  int input_rows = inputweightset->GetNumberOfOutputNodes();
+  const int input_cols = inputweightset->GetNumberOfInputNodes();
+  const int input_rows = inputweightset->GetNumberOfOutputNodes();
 
   vnl_matrix<ValueType> DW_m_1(input_rows, input_cols);
   DW_m_1.fill(0);
@@ -103,7 +101,7 @@ ErrorBackPropagationLearningWithMomentum<LayerType,TTargetVector>
   inputweightset->SetDBValues(DB_temp.data_block());
 }
 
-template<class LayerType, class TTargetVector>
+template<typename LayerType, typename TTargetVector>
 void
 ErrorBackPropagationLearningWithMomentum<LayerType,TTargetVector>
 ::Learn( LayerInterfaceType * itkNotUsed(layer), TTargetVector itkNotUsed(errors),ValueType itkNotUsed(lr))
@@ -113,7 +111,7 @@ ErrorBackPropagationLearningWithMomentum<LayerType,TTargetVector>
 }
 
 /** Print the object */
-template<class LayerType, class TTargetVector>
+template<typename LayerType, typename TTargetVector>
 void
 ErrorBackPropagationLearningWithMomentum<LayerType,TTargetVector>
 ::PrintSelf( std::ostream& os, Indent indent ) const

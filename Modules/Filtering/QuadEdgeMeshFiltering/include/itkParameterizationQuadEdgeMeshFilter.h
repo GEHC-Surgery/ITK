@@ -35,8 +35,8 @@ namespace itk
  * \wikiexample{Meshes/QuadEdgeMeshParameterizationFilter,Planar parameterization of a mesh}
  * \endwiki
  */
-template< class TInputMesh, class TOutputMesh, class TSolverTraits >
-class ITK_EXPORT ParameterizationQuadEdgeMeshFilter:
+template< typename TInputMesh, typename TOutputMesh, typename TSolverTraits >
+class ParameterizationQuadEdgeMeshFilter:
   public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 {
 public:
@@ -111,7 +111,7 @@ public:
   itkTypeMacro(ParameterizationQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   itkSetObjectMacro(BorderTransform, MeshBorderTransform);
-  itkGetObjectMacro(BorderTransform, MeshBorderTransform);
+  itkGetModifiableObjectMacro(BorderTransform, MeshBorderTransform);
 
 protected:
 

@@ -10,6 +10,7 @@ itkTimeVaryingBSplineVelocityFieldImageRegistrationTest.cxx
 itkSyNImageRegistrationTest.cxx
 itkBSplineSyNImageRegistrationTest.cxx
 itkQuasiNewtonOptimizerv4RegistrationTest.cxx
+itkBSplineImageRegistrationTest.cxx
 )
 
 set(INPUTDATA ${ITK_DATA_ROOT}/Input)
@@ -18,14 +19,15 @@ set(TEMP ${ITK_TEST_OUTPUT_DIR})
 
 CreateTestDriver(ITKRegistrationMethodsv4  "${ITKRegistrationMethodsv4-Test_LIBRARIES}" "${ITKRegistrationMethodsv4Tests}")
 
-itk_add_test(NAME itkSimpleImageRegistrationTest
+itk_add_test(NAME itkSimpleImageRegistrationTestDouble
       COMMAND ITKRegistrationMethodsv4TestDriver
       --with-threads 1
       --compareIntensityTolerance 3.0
       --compareNumberOfPixelsTolerance 4
-      --compare DATA{Baseline/itkSimpleImageRegistrationTestNew.nii.gz}
-                ${TEMP}/itkSimpleImageRegistrationTestNew.nii.gz
+      --compare DATA{Baseline/itkSimpleImageRegistrationTestNew.nii,:}
+              ${TEMP}/itkSimpleImageRegistrationTestNew.nii.gz
               itkSimpleImageRegistrationTest
+              double
               2 # number of dimensions
               DATA{Input/r16slice_rigid.nii.gz}
               DATA{Input/r64slice.nii.gz}
@@ -33,6 +35,25 @@ itk_add_test(NAME itkSimpleImageRegistrationTest
               100 # number of affine iterations
               10 # number of deformable iterations
               )
+set_property(TEST itkSimpleImageRegistrationTestDouble APPEND PROPERTY LABELS RUNS_LONG)
+
+itk_add_test(NAME itkSimpleImageRegistrationTestFloat
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+      --compareIntensityTolerance 3.0
+      --compareNumberOfPixelsTolerance 4
+      --compare DATA{Baseline/itkSimpleImageRegistrationTestNew.nii,:}
+              ${TEMP}/itkSimpleImageRegistrationTestNew.nii.gz
+              itkSimpleImageRegistrationTest
+              float
+              2 # number of dimensions
+              DATA{Input/r16slice_rigid.nii.gz}
+              DATA{Input/r64slice.nii.gz}
+              ${TEMP}/itkSimpleImageRegistrationTestNew.nii.gz
+              100 # number of affine iterations
+              10 # number of deformable iterations
+              )
+set_property(TEST itkSimpleImageRegistrationTestFloat APPEND PROPERTY LABELS RUNS_LONG)
 
 itk_add_test(NAME itkSimpleImageRegistrationTest2
       COMMAND ITKRegistrationMethodsv4TestDriver
@@ -44,6 +65,7 @@ itk_add_test(NAME itkSimpleImageRegistrationTest2
               ${TEMP}/itkSimpleImageRegistrationTest2New.nii.gz
               100 # number of affine iterations
               )
+set_property(TEST itkSimpleImageRegistrationTest2 APPEND PROPERTY LABELS RUNS_LONG)
 
 itk_add_test(NAME itkExponentialImageRegistrationTest
       COMMAND ITKRegistrationMethodsv4TestDriver
@@ -60,6 +82,7 @@ itk_add_test(NAME itkExponentialImageRegistrationTest
               100 # number of affine iterations
               10 # number of deformable iterations
               )
+set_property(TEST itkExponentialImageRegistrationTest APPEND PROPERTY LABELS RUNS_LONG)
 
 itk_add_test(NAME itkBSplineExponentialImageRegistrationTest
       COMMAND ITKRegistrationMethodsv4TestDriver
@@ -76,6 +99,7 @@ itk_add_test(NAME itkBSplineExponentialImageRegistrationTest
               100 # number of affine iterations
               10 # number of deformable iterations
               )
+set_property(TEST itkBSplineExponentialImageRegistrationTest APPEND PROPERTY LABELS RUNS_LONG)
 
 itk_add_test(NAME itkTimeVaryingVelocityFieldImageRegistrationTest
       COMMAND ITKRegistrationMethodsv4TestDriver
@@ -90,6 +114,7 @@ itk_add_test(NAME itkTimeVaryingVelocityFieldImageRegistrationTest
               1  # number of iterations for third level of the displacement field
               0.5 # learning rate
               )
+set_property(TEST itkTimeVaryingVelocityFieldImageRegistrationTest APPEND PROPERTY LABELS RUNS_LONG)
 
 itk_add_test(NAME itkTimeVaryingBSplineVelocityFieldImageRegistrationTest
       COMMAND ITKRegistrationMethodsv4TestDriver
@@ -156,3 +181,20 @@ itk_add_test(NAME itkQuasiNewtonOptimizerv4RegistrationTest3
               DATA{Input/r64slice.nii.gz}
               ${TEMP}/itkQuasiNewtonOptimizerv4RegistrationTest3.nii.gz
               5 2 )
+
+itk_add_test(NAME itkBSplineImageRegistrationTest
+      COMMAND ITKRegistrationMethodsv4TestDriver
+      --with-threads 1
+      --compareIntensityTolerance 3.0
+      --compareNumberOfPixelsTolerance 4
+#       --compare DATA{Baseline/itkSimpleImageRegistrationTestNew.nii.gz}
+#                 ${TEMP}/itkBSplineImageRegistrationTestNew.nii.gz
+              itkBSplineImageRegistrationTest
+              2 # number of dimensions
+              DATA{Input/r16slice_rigid.nii.gz}
+              DATA{Input/r64slice.nii.gz}
+              ${TEMP}/itkBSplineImageRegistrationTestNew.nii.gz
+              100 # number of affine iterations
+              10 # number of deformable iterations
+              )
+set_property(TEST itkBSplineImageRegistrationTest APPEND PROPERTY LABELS RUNS_LONG)

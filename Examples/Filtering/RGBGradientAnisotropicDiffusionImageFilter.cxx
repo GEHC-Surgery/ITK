@@ -96,8 +96,8 @@ int main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef   itk::RGBPixel< float >     InputPixelType;
-  typedef itk::Image< InputPixelType,  2 >   InputImageType;
+  typedef itk::RGBPixel< float >          InputPixelType;
+  typedef itk::Image< InputPixelType, 2 > InputImageType;
   // Software Guide : EndCodeSnippet
 
 
@@ -202,8 +202,8 @@ int main( int argc, char * argv[] )
   //  Software Guide : BeginLatex
   //
   // \begin{figure} \center
-  // \includegraphics[width=0.44\textwidth]{VisibleWomanHeadSlice.eps}
-  // \includegraphics[width=0.44\textwidth]{RGBGradientAnisotropicDiffusionImageFilterOutput.eps}
+  // \includegraphics[width=0.44\textwidth]{VisibleWomanHeadSlice}
+  // \includegraphics[width=0.44\textwidth]{RGBGradientAnisotropicDiffusionImageFilterOutput}
   // \itkcaption[VectorGradientAnisotropicDiffusionImageFilter on RGB] {Effect of
   // the VectorGradientAnisotropicDiffusionImageFilter on a RGB image from a
   // cryogenic section of the Visible Woman data set.}
@@ -222,4 +222,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

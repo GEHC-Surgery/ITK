@@ -929,7 +929,7 @@ VTKPolyDataMeshIO
           }
         else
           {
-          itkExceptionMacro(<< "Unknown point component type");
+          itkExceptionMacro(<< "Unknown cell component type");
           }
 
         // Set cell pixel type
@@ -1259,8 +1259,6 @@ void VTKPolyDataMeshIO::ReadCellsBufferAsASCII(std::ifstream & inputFile, void *
         }
       }
     }
-
-  return;
 }
 
 void
@@ -2026,8 +2024,6 @@ VTKPolyDataMeshIO
     }
 
   outputFile.close();
-
-  return;
 }
 
 void
@@ -2460,8 +2456,6 @@ VTKPolyDataMeshIO
     }
 
   outputFile.close();
-
-  return;
 }
 
 void
@@ -2679,15 +2673,12 @@ VTKPolyDataMeshIO
     }
 
   outputFile.close();
-
-  return;
 }
 
 void
 VTKPolyDataMeshIO
 ::Write()
 {
-  return;
 }
 
 void

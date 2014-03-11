@@ -59,7 +59,7 @@ namespace itk
  * \ingroup ITKReview
  */
 template< typename TInputImage, typename TOutputImage >
-class ITK_EXPORT HessianToObjectnessMeasureImageFilter:public
+class HessianToObjectnessMeasureImageFilter:public
   ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -125,9 +125,9 @@ public:
   itkBooleanMacro(BrightObject);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( DoubleConvertibleToOutputCheck, ( Concept::Convertible< double, OutputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

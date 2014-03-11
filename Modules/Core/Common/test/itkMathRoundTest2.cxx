@@ -30,10 +30,7 @@
 
 namespace
 {
-
-
-
-template <class T>
+template <typename T>
 bool TemplatedRoundTest( void )
 {
    bool ok = true;
@@ -117,8 +114,6 @@ bool TemplatedRoundTest( void )
 
     }
 
-
-
   // Floor
   for (unsigned int i = 0; i < numberOfElements; ++i)
     {
@@ -128,8 +123,6 @@ bool TemplatedRoundTest( void )
     RoundTestHelperMacro( itk::Math::Floor<T>, (double)fcinput[i], floorOutput[i] );
 
     }
-
-
 
   // Ceil
   for (unsigned int i = 0; i < numberOfElements; ++i)

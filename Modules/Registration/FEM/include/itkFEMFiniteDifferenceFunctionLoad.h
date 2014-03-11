@@ -63,8 +63,8 @@ namespace fem
  * and more functionality will be available (such as scale selection).
  * \ingroup ITKFEMRegistration
  */
-template <class TMoving, class TFixed>
-class ITK_EXPORT FiniteDifferenceFunctionLoad : public LoadElement
+template <typename TMoving, typename TFixed>
+class FiniteDifferenceFunctionLoad : public LoadElement
 {
 public:
   /** Standard class typedefs. */

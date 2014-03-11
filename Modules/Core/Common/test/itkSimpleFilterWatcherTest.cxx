@@ -24,7 +24,7 @@ namespace itk
 {
   namespace Function
   {
-    template< class TInput, class TOutput >
+    template< typename TInput, typename TOutput >
     class TanHelper
     {
     public:
@@ -45,8 +45,8 @@ namespace itk
     };
   }
 
-  template< class TInputImage, class TOutputImage >
-  class ITK_EXPORT TanHelperImageFilter:
+  template< typename TInputImage, typename TOutputImage >
+  class TanHelperImageFilter:
     public UnaryFunctorImageFilter< TInputImage, TOutputImage,
                              Function::TanHelper< typename TInputImage::PixelType,
                                             typename TOutputImage::PixelType >   >
@@ -70,12 +70,12 @@ namespace itk
                  UnaryFunctorImageFilter);
 
   #ifdef ITK_USE_CONCEPT_CHECKING
-    /** Begin concept checking */
+    // Begin concept checking
     itkConceptMacro( InputConvertibleToDoubleCheck,
                      ( Concept::Convertible< typename TInputImage::PixelType, double > ) );
     itkConceptMacro( DoubleConvertibleToOutputCheck,
                      ( Concept::Convertible< double, typename TOutputImage::PixelType > ) );
-    /** End concept checking */
+    // End concept checking
   #endif
   protected:
     TanHelperImageFilter() {}

@@ -22,20 +22,20 @@
 
 namespace itk
 {
-template <class TInputMesh, class TOutputMesh, class TTransform>
+template <typename TInputMesh, typename TOutputMesh, typename TTransform>
 class MeshSourceGraftOutputFilter :
     public MeshToMeshFilter<TInputMesh,TOutputMesh>
 {
 public:
   /** Standard class typedefs. */
-  typedef MeshSourceGraftOutputFilter  Self;
+  typedef MeshSourceGraftOutputFilter              Self;
   typedef MeshToMeshFilter<TInputMesh,TOutputMesh> Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef SmartPointer<Self>                       Pointer;
+  typedef SmartPointer<const Self>                 ConstPointer;
 
-  typedef TInputMesh InputMeshType;
-  typedef TOutputMesh OutputMeshType;
-  typedef typename InputMeshType::Pointer InputMeshPointer;
+  typedef TInputMesh                       InputMeshType;
+  typedef TOutputMesh                      OutputMeshType;
+  typedef typename InputMeshType::Pointer  InputMeshPointer;
   typedef typename OutputMeshType::Pointer OutputMeshPointer;
 
   /** Type for representing coordinates. */
@@ -50,11 +50,9 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(MeshSourceGraftOutputFilter,MeshToMeshFilter);
 
-  /** Set transform. */
+  /** Get/Set transform. */
   itkSetObjectMacro(Transform, TransformType);
-
-  /** Get transform. */
-  itkGetObjectMacro(Transform,TransformType);
+  itkGetModifiableObjectMacro(Transform, TransformType);
 
 protected:
   MeshSourceGraftOutputFilter();
@@ -76,7 +74,7 @@ private:
 /**
  *
  */
-template <class TInputMesh, class TOutputMesh, class TTransform>
+template <typename TInputMesh, typename TOutputMesh, typename TTransform>
 MeshSourceGraftOutputFilter<TInputMesh,TOutputMesh,TTransform>
 ::MeshSourceGraftOutputFilter()
 {
@@ -86,7 +84,7 @@ MeshSourceGraftOutputFilter<TInputMesh,TOutputMesh,TTransform>
 /**
  *
  */
-template <class TInputMesh, class TOutputMesh, class TTransform>
+template <typename TInputMesh, typename TOutputMesh, typename TTransform>
 void
 MeshSourceGraftOutputFilter<TInputMesh,TOutputMesh,TTransform>
 ::PrintSelf(std::ostream& os, Indent indent) const
@@ -96,13 +94,13 @@ MeshSourceGraftOutputFilter<TInputMesh,TOutputMesh,TTransform>
     {
     os << indent << "Transform: " << m_Transform << std::endl;
     }
-};
+}
 
 
 /**
  * This method causes the filter to generate its output.
  */
-template <class TInputMesh, class TOutputMesh, class TTransform>
+template <typename TInputMesh, typename TOutputMesh, typename TTransform>
 void MeshSourceGraftOutputFilter<TInputMesh,TOutputMesh,TTransform>
 ::GenerateData(void)
 {

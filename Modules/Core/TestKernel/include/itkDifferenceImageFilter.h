@@ -32,8 +32,8 @@ namespace itk
  * This class has no implementation, thus no .hxx file is needed.
  * \ingroup ITKTestKernel
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT DifferenceImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class DifferenceImageFilter:
   public Testing::ComparisonImageFilter< TInputImage, TOutputImage >
 {
 public:

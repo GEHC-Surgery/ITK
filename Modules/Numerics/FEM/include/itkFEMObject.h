@@ -71,7 +71,7 @@ namespace fem
  */
 
 template <unsigned int VDimension = 3>
-class ITK_EXPORT FEMObject : public DataObject
+class FEMObject : public DataObject
 {
 public:
   /** Standard class typedefs. */
@@ -132,10 +132,10 @@ public:
   void DeepCopy(FEMObject *Copy);
 
   // Get methods to get the entire VectorContainers for Elements, Nodes, Loads, and Materials
-  itkGetObjectMacro(ElementContainer, ElementContainerType);
-  itkGetObjectMacro(NodeContainer, NodeContainerType);
-  itkGetObjectMacro(LoadContainer, LoadContainerType);
-  itkGetObjectMacro(MaterialContainer, MaterialContainerType);
+  itkGetModifiableObjectMacro(ElementContainer, ElementContainerType);
+  itkGetModifiableObjectMacro(NodeContainer, NodeContainerType);
+  itkGetModifiableObjectMacro(LoadContainer, LoadContainerType);
+  itkGetModifiableObjectMacro(MaterialContainer, MaterialContainerType);
 
   /** Get the Degrees of Freedom for the FE model */
   unsigned int GetNumberOfDegreesOfFreedom(void) const

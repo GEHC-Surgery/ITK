@@ -75,8 +75,8 @@ namespace itk
  * \wikiexample{ImageProcessing/LabelGeometryImageFilter,Get geometric properties of labeled regions in an image}
  * \endwiki
  */
-template< class TLabelImage, class TIntensityImage = TLabelImage >
-class ITK_EXPORT LabelGeometryImageFilter:
+template< typename TLabelImage, typename TIntensityImage = TLabelImage >
+class LabelGeometryImageFilter:
   public ImageToImageFilter< TLabelImage, TIntensityImage >
 {
 public:
@@ -459,10 +459,10 @@ public:
   TIntensityImage * GetOrientedIntensityImage(LabelPixelType label) const;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:
@@ -490,11 +490,11 @@ private:
   SimpleFastMutexLock m_Mutex;
 }; // end of class
 
-template< class TLabelImage, class TIntensityImage >
+template< typename TLabelImage, typename TIntensityImage >
 typename LabelGeometryImageFilter< TLabelImage, TIntensityImage >::MatrixType CalculateRotationMatrix(
   vnl_symmetric_eigensystem< double > eig);
 
-template< class TLabelImage, class TIntensityImage, class TGenericImage >
+template< typename TLabelImage, typename TIntensityImage, typename TGenericImage >
 bool CalculateOrientedImage(
   LabelGeometryImageFilter< TLabelImage, TIntensityImage >  *filter,
   vnl_symmetric_eigensystem< double > eig,

@@ -71,8 +71,8 @@ namespace itk
  * \endwiki
  */
 
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT BilateralImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class BilateralImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -133,6 +133,8 @@ public:
    * RangeSigma is specified in the units of intensity. */
   itkSetMacro(DomainSigma, ArrayType);
   itkGetConstMacro(DomainSigma, const ArrayType);
+  itkSetMacro(DomainMu, double);
+  itkGetConstReferenceMacro(DomainMu, double);
   itkSetMacro(RangeSigma, double);
   itkGetConstMacro(RangeSigma, double);
   itkGetConstMacro(FilterDimensionality, unsigned int);
@@ -168,31 +170,20 @@ public:
   itkGetConstMacro(NumberOfRangeGaussianSamples, unsigned long);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< OutputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:
-  /** Constructor.  Default value for DomainSigma is 4. Default value
-   * RangeSigma is 50. */
-  BilateralImageFilter()
-  {
-    m_Radius.Fill(1);
-    m_AutomaticKernelSize = true;
-    m_DomainSigma.Fill(4.0);
-    m_RangeSigma = 50.0;
-    m_FilterDimensionality = ImageDimension;
-    m_NumberOfRangeGaussianSamples = 100;
-    m_DynamicRange = 0.0;
-    m_DynamicRangeUsed = 0.0;
-    m_DomainMu = 2.5;  // keep small to keep kernels small
-    m_RangeMu = 4.0;   // can be bigger then DomainMu since we only
-                       // index into a single table
-  }
+  /** Constructor. */
+  BilateralImageFilter();
 
+  /** Destructor. */
   virtual ~BilateralImageFilter() {}
+
+  /** PrintSelf. */
   void PrintSelf(std::ostream & os, Indent indent) const;
 
   /** Do some setup before the ThreadedGenerateData */

@@ -57,8 +57,11 @@ namespace itk
  * This filter uses the FastChamferDistanceImageFilter and the
  * IsoContourDistanceImageFilter inernally to perform the distance calculations.
  *
- * \sa DanielssonDistanceMapImageFilter, SignedDanielssonDistanceMapImageFilter
- * \sa FastChamferDistanceImageFilter, IsoContourDistanceImageFilter
+ * \sa DanielssonDistanceMapImageFilter
+ * \sa SignedDanielssonDistanceMapImageFilter
+ * \sa SignedMaurerDistanceMapImageFilter
+ * \sa FastChamferDistanceImageFilter
+ * \sa IsoContourDistanceImageFilter
  *
  * \author Zach Pincus
  * \ingroup ITKDistanceMap
@@ -68,8 +71,8 @@ namespace itk
  * \endwiki
  */
 
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT ApproximateSignedDistanceMapImageFilter:public ImageToImageFilter< TInputImage, TOutputImage >
+template< typename TInputImage, typename TOutputImage >
+class ApproximateSignedDistanceMapImageFilter:public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** Standard typedefs */
@@ -119,10 +122,10 @@ public:
   itkGetConstMacro(OutsideValue, InputPixelType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputEqualityComparableCheck,
                    ( Concept::EqualityComparable< typename InputImageType::PixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

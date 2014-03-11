@@ -98,8 +98,8 @@ namespace itk
  * \wikiexample{Developer/ImageFilterMultipleOutputsDifferentType,Write a filter with multiple outputs of different types.}
  * \endwiki
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT ImageToImageFilter:public ImageSource< TOutputImage >
+template< typename TInputImage, typename TOutputImage >
+class ImageToImageFilter:public ImageSource< TOutputImage >
 {
 public:
   /** Standard class typedefs. */
@@ -171,14 +171,16 @@ public:
    *  been added that both input images be congruent in space.
    */
   itkSetMacro(CoordinateTolerance,double);
-  itkGetMacro(CoordinateTolerance,double);
+  itkGetConstMacro(CoordinateTolerance,double);
+
   /** get/set the direction tolerance
    *  This tolerance is used to make sure that all input
    *  images are oriented the same before performing the filter's
    *  transformations.
    */
   itkSetMacro(DirectionTolerance,double);
-  itkGetMacro(DirectionTolerance,double);
+  itkGetConstMacro(DirectionTolerance,double);
+
 protected:
   ImageToImageFilter();
   ~ImageToImageFilter();

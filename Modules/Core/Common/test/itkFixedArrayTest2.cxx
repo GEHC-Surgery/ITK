@@ -94,7 +94,7 @@ int itkFixedArrayTest2(int, char* [] )
     {
     for (unsigned int j=0;j<nelements;++j)
       {
-      acc2+=vec2[j][0];
+      acc2 += vec2[j][0];
       }
     }
 
@@ -108,7 +108,7 @@ int itkFixedArrayTest2(int, char* [] )
 
 
   // Free up the memory
-  delete [] vec;
+  delete[] vec;
 
   const double ratio = 100.0 * ( time1 - time2 ) / time2;
 

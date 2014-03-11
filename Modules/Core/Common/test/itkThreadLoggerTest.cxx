@@ -31,6 +31,7 @@ typedef std::vector<ThreadDataStruct> ThreadDataVec;
 class LogTester
 {
 public:
+  LogTester(){ this->m_Logger = NULL; }
   itk::Logger* GetLogger() { return m_Logger; }
   void SetLogger(itk::Logger* logger) { m_Logger = logger; }
   void log() {
@@ -93,7 +94,7 @@ ITK_THREAD_RETURN_TYPE ThreadedGenerateLogMessages(void* arg)
     return ITK_THREAD_RETURN_VALUE;
   }
   return ITK_THREAD_RETURN_VALUE;
-};
+}
 
 ThreadDataVec create_threaded_data(int num_threads, itk::LoggerBase* logger)
 {
@@ -104,7 +105,7 @@ ThreadDataVec create_threaded_data(int num_threads, itk::LoggerBase* logger)
     threadData[ii].logger = logger;
   }
   return threadData;
-};
+}
 
 int itkThreadLoggerTest( int argc, char * argv[] )
 {
@@ -191,5 +192,3 @@ int itkThreadLoggerTest( int argc, char * argv[] )
   std::cout << "[PASSED]" << std::endl;
   return EXIT_SUCCESS;
 }
-
-

@@ -19,17 +19,40 @@ if(ITK_BUILD_SHARED_LIBS)
     COMMAND itkTestDriver  --add-before-env ITK_AUTOLOAD_PATH "$<TARGET_FILE_DIR:FileFreeTestLib>"
       "$<TARGET_FILE:IOPlugin>"
       "FileFreeIO::Size=128,256:Spacing=.5,.8:Origin=5,6:Direction=-1,0,0,-1"
-      ${ITK_TEST_OUTPUT_DIR}ExampleIOPluginTest.png
+      "${ITK_TEST_OUTPUT_DIR}ExampleIOPluginTest.png"
       )
   itk_add_test( NAME ExampleIOPluginTest2
     COMMAND itkTestDriver
       "$<TARGET_FILE:IOPlugin>"
       "FileFreeIO::Size=128,256:Spacing=.5,.8:Origin=5,6:Direction=-1,0,0,-1"
-      "${ITK_TEST_OUTPUT_DIR}ExampleIOPluginTest.png"
+      "${ITK_TEST_OUTPUT_DIR}ExampleIOPluginTest2.png"
       "$<TARGET_FILE_DIR:FileFreeTestLib>"
       )
 
 endif()
+
+# Test ITK ImageIO factory registrations.
+# Please refer to CMake/UseITK.cmake for all the image IO registartion handeling.
+
+# Collecting image format's description into a string for verification
+set(REGEX_IO_Factory_Description_First_Word  "")
+foreach(ImageFormat ${LIST_OF_IMAGEIO_FORMATS})
+  if (${${ImageFormat}_module_name}_ENABLED)
+    if (NOT REGEX_IO_Factory_Description_First_Word)
+      set (REGEX_IO_Factory_Description_First_Word ${ImageFormat})
+    else()
+      set (REGEX_IO_Factory_Description_First_Word"${REGEX_IO_Factory_Description_First_Word} ${ImageFormat}")
+    endif()
+  endif()
+endforeach()
+
+itk_add_test( NAME ImageIOFactoryRegisterTest
+    COMMAND ${ITK_TEST_DRIVER}
+    $<TARGET_FILE:IOFactoryRegistration>
+    )
+set_tests_properties (ImageIOFactoryRegisterTest
+  PROPERTIES PASS_REGULAR_EXPRESSION  ${REGEX_IO_Factory_Description_First_Word})
+
 
 if(ITK_VISIBLEHUMAN_DATA_ROOT)
   itk_add_test(NAME VisibleHumanStreamReadWriteTest

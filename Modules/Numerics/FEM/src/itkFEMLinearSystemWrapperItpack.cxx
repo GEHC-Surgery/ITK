@@ -95,8 +95,6 @@ void LinearSystemWrapperItpack::InitializeMatrix(unsigned int matrixIndex)
   ( *m_Matrices )[matrixIndex].Clear();
   ( *m_Matrices )[matrixIndex].SetOrder(m_Order);
   ( *m_Matrices )[matrixIndex].SetMaxNonZeroValues(m_MaximumNonZeroValues);
-
-  return;
 }
 
 bool LinearSystemWrapperItpack::IsMatrixInitialized(unsigned int matrixIndex)
@@ -143,10 +141,7 @@ void LinearSystemWrapperItpack::InitializeVector(unsigned int vectorIndex)
     }
 
   /* delete old vector */
-  if( ( *m_Vectors )[vectorIndex] != 0 )
-    {
-    delete[] ( *m_Vectors )[vectorIndex];
-    }
+  delete[] ( *m_Vectors )[vectorIndex];
 
   /* insert new vector */
   ( *m_Vectors )[vectorIndex] = new doublereal[m_Order];
@@ -155,8 +150,6 @@ void LinearSystemWrapperItpack::InitializeVector(unsigned int vectorIndex)
     {
     ( *m_Vectors )[vectorIndex][i] = 0.0;
     }
-
-  return;
 }
 
 bool LinearSystemWrapperItpack::IsVectorInitialized(unsigned int vectorIndex)
@@ -199,10 +192,7 @@ void LinearSystemWrapperItpack::InitializeSolution(unsigned int solutionIndex)
     }
 
   /* delete old vector */
-  if( ( *m_Solutions )[solutionIndex] != 0 )
-    {
-    delete[] ( *m_Solutions )[solutionIndex];
-    }
+  delete[] ( *m_Solutions )[solutionIndex];
 
   /* insert new vector */
   ( *m_Solutions )[solutionIndex] = new doublereal[m_Order];
@@ -211,8 +201,6 @@ void LinearSystemWrapperItpack::InitializeSolution(unsigned int solutionIndex)
     {
     ( *m_Solutions )[solutionIndex][i] = 0.0;
     }
-
-  return;
 }
 
 bool LinearSystemWrapperItpack::IsSolutionInitialized(unsigned int solutionIndex)
@@ -232,71 +220,59 @@ bool LinearSystemWrapperItpack::IsSolutionInitialized(unsigned int solutionIndex
 void LinearSystemWrapperItpack::DestroyMatrix(unsigned int matrixIndex)
 {
   /* FIX ME: exceptions */
-  if( !m_Matrices )
+  if( m_Matrices )
     {
-    return;
-    }
-  if( matrixIndex >= m_NumberOfMatrices )
-    {
-    throw FEMExceptionLinearSystemBounds(__FILE__,
-                                         __LINE__,
-                                         "LinearSystemWrapperItpack::DestroyMatrix",
-                                         "m_Matrices",
-                                         matrixIndex);
-    }
+    if( matrixIndex >= m_NumberOfMatrices )
+      {
+      throw FEMExceptionLinearSystemBounds(__FILE__,
+                                          __LINE__,
+                                          "LinearSystemWrapperItpack::DestroyMatrix",
+                                          "m_Matrices",
+                                          matrixIndex);
+      }
 
-  ( *m_Matrices )[matrixIndex].Clear();
+    ( *m_Matrices )[matrixIndex].Clear();
+    }
 }
 
 void LinearSystemWrapperItpack::DestroyVector(unsigned int vectorIndex)
 {
   /* FIXME: exceptions */
-  if( !m_Vectors )
+  if( m_Vectors )
     {
-    return;
-    }
-  if( vectorIndex >= m_NumberOfVectors )
-    {
-    throw FEMExceptionLinearSystemBounds(__FILE__,
-                                         __LINE__,
-                                         "LinearSystemWrapperItpack::DestroyVector",
-                                         "m_Vectors",
-                                         vectorIndex);
-    }
+    if( vectorIndex >= m_NumberOfVectors )
+      {
+      throw FEMExceptionLinearSystemBounds(__FILE__,
+                                          __LINE__,
+                                          "LinearSystemWrapperItpack::DestroyVector",
+                                          "m_Vectors",
+                                          vectorIndex);
+      }
 
-  if( !( *m_Vectors )[vectorIndex] )
-    {
-    return;
+    /* delete vector */
+    delete[] ( *m_Vectors )[vectorIndex];
+    ( *m_Vectors )[vectorIndex] = 0;
     }
-
-  /* delete vector */
-  delete[] ( *m_Vectors )[vectorIndex];
-  ( *m_Vectors )[vectorIndex] = 0;
 }
 
 void LinearSystemWrapperItpack::DestroySolution(unsigned int solutionIndex)
 {
   // FIXME: exceptions
-  if( !m_Solutions )
+  if( m_Solutions )
     {
-    return;
-    }
-  if( solutionIndex >= m_NumberOfSolutions )
-    {
-    throw FEMExceptionLinearSystemBounds(__FILE__,
-                                         __LINE__,
-                                         "LinearSystemWrapperItpack::DestroySolution",
-                                         "m_Solutions",
-                                         solutionIndex);
-    }
-  if( !( *m_Solutions )[solutionIndex] )
-    {
-    return;
-    }
+    if( solutionIndex >= m_NumberOfSolutions )
+      {
+      throw FEMExceptionLinearSystemBounds(__FILE__,
+                                          __LINE__,
+                                          "LinearSystemWrapperItpack::DestroySolution",
+                                          "m_Solutions",
+                                          solutionIndex);
+      }
 
-  /* delete vector */
-  delete[] ( *m_Solutions )[solutionIndex];
-  ( *m_Solutions )[solutionIndex] = 0;
+    /* delete vector */
+    delete[] ( *m_Solutions )[solutionIndex];
+    ( *m_Solutions )[solutionIndex] = 0;
+    }
 }
 
 LinearSystemWrapperItpack::Float LinearSystemWrapperItpack::GetMatrixValue(unsigned int i,
@@ -782,6 +758,13 @@ void LinearSystemWrapperItpack::Solve(void)
     case 6:
       NW = N + NB;
       break;
+    default:
+      std::ostringstream msg;
+      msg << "m_Method is" << m_Method << " but must be >=0 and <= 6";
+      throw FEMExceptionLinearSystem(__FILE__,
+                                     __LINE__,
+                                     "LinearSystemWrapperItpack::Solve",
+                                     msg.str().c_str());
     }
   m_IPARM[7] = NW;
   IWKSP = new integer[3 * N];
@@ -1175,26 +1158,20 @@ LinearSystemWrapperItpack::~LinearSystemWrapperItpack(void)
   delete m_Matrices;
 
   unsigned int i;
-  if( m_Vectors != 0 )
+  if( m_Vectors )
     {
     for( i = 0; i < m_NumberOfVectors; i++ )
       {
-      if( ( *m_Vectors )[i] != 0 )
-        {
-        delete[] ( *m_Vectors )[i];
-        }
+      delete[] ( *m_Vectors )[i];
       }
     delete m_Vectors;
     }
 
-  if( m_Solutions != 0 )
+  if( m_Solutions )
     {
     for( i = 0; i < m_NumberOfSolutions; i++ )
       {
-      if( ( *m_Solutions )[i] != 0 )
-        {
-        delete[] ( *m_Solutions )[i];
-        }
+      delete[] ( *m_Solutions )[i];
       }
     delete m_Solutions;
     }

@@ -19,7 +19,7 @@
 #include "itkImageAlgorithm.h"
 
 
-template <class TImage >
+template <typename TImage >
 static void AverageTestCopy( typename TImage::SizeType &size )
 {
 
@@ -103,8 +103,6 @@ static void AverageTestCopy( typename TImage::SizeType &size )
   std::cout << "== SUMMARY SPEEDUP RESULTS == " << std::endl;
   std::cout << "memcpy is " << referenceTime/memCopyTime << " times faster" << std::endl;
   std::cout << "ImageCopy is " << referenceTime/imageCopyTime << " times faster" << std::endl;
-
-  return;
 }
 
 int itkImageAlgorithmCopyTest( int, char *[] )

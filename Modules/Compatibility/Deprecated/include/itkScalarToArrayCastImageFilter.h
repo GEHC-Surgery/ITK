@@ -39,8 +39,8 @@ namespace itk
  * \ingroup ITKDeprecated
  */
 
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT ScalarToArrayCastImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class ScalarToArrayCastImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -58,12 +58,12 @@ public:
   typedef typename TOutputImage::PixelType           OutputImagePixelType;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename OutputImagePixelType::ValueType > ) );
   itkConceptMacro( OutputHasPixelTraitsCheck,
                    ( Concept::HasPixelTraits< OutputImagePixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

@@ -31,12 +31,9 @@
 // Software Guide : EndLatex
 
 
-
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-
-
 
 
 // Software Guide : BeginLatex
@@ -75,8 +72,6 @@ int main( int argc, char * argv[] )
 
   typedef itk::Image< PixelType, Dimension >   ImageType;
 // Software Guide : EndCodeSnippet
-
-
 
 
   typedef itk::ImageFileReader< ImageType >  ReaderType;
@@ -197,13 +192,12 @@ int main( int argc, char * argv[] )
 // Software Guide : EndCodeSnippet
 
 
-
 // Software Guide : BeginLatex
 //
 // \begin{figure}
 // \center
-// \includegraphics[height=0.33\textwidth]{MeanSquaresMetricPlot1.eps}
-// \includegraphics[height=0.33\textwidth]{MeanSquaresMetricPlot2.eps}
+// \includegraphics[height=0.33\textwidth]{MeanSquaresMetricPlot1}
+// \includegraphics[height=0.33\textwidth]{MeanSquaresMetricPlot2}
 // \itkcaption[Mean Squares Metric Plots]{Plots of the Mean Squares Metric for
 // an image compared to itself under multiple translations.}
 // \label{fig:MeanSquaresMetricPlot}
@@ -238,8 +232,5 @@ int main( int argc, char * argv[] )
 // Software Guide : EndLatex
 
 
-
   return EXIT_SUCCESS;
 }
-
-

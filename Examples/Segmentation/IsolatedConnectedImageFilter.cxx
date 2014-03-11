@@ -117,8 +117,8 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::IsolatedConnectedImageFilter<InternalImageType, InternalImageType>
-    ConnectedFilterType;
+  typedef itk::IsolatedConnectedImageFilter<InternalImageType,
+                                       InternalImageType> ConnectedFilterType;
   // Software Guide : EndCodeSnippet
 
 
@@ -274,9 +274,9 @@ int main( int argc, char *argv[] )
   //  \end{table}
   //
   // \begin{figure} \center
-  // \includegraphics[width=0.32\textwidth]{BrainProtonDensitySlice.eps}
-  // \includegraphics[width=0.32\textwidth]{IsolatedConnectedImageFilterOutput0.eps}
-  // \includegraphics[width=0.32\textwidth]{IsolatedConnectedImageFilterOutput1.eps}
+  // \includegraphics[width=0.32\textwidth]{BrainProtonDensitySlice}
+  // \includegraphics[width=0.32\textwidth]{IsolatedConnectedImageFilterOutput0}
+  // \includegraphics[width=0.32\textwidth]{IsolatedConnectedImageFilterOutput1}
   // \itkcaption[IsolatedConnected segmentation results]{Segmentation results of
   // the IsolatedConnectedImageFilter.}
   // \label{fig:IsolatedConnectedImageFilterOutput}

@@ -25,7 +25,7 @@
 namespace itk
 {
 /** Create the operator */
-template< class TPixel, unsigned int TDimension, class TAllocator >
+template< typename TPixel, unsigned int TDimension, typename TAllocator >
 void
 AnnulusOperator< TPixel, TDimension, TAllocator >
 ::CreateOperator()
@@ -39,20 +39,17 @@ AnnulusOperator< TPixel, TDimension, TAllocator >
 
 /** This function fills the coefficients into the corresponding
  *  neighborhood. */
-template< class TPixel, unsigned int TDimension, class TAllocator >
+template< typename TPixel, unsigned int TDimension, typename TAllocator >
 void
 AnnulusOperator< TPixel, TDimension, TAllocator >
 ::Fill(const CoefficientVector & coeff)
 {
-  typename Superclass::CoefficientVector::const_iterator it;
-
-  std::slice *temp_slice;
-  temp_slice = new std::slice(0, coeff.size(), 1);
+  std::slice *temp_slice = new std::slice(0, coeff.size(), 1);
 
   typename Self::SliceIteratorType data(this, *temp_slice);
   delete temp_slice;
 
-  it = coeff.begin();
+  typename Superclass::CoefficientVector::const_iterator it = coeff.begin();
 
   // Copy the coefficients into the neighborhood
   for ( data = data.Begin(); data < data.End(); ++data, ++it )
@@ -61,7 +58,7 @@ AnnulusOperator< TPixel, TDimension, TAllocator >
     }
 }
 
-template< class TPixel, unsigned int TDimension, class TAllocator >
+template< typename TPixel, unsigned int TDimension, typename TAllocator >
 typename AnnulusOperator< TPixel, TDimension, TAllocator >
 ::CoefficientVector
 AnnulusOperator< TPixel, TDimension, TAllocator >
@@ -107,13 +104,11 @@ AnnulusOperator< TPixel, TDimension, TAllocator >
 
   // Walk the neighborhood (this) and evaluate the sphere spatial
   // functions
-  bool         inInner, inOuter;
   double       sumNotExterior = 0.0;
   double       sumNotExteriorSq = 0.0;
   unsigned int countNotExterior = 0;
 
-  unsigned int w;
-  w = this->Size();
+  const typename SizeType::SizeValueType w = this->Size();
 
   std::vector< bool > outside(w);
   CoefficientVector   coeffP(w);
@@ -132,8 +127,8 @@ AnnulusOperator< TPixel, TDimension, TAllocator >
       }
 
     // evaluate the spheres
-    inInner = innerS->Evaluate(point);
-    inOuter = outerS->Evaluate(point);
+    const bool inInner = innerS->Evaluate(point);
+    const bool inOuter = outerS->Evaluate(point);
 
     // set the coefficients
     if ( !inOuter )
@@ -170,7 +165,7 @@ AnnulusOperator< TPixel, TDimension, TAllocator >
     double num = static_cast< double >( countNotExterior );
     double mean = sumNotExterior / num;
     double var = ( sumNotExteriorSq - ( sumNotExterior * sumNotExterior / num ) )
-                 / ( num - 1.0 );
+      / ( num - 1.0 );
     double std = vcl_sqrt(var);
 
     // convert std to a scaling factor k such that
@@ -196,6 +191,7 @@ AnnulusOperator< TPixel, TDimension, TAllocator >
 
   return coeffP;
 }
+
 } // namespace itk
 
 #endif

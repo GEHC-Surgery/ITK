@@ -20,10 +20,10 @@
 #include <cstring>
 #include "itksys/SystemTools.hxx"
 
-bool CheckFileNameParsing(const std::string fileName,
-                          const std::string correctNameOnly,
-                          const std::string correctExtension,
-                          const std::string correctPath)
+bool CheckFileNameParsing(const std::string & fileName,
+                          const std::string & correctNameOnly,
+                          const std::string & correctExtension,
+                          const std::string & correctPath)
 {
   // the current kwsys way...
   std::cout << "(kwsys) Extracting...file name...";
@@ -107,15 +107,15 @@ bool CheckFileNameParsing(const std::string fileName,
 
   std::cout << "FullFileName: \"" << fileName << "\"" << std::endl;
   std::cout << "FileName: (expected) \"" << correctNameOnly
-            << "\" (actual) \"" << (nameOnly != NULL ? nameOnly : "(null)")
+            << "\" (actual) \"" << (nameOnly != NULL ? static_cast<const char *>(nameOnly) : "(null)")
             << "\""
             << " (correct) " << nameMatches << std::endl;
   std::cout << "Extension: (expected) \"" << correctExtension
-            << "\" (actual) \"" << (extension != NULL ? extension : "(null)")
+            << "\" (actual) \"" << (extension != NULL ? static_cast<const char *>(extension) : "(null)")
             << "\""
             << " (correct) " << extensionMatches << std::endl;
   std::cout << "Path: (expected) \"" << correctPath
-            << "\" (actual) \"" << (path != NULL ? path : "(null)")
+            << "\" (actual) \"" << (path != NULL ? static_cast<const char *>(path) : "(null)")
             << "\""
             << " (correct) " << pathMatches << std::endl;
 
@@ -125,18 +125,9 @@ bool CheckFileNameParsing(const std::string fileName,
 
   // clean up
   std::cout << "Cleaning up...";
-  if (nameOnly != NULL)
-    {
-    delete [] nameOnly;
-    }
-  if (extension != NULL)
-    {
-    delete [] extension;
-    }
-  if (path != NULL)
-    {
-    delete [] path;
-    }
+  delete[] nameOnly;
+  delete[] extension;
+  delete[] path;
   std::cout << "DONE" << std::endl;
 
   return correctParse;

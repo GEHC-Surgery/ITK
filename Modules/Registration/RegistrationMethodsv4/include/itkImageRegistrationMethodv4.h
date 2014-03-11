@@ -26,6 +26,7 @@
 #include "itkObjectToObjectMultiMetricv4.h"
 #include "itkObjectToObjectOptimizerBase.h"
 #include "itkImageToImageMetricv4.h"
+#include "itkShrinkImageFilter.h"
 #include "itkTransform.h"
 #include "itkTransformParametersAdaptor.h"
 
@@ -84,8 +85,8 @@ namespace itk
  *
  * \ingroup ITKRegistrationMethodsv4
  */
-template<typename TFixedImage, typename TMovingImage, typename TOutputTransform>
-class ITK_EXPORT ImageRegistrationMethodv4
+template<typename TFixedImage, typename TMovingImage, typename TOutputTransform, typename TVirtualImage = TFixedImage>
+class ImageRegistrationMethodv4
 :public ProcessObject
 {
 public:
@@ -113,13 +114,6 @@ public:
   typedef std::vector<MovingImagePointer>                             MovingImagesContainerType;
 
   /** Metric and transform typedefs */
-  typedef ObjectToObjectMetricBase                                    MetricType;
-  typedef typename MetricType::Pointer                                MetricPointer;
-
-  typedef ObjectToObjectMultiMetricv4<ImageDimension, ImageDimension> MultiMetricType;
-  typedef ImageToImageMetricv4<FixedImageType, MovingImageType>       ImageMetricType;
-  typedef typename ImageMetricType::VirtualImageType                  VirtualImageType;
-
   typedef TOutputTransform                                            OutputTransformType;
   typedef typename OutputTransformType::Pointer                       OutputTransformPointer;
   typedef typename OutputTransformType::ScalarType                    RealType;
@@ -132,6 +126,14 @@ public:
   typedef CompositeTransform<RealType, ImageDimension>                CompositeTransformType;
   typedef typename CompositeTransformType::Pointer                    CompositeTransformPointer;
 
+  typedef ObjectToObjectMetricBaseTemplate<RealType>                  MetricType;
+  typedef typename MetricType::Pointer                                MetricPointer;
+
+  typedef TVirtualImage                                               VirtualImageType;
+
+  typedef ObjectToObjectMultiMetricv4<ImageDimension, ImageDimension, VirtualImageType, RealType>  MultiMetricType;
+  typedef ImageToImageMetricv4<FixedImageType, MovingImageType, VirtualImageType, RealType>        ImageMetricType;
+
   /**
    * Type for the output: Using Decorator pattern for enabling the transform to be
    * passed in the data pipeline
@@ -139,8 +141,11 @@ public:
   typedef DataObjectDecorator<OutputTransformType>                    DecoratedOutputTransformType;
   typedef typename DecoratedOutputTransformType::Pointer              DecoratedOutputTransformPointer;
 
-  /** array typedef **/
+  typedef ShrinkImageFilter<FixedImageType, VirtualImageType>         ShrinkFilterType;
+  typedef typename ShrinkFilterType::ShrinkFactorsType                ShrinkFactorsPerDimensionContainerType;
+
   typedef Array<SizeValueType>                                        ShrinkFactorsArrayType;
+
   typedef Array<RealType>                                             SmoothingSigmasArrayType;
   typedef Array<RealType>                                             MetricSamplingPercentageArrayType;
 
@@ -150,8 +155,11 @@ public:
   typedef std::vector<TransformParametersAdaptorPointer>              TransformParametersAdaptorsContainerType;
 
   /**  Type of the optimizer. */
-  typedef ObjectToObjectOptimizerBase                                 OptimizerType;
+  typedef ObjectToObjectOptimizerBaseTemplate<RealType>               OptimizerType;
   typedef typename OptimizerType::Pointer                             OptimizerPointer;
+
+  /** Weights type for the optimizer. */
+  typedef typename OptimizerType::ScalesType                          OptimizerWeightsType;
 
   /** enum type for metric sampling strategy */
   enum MetricSamplingStrategyType { NONE, REGULAR, RANDOM };
@@ -184,11 +192,22 @@ public:
 
   /** Set/Get the optimizer. */
   itkSetObjectMacro( Optimizer, OptimizerType );
-  itkGetObjectMacro( Optimizer, OptimizerType );
+  itkGetModifiableObjectMacro( Optimizer, OptimizerType );
+
+  /**
+   * Set/Get the optimizer weights.  Allows setting of a per-local-parameter
+   * weighting array. If unset, the weights are treated as identity. Weights
+   * are used to mask out a particular parameter during optimzation to hold
+   * it constant. Or they may be used to apply another kind of prior knowledge.
+   * The size of the weights must be equal to the number of the local transformation
+   * parameters.
+   */
+  void SetOptimizerWeights( OptimizerWeightsType & );
+  itkGetConstMacro( OptimizerWeights, OptimizerWeightsType );
 
   /** Set/Get the metric. */
   itkSetObjectMacro( Metric, MetricType );
-  itkGetObjectMacro( Metric, MetricType );
+  itkGetModifiableObjectMacro( Metric, MetricType );
 
   /** Set/Get the metric sampling strategy. */
   itkSetMacro( MetricSamplingStrategy, MetricSamplingStrategyType );
@@ -203,11 +222,11 @@ public:
 
   /** Set/Get the initial fixed transform. */
   itkSetObjectMacro( FixedInitialTransform, InitialTransformType );
-  itkGetConstObjectMacro( FixedInitialTransform, InitialTransformType );
+  itkGetModifiableObjectMacro( FixedInitialTransform, InitialTransformType );
 
   /** Set/Get the initial moving transform. */
   itkSetObjectMacro( MovingInitialTransform, InitialTransformType );
-  itkGetConstObjectMacro( MovingInitialTransform, InitialTransformType );
+  itkGetModifiableObjectMacro( MovingInitialTransform, InitialTransformType );
 
   /** Set/Get the transform adaptors. */
   void SetTransformParametersAdaptorsPerLevel( TransformParametersAdaptorsContainerType & );
@@ -224,12 +243,46 @@ public:
   itkGetConstMacro( NumberOfLevels, SizeValueType );
 
   /**
-   * Set/Get the shrink factors for each level. At each resolution level, the
-   * \c itkShrinkImageFilter is called.  For a 256x256 image, a shrink factor
-   * of 2 reduces the image to 128x128.
+   * Set the shrink factors for each level where each level has a constant
+   * shrink factor for each dimension.  For example, input to the function
+   * of factors = [4,2,1] will shrink the image in every dimension by 4
+   * the first level, then by 2 at the second level, then the original resolution
+   * for the final level (uses the \c itkShrinkImageFilter).
    */
-  itkSetMacro( ShrinkFactorsPerLevel, ShrinkFactorsArrayType );
-  itkGetConstMacro( ShrinkFactorsPerLevel, ShrinkFactorsArrayType );
+  void SetShrinkFactorsPerLevel( ShrinkFactorsArrayType factors )
+    {
+    for( unsigned int level = 0; level < factors.Size(); ++level )
+      {
+      ShrinkFactorsPerDimensionContainerType shrinkFactors;
+      shrinkFactors.Fill( factors[level] );
+      this->SetShrinkFactorsPerDimension( level, shrinkFactors );
+      }
+    }
+
+  /**
+   * Get the shrink factors for a specific level.
+   */
+  ShrinkFactorsPerDimensionContainerType GetShrinkFactorsPerDimension( const unsigned int level ) const
+    {
+    if( level >= this->m_ShrinkFactorsPerLevel.size() )
+      {
+      itkExceptionMacro( "Requesting level greater than the number of levels." );
+      }
+    return this->m_ShrinkFactorsPerLevel[level];
+    }
+
+  /**
+   * Set the shrink factors for a specific level for each dimension.
+   */
+  void SetShrinkFactorsPerDimension( unsigned int level, ShrinkFactorsPerDimensionContainerType factors )
+    {
+    if( level >= this->m_ShrinkFactorsPerLevel.size() )
+      {
+      this->m_ShrinkFactorsPerLevel.resize( level + 1 );
+      }
+    this->m_ShrinkFactorsPerLevel[level] = factors;
+    this->Modified();
+    }
 
   /**
    * Set/Get the smoothing sigmas for each level.  At each resolution level, a gaussian smoothing
@@ -316,12 +369,14 @@ protected:
   SizeValueType                                                   m_NumberOfMovingImages;
 
   OptimizerPointer                                                m_Optimizer;
+  OptimizerWeightsType                                            m_OptimizerWeights;
+  bool                                                            m_OptimizerWeightsAreIdentity;
 
   MetricPointer                                                   m_Metric;
   MetricSamplingStrategyType                                      m_MetricSamplingStrategy;
   MetricSamplingPercentageArrayType                               m_MetricSamplingPercentagePerLevel;
 
-  ShrinkFactorsArrayType                                          m_ShrinkFactorsPerLevel;
+  std::vector<ShrinkFactorsPerDimensionContainerType>             m_ShrinkFactorsPerLevel;
   SmoothingSigmasArrayType                                        m_SmoothingSigmasPerLevel;
   bool                                                            m_SmoothingSigmasAreSpecifiedInPhysicalUnits;
 

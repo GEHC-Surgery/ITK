@@ -33,7 +33,6 @@ namespace itk
  * The original paper can be found at
  *      http://hdl.handle.net/1926/164
  *
- *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
  *
@@ -49,7 +48,7 @@ namespace itk
 
 namespace Functor
 {
-template< class TInputPixel >
+template< typename TInputPixel >
 class MedianAccumulator
 {
 public:
@@ -82,8 +81,8 @@ public:
 };
 } // end namespace Function
 
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT MedianProjectionImageFilter:public
+template< typename TInputImage, typename TOutputImage >
+class MedianProjectionImageFilter:public
   ProjectionImageFilter< TInputImage, TOutputImage,
                          Functor::MedianAccumulator< typename TInputImage::PixelType > >
 {
@@ -103,8 +102,8 @@ public:
   itkNewMacro(Self);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
-  /** End concept checking */
+  // Begin concept checking
+  // End concept checking
 #endif
 
 protected:

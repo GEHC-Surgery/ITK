@@ -30,7 +30,7 @@
 
 namespace itk
 {
-template < class TPixel, unsigned int NDimension > class GPUImage;
+template < typename TPixel, unsigned int NDimension > class GPUImage;
 
 /**
  * \class GPUImageDataManager
@@ -40,8 +40,8 @@ template < class TPixel, unsigned int NDimension > class GPUImage;
  *
  * \ingroup ITKGPUCommon
  */
-template < class ImageType >
-class ITK_EXPORT GPUImageDataManager : public GPUDataManager
+template < typename ImageType >
+class GPUImageDataManager : public GPUDataManager
 {
   // allow GPUKernelManager to access GPU buffer pointer
   friend class GPUKernelManager;
@@ -58,8 +58,8 @@ public:
 
   static const unsigned int        ImageDimension = ImageType::ImageDimension;
 
-  itkGetObjectMacro(GPUBufferedRegionIndex, GPUDataManager);
-  itkGetObjectMacro(GPUBufferedRegionSize, GPUDataManager);
+  itkGetModifiableObjectMacro(GPUBufferedRegionIndex, GPUDataManager);
+  itkGetModifiableObjectMacro(GPUBufferedRegionSize, GPUDataManager);
 
   void SetImagePointer( typename ImageType::Pointer img );
   ImageType *GetImagePointer()

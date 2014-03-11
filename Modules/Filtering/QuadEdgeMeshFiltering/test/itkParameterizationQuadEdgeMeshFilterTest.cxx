@@ -23,7 +23,7 @@
 
 #include "itkParameterizationQuadEdgeMeshFilter.h"
 
-template< class TSolver >
+template< typename TSolver >
 int ParameterizationQuadEdgeMeshFilterTest( int argc, char* argv[] )
 {
   // ** ERROR MESSAGE AND HELP ** //
@@ -177,4 +177,3 @@ int itkParameterizationQuadEdgeMeshFilterTest( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 }
-

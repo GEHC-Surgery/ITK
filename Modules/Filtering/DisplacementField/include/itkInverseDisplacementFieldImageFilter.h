@@ -61,8 +61,8 @@ namespace itk
  * \ingroup ImageToImageFilter
  * \ingroup ITKDisplacementField
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT InverseDisplacementFieldImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class InverseDisplacementFieldImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -114,13 +114,11 @@ public:
   typedef typename TOutputImage::SpacingType SpacingType;
   typedef typename TOutputImage::PointType   OriginPointType;
 
-  /** Set the coordinate transformation.
+  /** Get/Set the coordinate transformation.
    * Set the KernelBase spline used for resampling the displacement grid.
    * */
   itkSetObjectMacro(KernelTransform, KernelTransformType);
-
-  /** Get a pointer to the coordinate transform. */
-  itkGetObjectMacro(KernelTransform, KernelTransformType);
+  itkGetModifiableObjectMacro(KernelTransform, KernelTransformType);
 
   /** Set the size of the output image. */
   itkSetMacro(Size, SizeType);
@@ -168,10 +166,10 @@ public:
   ModifiedTimeType GetMTime(void) const;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< OutputPixelComponentType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

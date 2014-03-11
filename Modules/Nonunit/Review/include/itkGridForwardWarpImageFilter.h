@@ -52,10 +52,10 @@ namespace itk
  * \ingroup ITKReview
  */
 template<
-  class TDisplacementField,
-  class TOutputImage
+  typename TDisplacementField,
+  typename TOutputImage
   >
-class ITK_EXPORT GridForwardWarpImageFilter:
+class GridForwardWarpImageFilter:
   public ImageToImageFilter< TDisplacementField, TOutputImage >
 {
 public:
@@ -106,12 +106,12 @@ public:
   itkGetConstMacro(ForegroundValue, PixelType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( SameDimensionCheck,
                    ( Concept::SameDimension< ImageDimension, DisplacementFieldDimension > ) );
   itkConceptMacro( DisplacementFieldHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename TDisplacementField::PixelType::ValueType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

@@ -25,7 +25,7 @@ namespace itk
 {
 namespace Statistics
 {
-template<class LayerType, class TTargetVector>
+template<typename LayerType, typename TTargetVector>
 QuickPropLearningRule <LayerType,TTargetVector>
 ::QuickPropLearningRule()
 {
@@ -39,13 +39,12 @@ QuickPropLearningRule <LayerType,TTargetVector>
   m_SplitEpsilon = 0;
 }
 
-template<class LayerType, class TTargetVector>
+template<typename LayerType, typename TTargetVector>
 void
 QuickPropLearningRule<LayerType,TTargetVector>
 ::Learn(LayerType* layer, ValueType itkNotUsed(lr))
 {
-  typename LayerType::WeightSetType::Pointer inputweightset;
-  inputweightset = layer->GetInputWeightSet();
+  typename LayerType::WeightSetType::Pointer inputweightset = layer->GetModifiableInputWeightSet();
 
   //For Quickprop
   typename LayerType::ValuePointer DWvalues_m_1 = inputweightset->GetPrevDWValues();
@@ -153,7 +152,7 @@ QuickPropLearningRule<LayerType,TTargetVector>
   inputweightset->SetDWValues(temp.data_block());
 }
 
-template<class LayerType, class TTargetVector>
+template<typename LayerType, typename TTargetVector>
 void
 QuickPropLearningRule<LayerType,TTargetVector>
 ::Learn(LayerType* itkNotUsed(layer), TTargetVector itkNotUsed(errors),ValueType itkNotUsed(lr))
@@ -161,7 +160,7 @@ QuickPropLearningRule<LayerType,TTargetVector>
 }
 
 /** Print the object */
-template<class LayerType, class TTargetVector>
+template<typename LayerType, typename TTargetVector>
 void
 QuickPropLearningRule<LayerType,TTargetVector>
 ::PrintSelf( std::ostream& os, Indent indent ) const

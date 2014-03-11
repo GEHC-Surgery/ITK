@@ -42,7 +42,7 @@ typedef unsigned char                                    InputPixelType;
 typedef itk::Image< InputPixelType, Dimension >          InputImageType;
 typedef float                                            LevelSetPixelType;
 typedef itk::Image< LevelSetPixelType, Dimension >       LevelSetImageType;
-typedef itk::LevelSetDenseImage< LevelSetImageType > LevelSetType;
+typedef itk::LevelSetDenseImage< LevelSetImageType >     LevelSetType;
 
 struct NeedToPauseInformation
 {
@@ -70,6 +70,8 @@ public:
   typedef itk::SmartPointer< Self > Pointer;
 
   itkNewMacro( Self );
+
+  ProcessingPauseCommand(){}
 
   virtual void Execute( const itk::Object* caller, const itk::EventObject& event )
     {
@@ -107,6 +109,8 @@ class KeypressPauseCommand: public vtkCommand
 {
 public:
   typedef itk::VTKVisualizeImageLevelSetIsoValues< InputImageType, LevelSetType > VisualizationType;
+
+  KeypressPauseCommand(){}
 
   static KeypressPauseCommand * New()
     {
@@ -151,10 +155,9 @@ public:
       }
     else if( vtkCommand::KeyPressEvent == eventId )
       {
-      bool weArePaused = false;
       this->m_NeedToPauseInformation->m_Mutex.Lock();
       std::cout << "Got a keypress event..." << std::endl;
-      weArePaused = this->m_NeedToPauseInformation->m_NeedToPause;
+      bool weArePaused = this->m_NeedToPauseInformation->m_NeedToPause;
       if( weArePaused )
         {
         this->m_NeedToPauseInformation->m_NeedToPause = false;
@@ -183,7 +186,7 @@ private:
   VisualizationType::Pointer m_Visualizer;
 };
 
-template< class TInputImage, class TLevelSetType >
+template< typename TInputImage, typename TLevelSetType >
 void
 visualizeLevelSet( TInputImage * inputImage,
   const int numberOfIterations,
@@ -323,6 +326,8 @@ ITK_THREAD_RETURN_TYPE visualizationThreadRunner( void * threadInfo )
 class ExitOnTimer: public vtkCommand
 {
 public:
+  ExitOnTimer(){}
+
   static ExitOnTimer * New()
     {
     return new ExitOnTimer;

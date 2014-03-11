@@ -171,7 +171,7 @@ int MakeNiftiImage(void)
   return EXIT_SUCCESS;
 }
 
-template <class ImageType>
+template <typename ImageType>
 typename ImageType::DirectionType
 CORDirCosines()
 {
@@ -197,7 +197,7 @@ CORDirCosines()
  * Could probably be made to fo the image of vector test as well
  */
 
-template <class PixelType, unsigned VDimension>
+template <typename PixelType, unsigned VDimension>
 int
 TestImageOfSymMats(const std::string &fname)
 {
@@ -286,13 +286,10 @@ TestImageOfSymMats(const std::string &fname)
                 {
                 _index[0] = k;
                 PixelType pixel;
-                float lowrange(100.00),highrange(200.00);
                 for(unsigned int q = 0; q < pixel.Size(); q++)
                   {
                   //pixel[q] = randgen.drand32(lowrange,highrange);
                   pixel[q] = incr_value++;
-                  lowrange += 100.0;
-                  highrange += 100.0;
                   }
                 for(unsigned int q = 0; q < VDimension; q++)
                   {
@@ -420,7 +417,7 @@ TestImageOfSymMats(const std::string &fname)
 
 extern bool Equal(const double a, const double b);
 
-template <class RGBPixelType>
+template <typename RGBPixelType>
 int RGBTest(int ac, char *av[])
 {
   if(ac > 2)

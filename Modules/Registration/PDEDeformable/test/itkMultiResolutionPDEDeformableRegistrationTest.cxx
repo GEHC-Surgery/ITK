@@ -32,8 +32,11 @@ namespace
 class ShowProgressPDEObject
 {
 public:
-  ShowProgressPDEObject(itk::ProcessObject* o)
-    {m_Process = o; m_Prefix="";}
+  ShowProgressPDEObject(itk::ProcessObject* o) :
+    m_Process(o),
+    m_Prefix("")
+    {
+    }
   void ShowProgress()
     {
     std::cout <<  m_Prefix;
@@ -65,7 +68,7 @@ public:
 
 
 // Template function to fill in an image with a value
-template <class TImage>
+template <typename TImage>
 void
 FillImage(
 TImage * image,
@@ -86,7 +89,7 @@ typename TImage::PixelType value )
 
 
 // Template function to fill in an image with a circle.
-template <class TImage>
+template <typename TImage>
 void
 FillWithCircle(
 TImage * image,
@@ -120,7 +123,7 @@ typename TImage::PixelType backgnd )
 
 
 // Template function to copy image regions
-template <class TImage>
+template <typename TImage>
 void
 CopyImageBuffer(
 TImage *input,
@@ -229,8 +232,8 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
 
   registrator->SetMovingImage( moving );
   registrator->SetFixedImage( fixed );
-  registrator->GetFixedImagePyramid()->UseShrinkImageFilterOn();
-  registrator->GetMovingImagePyramid()->UseShrinkImageFilterOn();
+  registrator->GetModifiableFixedImagePyramid()->UseShrinkImageFilterOn();
+  registrator->GetModifiableMovingImagePyramid()->UseShrinkImageFilterOn();
 
   unsigned int numLevel = 3;
   unsigned int numIterations[10];
@@ -263,7 +266,7 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
     &controller, &PDERegistrationController<RegistrationType>::ShowProgress );
   registrator->AddObserver(itk::ProgressEvent(), controllerCommand );
 
-  ShowProgressPDEObject innerWatch(registrator->GetRegistrationFilter() );
+  ShowProgressPDEObject innerWatch(registrator->GetModifiableRegistrationFilter() );
   innerWatch.m_Prefix = "    ";
   CommandType::Pointer innerCommand = CommandType::New();
   innerCommand->SetCallbackFunction(&innerWatch,
@@ -272,7 +275,7 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
     AddObserver(itk::ProgressEvent(), innerCommand);
 
   // make registration inplace
-  registrator->GetRegistrationFilter()->InPlaceOn();
+  registrator->GetModifiableRegistrationFilter()->InPlaceOn();
 
   registrator->Update();
 
@@ -331,7 +334,7 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
   std::cout << "Test when last shrink factors are not ones." << std::endl;
 
   registrator->SetNumberOfLevels( 1 );
-  registrator->GetFixedImagePyramid()->SetStartingShrinkFactors( 2 );
+  registrator->GetModifiableFixedImagePyramid()->SetStartingShrinkFactors( 2 );
 
   unsigned int n = 5;
   registrator->SetNumberOfIterations( &n );
@@ -360,7 +363,7 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
   bool passed;
 
   typedef RegistrationType::RegistrationType InternalRegistrationType;
-  InternalRegistrationType::Pointer demons = registrator->GetRegistrationFilter();
+  InternalRegistrationType::Pointer demons = registrator->GetModifiableRegistrationFilter();
 
   try
     {
@@ -383,7 +386,7 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
     }
 
   typedef RegistrationType::FixedImagePyramidType FixedImagePyramidType;
-  FixedImagePyramidType::Pointer fixedPyramid = registrator->GetFixedImagePyramid();
+  FixedImagePyramidType::Pointer fixedPyramid = registrator->GetModifiableFixedImagePyramid();
 
   try
     {
@@ -407,7 +410,7 @@ int itkMultiResolutionPDEDeformableRegistrationTest(int argc, char* argv[] )
    }
 
   typedef RegistrationType::MovingImagePyramidType MovingImagePyramidType;
-  MovingImagePyramidType::Pointer movingPyramid = registrator->GetMovingImagePyramid();
+  MovingImagePyramidType::Pointer movingPyramid = registrator->GetModifiableMovingImagePyramid();
 
   try
     {

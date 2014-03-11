@@ -50,10 +50,7 @@ IPLCommonImageIO::IPLCommonImageIO()
 
 IPLCommonImageIO::~IPLCommonImageIO()
 {
-  if ( m_ImageHeader != 0 )
-    {
-    delete m_ImageHeader;
-    }
+  delete m_ImageHeader;
   delete m_FilenameList;
 }
 
@@ -605,14 +602,12 @@ void IPLCommonImageIO
 ::sortImageListAscend()
 {
   m_FilenameList->sortImageListAscend();
-  return;
 }
 
 void IPLCommonImageIO
 ::sortImageListDescend()
 {
   m_FilenameList->sortImageListDescend();
-  return;
 }
 
 int IPLCommonImageIO

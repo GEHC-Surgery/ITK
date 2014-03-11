@@ -25,8 +25,6 @@
 #include "vnl/vnl_vector.h"
 #include "itkOffset.h"
 #include <vector>
-#include <cstdlib>
-#include <cstring>
 
 namespace itk
 {
@@ -52,9 +50,9 @@ namespace itk
  * \ingroup ITKCommon
  */
 
-template< class TPixel, unsigned int VDimension = 2,
-          class TAllocator = NeighborhoodAllocator< TPixel > >
-class ITK_EXPORT Neighborhood
+template< typename TPixel, unsigned int VDimension = 2,
+          typename TAllocator = NeighborhoodAllocator< TPixel > >
+class Neighborhood
 {
 public:
   /** Standard class typedefs. */
@@ -191,8 +189,9 @@ public:
   void SetRadius(const SizeValueType *rad)
   {
     SizeType s;
-
-    memcpy(s.m_Size, rad, sizeof( SizeValueType ) * VDimension);
+    std::copy(rad,
+              rad+VDimension,
+              s.m_Size);
     this->SetRadius(s);
   }
 
@@ -275,7 +274,7 @@ private:
   std::vector< OffsetType > m_OffsetTable;
 };
 
-template< class TPixel, unsigned int VDimension, class TContainer >
+template< typename TPixel, unsigned int VDimension, typename TContainer >
 std::ostream & operator<<(std::ostream & os, const Neighborhood< TPixel, VDimension, TContainer > & neighborhood)
 {
   os << "Neighborhood:" << std::endl;

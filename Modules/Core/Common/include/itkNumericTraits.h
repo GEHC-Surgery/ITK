@@ -66,7 +66,7 @@ template< typename TValueType, unsigned int VLength>  class FixedArray;
  * \wikiexample{SimpleOperations/NumericTraits,Get some basic information about a type}
  * \endwiki
  */
-template< class T >
+template< typename T >
 class NumericTraits:public vcl_numeric_limits< T >
 {
 public:
@@ -142,12 +142,13 @@ public:
    * VariableLengthVector will provide a different implementation
    * where a vector of the correct size is built.
    */
-  static void SetLength(T &, const unsigned int s)
+  static void SetLength(T & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
   /** Return the length of the scalar. This API is needed for
    * VariableLengthVector because
@@ -191,7 +192,7 @@ public:
   }
 
   /** assign the value to an array */
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const T & v, TArray & mv )
   {
     mv[0] = v;
@@ -241,17 +242,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 
 };
@@ -277,8 +279,8 @@ public:
   static const char ITKCommon_EXPORT Zero;
   static const char ITKCommon_EXPORT One;
 
-  static char min() { return char(255) < 0 ? -128 : 0; }
-  static char max() { return char(255) < 0 ? 127 : 255; }
+  static char min() { return char(255) < char(0) ? char(-128) : char(0); }
+  static char max() { return char(255) < char(0) ? char(127) : char(255); }
 
   static char min(char) { return min(); }
   static char max(char) { return max(); }
@@ -295,17 +297,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -347,17 +350,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -397,17 +401,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -445,17 +450,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -494,17 +500,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -542,17 +549,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -594,17 +602,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -643,17 +652,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -692,17 +702,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -741,17 +752,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -790,17 +802,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -847,17 +860,498 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<char> >
+ * \brief Define traits for type std::complex<char>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< char > >
+{
+public:
+  typedef std::complex< char >   Self;
+  // for backward compatibility
+  typedef Self                   TheType;
+  typedef char                   ValueType;
+  typedef std::complex< int >    PrintType;
+  typedef double                 AbsType;
+  typedef Self                   AccumulateType;
+  typedef std::complex< double > RealType;
+  typedef double                 ScalarRealType;
+  typedef std::complex< float >  FloatType;
+  typedef FixedArray<char, 2>    MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< Self >::min(); }
+  static Self max() { return vcl_numeric_limits< Self >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0; }
+  static bool IsNonpositive(Self val) { return val.real() <= 0; }
+  static bool IsNegative(Self val) { return val.real() < 0; }
+  static bool IsNonnegative(Self val) { return val.real() >= 0; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<unsigned char> >
+ * \brief Define traits for type std::complex<unsigned char>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< unsigned char > >
+{
+public:
+  typedef std::complex< unsigned char >   Self;
+  // for backward compatibility
+  typedef Self                         TheType;
+  typedef unsigned char                ValueType;
+  typedef std::complex< unsigned int > PrintType;
+  typedef double                       AbsType;
+  typedef Self                         AccumulateType;
+  typedef std::complex< double >       RealType;
+  typedef double                       ScalarRealType;
+  typedef std::complex< float >        FloatType;
+  typedef FixedArray<unsigned char, 2> MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< Self >::min(); }
+  static Self max() { return vcl_numeric_limits< Self >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0; }
+  static bool IsNonpositive(Self val) { return val.real() == 0; }
+  static bool IsNegative(Self) { return false; }
+  static bool IsNonnegative(Self) { return true; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<short> >
+ * \brief Define traits for type std::complex<short>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< short > >
+{
+public:
+  typedef std::complex< short >  Self;
+  // for backward compatibility
+  typedef Self                   TheType;
+  typedef short                  ValueType;
+  typedef Self                   PrintType;
+  typedef double                 AbsType;
+  typedef Self                   AccumulateType;
+  typedef std::complex< double > RealType;
+  typedef double                 ScalarRealType;
+  typedef std::complex< float >  FloatType;
+  typedef FixedArray<short, 2>   MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< Self >::min(); }
+  static Self max() { return vcl_numeric_limits< Self >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0; }
+  static bool IsNonpositive(Self val) { return val.real() <= 0; }
+  static bool IsNegative(Self val) { return val.real() < 0; }
+  static bool IsNonnegative(Self val) { return val.real() >= 0; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<unsigned short> >
+ * \brief Define traits for type std::complex<unsigned short>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< unsigned short > >
+{
+public:
+  typedef std::complex< unsigned short >  Self;
+  // for backward compatibility
+  typedef Self                            TheType;
+  typedef unsigned short                  ValueType;
+  typedef Self                            PrintType;
+  typedef double                          AbsType;
+  typedef Self                            AccumulateType;
+  typedef std::complex< double >          RealType;
+  typedef double                          ScalarRealType;
+  typedef std::complex< float >           FloatType;
+  typedef FixedArray<unsigned short, 2>   MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< Self >::min(); }
+  static Self max() { return vcl_numeric_limits< Self >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0; }
+  static bool IsNonpositive(Self val) { return val.real() == 0; }
+  static bool IsNegative(Self) { return false; }
+  static bool IsNonnegative(Self) { return true; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<int> >
+ * \brief Define traits for type std::complex<int>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< int > >
+{
+public:
+  typedef std::complex< int >    Self;
+  // for backward compatibility
+  typedef Self                   TheType;
+  typedef int                    ValueType;
+  typedef Self                   PrintType;
+  typedef double                 AbsType;
+  typedef Self                   AccumulateType;
+  typedef std::complex< double > RealType;
+  typedef double                 ScalarRealType;
+  typedef std::complex< float >  FloatType;
+  typedef FixedArray<int, 2>     MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< Self >::min(); }
+  static Self max() { return vcl_numeric_limits< Self >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0; }
+  static bool IsNonpositive(Self val) { return val.real() <= 0; }
+  static bool IsNegative(Self val) { return val.real() < 0; }
+  static bool IsNonnegative(Self val) { return val.real() >= 0; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<unsigned int> >
+ * \brief Define traits for type std::complex<unsigned int>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< unsigned int > >
+{
+public:
+  typedef std::complex< unsigned int >  Self;
+  // for backward compatibility
+  typedef Self                          TheType;
+  typedef unsigned int                  ValueType;
+  typedef Self                          PrintType;
+  typedef double                        AbsType;
+  typedef Self                          AccumulateType;
+  typedef std::complex< double >        RealType;
+  typedef double                        ScalarRealType;
+  typedef std::complex< float >         FloatType;
+  typedef FixedArray<unsigned int, 2>   MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< Self >::min(); }
+  static Self max() { return vcl_numeric_limits< Self >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0; }
+  static bool IsNonpositive(Self val) { return val.real() == 0; }
+  static bool IsNegative(Self) { return false; }
+  static bool IsNonnegative(Self) { return true; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<long> >
+ * \brief Define traits for type std::complex<long>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< long > >
+{
+public:
+  typedef std::complex< long >    Self;
+  // for backward compatibility
+  typedef Self                   TheType;
+  typedef long                   ValueType;
+  typedef Self                   PrintType;
+  typedef double                 AbsType;
+  typedef Self                   AccumulateType;
+  typedef std::complex< double > RealType;
+  typedef double                 ScalarRealType;
+  typedef std::complex< float >  FloatType;
+  typedef FixedArray<long, 2>    MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< Self >::min(); }
+  static Self max() { return vcl_numeric_limits< Self >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0; }
+  static bool IsNonpositive(Self val) { return val.real() <= 0; }
+  static bool IsNegative(Self val) { return val.real() < 0; }
+  static bool IsNonnegative(Self val) { return val.real() >= 0; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<unsigned long> >
+ * \brief Define traits for type std::complex<unsigned long>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< unsigned long > >
+{
+public:
+  typedef std::complex< unsigned long >  Self;
+  // for backward compatibility
+  typedef Self                           TheType;
+  typedef unsigned long                  ValueType;
+  typedef Self                           PrintType;
+  typedef double                         AbsType;
+  typedef Self                           AccumulateType;
+  typedef std::complex< double >         RealType;
+  typedef double                         ScalarRealType;
+  typedef std::complex< float >          FloatType;
+  typedef FixedArray<unsigned long, 2>   MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< Self >::min(); }
+  static Self max() { return vcl_numeric_limits< Self >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0; }
+  static bool IsNonpositive(Self val) { return val.real() == 0; }
+  static bool IsNegative(Self) { return false; }
+  static bool IsNonnegative(Self) { return true; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -891,7 +1385,7 @@ public:
   static Self max(Self) { return max(); }
   static Self NonpositiveMin()
   {
-    return Self(-NumericTraits< float >::NonpositiveMin(), 0.0f);
+    return Self(NumericTraits< float >::NonpositiveMin(), 0.0f);
   }
 
   static bool IsPositive(Self val) { return val.real() > 0.0; }
@@ -905,18 +1399,19 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -950,7 +1445,7 @@ public:
   static Self max(Self) { return max(); }
   static Self NonpositiveMin()
   {
-    return Self(-NumericTraits< double >::NonpositiveMin(), 0.0);
+    return Self(NumericTraits< double >::NonpositiveMin(), 0.0);
   }
 
   static bool IsPositive(Self val) { return val.real() > 0.0; }
@@ -964,18 +1459,79 @@ public:
   static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
   static Self ZeroValue(const Self &) { return ZeroValue(); }
   static Self OneValue(const Self &) { return OneValue(); }
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const Self & v, TArray & mv )
   {
     mv[0] = v.real();
     mv[1] = v.imag();
   }
-  static void SetLength(Self &, const unsigned int s)
+  static void SetLength(Self & m, const unsigned int s)
   {
     if ( s != 2 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
+  }
+};
+
+/** \class NumericTraits< std::complex<long double> >
+ * \brief Define traits for type std::complex<long double>.
+ * \ingroup DataRepresentation
+ * \ingroup ITKCommon
+ */
+template< >
+class NumericTraits< std::complex< long double > >
+{
+public:
+  typedef std::complex< long double > Self;
+  // for backward compatibility
+  typedef Self                        TheType;
+  typedef long double                 ValueType;
+  typedef Self                        PrintType;
+  typedef long double                 AbsType;
+  typedef Self                        AccumulateType;
+  typedef std::complex< long double > RealType;
+  typedef long double                 ScalarRealType;
+  typedef std::complex< float >       FloatType;
+  typedef FixedArray<long double, 2>  MeasurementVectorType;
+
+  static const Self ITKCommon_EXPORT Zero;
+  static const Self ITKCommon_EXPORT One;
+
+  static Self min() { return vcl_numeric_limits< ValueType >::min(); }
+  static Self max() { return vcl_numeric_limits< ValueType >::max(); }
+  static Self min(Self) { return min(); }
+  static Self max(Self) { return max(); }
+  static Self NonpositiveMin()
+  {
+    return Self(NumericTraits< ValueType >::NonpositiveMin(), 0.0);
+  }
+
+  static bool IsPositive(Self val) { return val.real() > 0.0; }
+  static bool IsNonpositive(Self val) { return val.real() <= 0.0; }
+  static bool IsNegative(Self val) { return val.real() < 0.0; }
+  static bool IsNonnegative(Self val) { return val.real() >= 0.0; }
+  static Self ZeroValue() { return Zero; }
+  static Self OneValue() { return One; }
+  static unsigned int GetLength(const Self &) { return 2; }
+  static unsigned int GetLength() { return 2; }
+  static Self NonpositiveMin(const Self &) { return NonpositiveMin(); }
+  static Self ZeroValue(const Self &) { return ZeroValue(); }
+  static Self OneValue(const Self &) { return OneValue(); }
+  template<typename TArray>
+  static void AssignToArray( const Self & v, TArray & mv )
+  {
+    mv[0] = v.real();
+    mv[1] = v.imag();
+  }
+  static void SetLength(Self & m, const unsigned int s)
+  {
+    if ( s != 2 )
+      {
+      itkGenericExceptionMacro(<< "Cannot set the size of a complex to " << s);
+      }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1015,17 +1571,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 
@@ -1065,17 +1622,18 @@ public:
   static ValueType ZeroValue(const ValueType &) { return ZeroValue(); }
   static ValueType OneValue(const ValueType &) { return OneValue(); }
 
-  template<class TArray>
+  template<typename TArray>
   static void AssignToArray( const ValueType & v, TArray & mv )
   {
     mv[0] = v;
   }
-  static void SetLength(ValueType &, const unsigned int s)
+  static void SetLength(ValueType & m, const unsigned int s)
   {
     if ( s != 1 )
       {
       itkGenericExceptionMacro(<< "Cannot set the size of a scalar to " << s);
       }
+    m = NumericTraits< ValueType >::Zero;
   }
 };
 

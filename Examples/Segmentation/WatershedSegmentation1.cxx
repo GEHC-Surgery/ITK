@@ -85,12 +85,12 @@ int main( int argc, char *argv[] )
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::RGBPixel<unsigned char>   RGBPixelType;
-  typedef itk::Image<RGBPixelType, 2>    RGBImageType;
-  typedef itk::Vector<float, 3>          VectorPixelType;
-  typedef itk::Image<VectorPixelType, 2> VectorImageType;
-  typedef itk::Image< itk::IdentifierType, 2>   LabeledImageType;
-  typedef itk::Image<float, 2>           ScalarImageType;
+  typedef itk::RGBPixel< unsigned char >       RGBPixelType;
+  typedef itk::Image< RGBPixelType, 2 >        RGBImageType;
+  typedef itk::Vector< float, 3 >              VectorPixelType;
+  typedef itk::Image< VectorPixelType, 2 >     VectorImageType;
+  typedef itk::Image< itk::IdentifierType, 2 > LabeledImageType;
+  typedef itk::Image< float, 2 >               ScalarImageType;
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex
@@ -101,14 +101,16 @@ int main( int argc, char *argv[] )
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::ImageFileReader<RGBImageType> FileReaderType;
-  typedef itk::VectorCastImageFilter<RGBImageType, VectorImageType>
-    CastFilterType;
-  typedef itk::VectorGradientAnisotropicDiffusionImageFilter<VectorImageType,
-    VectorImageType>  DiffusionFilterType;
-  typedef itk::VectorGradientMagnitudeImageFilter<VectorImageType>
-    GradientMagnitudeFilterType;
-  typedef itk::WatershedImageFilter<ScalarImageType> WatershedFilterType;
+  typedef itk::ImageFileReader< RGBImageType >   FileReaderType;
+  typedef itk::VectorCastImageFilter< RGBImageType, VectorImageType >
+                                                 CastFilterType;
+  typedef itk::VectorGradientAnisotropicDiffusionImageFilter<
+                        VectorImageType, VectorImageType >
+                                                 DiffusionFilterType;
+  typedef itk::VectorGradientMagnitudeImageFilter< VectorImageType >
+                                                 GradientMagnitudeFilterType;
+  typedef itk::WatershedImageFilter< ScalarImageType >
+                                                 WatershedFilterType;
   // Software Guide : EndCodeSnippet
 
   typedef itk::ImageFileWriter<RGBImageType> FileWriterType;
@@ -229,9 +231,9 @@ int main( int argc, char *argv[] )
 // Software Guide : BeginLatex
 //
 // \begin{figure} \center
-// \includegraphics[width=0.32\textwidth]{VisibleWomanEyeSlice.eps}
-// \includegraphics[width=0.32\textwidth]{WatershedSegmentation1Output1.eps}
-// \includegraphics[width=0.32\textwidth]{WatershedSegmentation1Output2.eps}
+// \includegraphics[width=0.32\textwidth]{VisibleWomanEyeSlice}
+// \includegraphics[width=0.32\textwidth]{WatershedSegmentation1Output1}
+// \includegraphics[width=0.32\textwidth]{WatershedSegmentation1Output2}
 // \itkcaption[Watershed segmentation output]{Segmented section of Visible Human
 // female head and neck cryosection data.  At left is the original image.  The
 // image in the middle was generated with parameters: conductance = 2.0,

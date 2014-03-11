@@ -62,7 +62,7 @@ namespace itk
  *
  * \ingroup ITKCommon
  */
-template < class TFloat >
+template < typename TFloat >
 class CompensatedSummation
 {
 public:
@@ -81,7 +81,7 @@ public:
   /** Copy constructor. */
   CompensatedSummation( const Self & rhs );
   /** Assignment operator. */
-  void operator=( const Self & rhs );
+  Self & operator=( const Self & rhs );
 
   /** Add an element to the sum. */
   void AddElement( const FloatType & element );

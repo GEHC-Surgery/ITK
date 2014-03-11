@@ -21,6 +21,8 @@
 #include "itkGaussianOperator.h"
 #include "itkDerivativeOperator.h"
 
+#include <algorithm>
+
 namespace itk
 {
 /**
@@ -72,9 +74,9 @@ namespace itk
  * \wikiexample{Operators/GaussianDerivativeOperator,Create a Gaussian derivative kernel}
  * \endwiki
  */
-template< class TPixel, unsigned int VDimension = 2,
-          class TAllocator = NeighborhoodAllocator< TPixel > >
-class ITK_EXPORT GaussianDerivativeOperator :
+template< typename TPixel, unsigned int VDimension = 2,
+          typename TAllocator = NeighborhoodAllocator< TPixel > >
+class GaussianDerivativeOperator :
   public NeighborhoodOperator< TPixel, VDimension, TAllocator >
 {
 public:

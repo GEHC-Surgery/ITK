@@ -180,8 +180,8 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  typedef itk::ConfidenceConnectedImageFilter<InternalImageType, InternalImageType>
-    ConnectedFilterType;
+  typedef itk::ConfidenceConnectedImageFilter<
+            InternalImageType, InternalImageType> ConnectedFilterType;
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -192,7 +192,8 @@ int main( int argc, char *argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  ConnectedFilterType::Pointer confidenceConnected = ConnectedFilterType::New();
+  ConnectedFilterType::Pointer confidenceConnected
+                                                 = ConnectedFilterType::New();
   // Software Guide : EndCodeSnippet
 
 
@@ -367,10 +368,10 @@ int main( int argc, char *argv[] )
   //  \end{center}
   //
   // \begin{figure} \center
-  // \includegraphics[width=0.24\textwidth]{BrainProtonDensitySlice.eps}
-  // \includegraphics[width=0.24\textwidth]{ConfidenceConnectedOutput1.eps}
-  // \includegraphics[width=0.24\textwidth]{ConfidenceConnectedOutput2.eps}
-  // \includegraphics[width=0.24\textwidth]{ConfidenceConnectedOutput3.eps}
+  // \includegraphics[width=0.24\textwidth]{BrainProtonDensitySlice}
+  // \includegraphics[width=0.24\textwidth]{ConfidenceConnectedOutput1}
+  // \includegraphics[width=0.24\textwidth]{ConfidenceConnectedOutput2}
+  // \includegraphics[width=0.24\textwidth]{ConfidenceConnectedOutput3}
   // \itkcaption[ConfidenceConnected segmentation results]{Segmentation results
   // for the ConfidenceConnected filter for various seed points.}
   // \label{fig:ConfidenceConnectedOutput}

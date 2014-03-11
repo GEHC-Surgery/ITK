@@ -468,7 +468,7 @@ HDF5ImageIO
   H5::DataSet vecSet = this->m_H5File->createDataSet(path, vecType, vecSpace);
   vecSet.write(buf,vecType);
   vecSet.close();
-  delete [] buf;
+  delete[] buf;
 
 }
 
@@ -497,7 +497,7 @@ HDF5ImageIO
     {
     vec[i] = buf[i];
     }
-  delete [] buf;
+  delete[] buf;
   vecSet.close();
   return vec;
 }
@@ -527,7 +527,7 @@ HDF5ImageIO
                                                      dirSpace);
   dirSet.write(buf,H5::PredType::NATIVE_DOUBLE);
   dirSet.close();
-  delete [] buf;
+  delete[] buf;
 }
 
 std::vector<std::vector<double> >
@@ -563,7 +563,7 @@ HDF5ImageIO
         k++;
         }
       }
-    delete [] buf;
+    delete[] buf;
     }
   else
     {
@@ -578,7 +578,7 @@ HDF5ImageIO
         k++;
         }
       }
-    delete [] buf;
+    delete[] buf;
     }
   dirSet.close();
   return rval;
@@ -644,6 +644,37 @@ HDF5ImageIO
     {
     return false;
     }
+
+  //Do not read if it is a MINC file.
+  std::string filename(FileNameToRead);
+  std::string::size_type mncPos = filename.rfind(".mnc");
+  if ( (mncPos != std::string::npos)
+       && (mncPos == filename.length() - 4) )
+    {
+    return false;
+    }
+
+  mncPos = filename.rfind(".MNC");
+  if ( (mncPos != std::string::npos)
+       && (mncPos == filename.length() - 4) )
+    {
+    return false;
+    }
+
+  mncPos = filename.rfind(".mnc2");
+  if ( (mncPos != std::string::npos)
+       && (mncPos == filename.length() - 5) )
+    {
+    return false;
+    }
+
+  mncPos = filename.rfind(".MNC2");
+  if ( (mncPos != std::string::npos)
+       && (mncPos == filename.length() - 5) )
+    {
+    return false;
+    }
+
   // call standard method to determine HDF-ness
   bool rval;
   // HDF5 is so exception happy, we have to worry about
@@ -717,16 +748,11 @@ HDF5ImageIO
       this->SetDimensions(i,Dims[i]);
       }
     }
-    std::string VoxelTypeName(groupName);
-    VoxelTypeName += VoxelType;
-    //std::string typeVal = this->ReadString(VoxelTypeName);
-
 
     std::string VoxelDataName(groupName);
     VoxelDataName += VoxelData;
     H5::DataSet imageSet = this->m_H5File->openDataSet(VoxelDataName);
     H5::DataSpace imageSpace = imageSet.getSpace();
-
     //
     // set the componentType
     H5::DataType imageVoxelType = imageSet.getDataType();
@@ -742,8 +768,7 @@ HDF5ImageIO
       {
       this->SetNumberOfComponents(Dims[nDims - 1]);
       }
-    delete [] Dims;
-
+    delete[] Dims;
     //
     // read out metadata
     MetaDataDictionary & metaDict = this->GetMetaDataDictionary();
@@ -877,26 +902,26 @@ HDF5ImageIO
     imageSet.close();
     }
   // catch failure caused by the H5File operations
-  catch( H5::AttributeIException error )
+  catch( H5::AttributeIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
-  catch( H5::FileIException error )
+  catch( H5::FileIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSet operations
-  catch( H5::DataSetIException error )
+  catch( H5::DataSetIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSpace operations
-  catch( H5::DataSpaceIException error )
+  catch( H5::DataSpaceIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSpace operations
-  catch( H5::DataTypeIException error )
+  catch( H5::DataTypeIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
@@ -937,8 +962,8 @@ HDF5ImageIO
     }
   slabSpace->setExtentSimple(HDFDim,HDFSize);
   imageSpace->selectHyperslab(H5S_SELECT_SET,HDFSize,offset);
-  delete [] HDFSize;
-  delete [] offset;
+  delete[] HDFSize;
+  delete[] offset;
 }
 
 void
@@ -1191,22 +1216,22 @@ HDF5ImageIO
       }
     }
   // catch failure caused by the H5File operations
-  catch( H5::FileIException error )
+  catch( H5::FileIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSet operations
-  catch( H5::DataSetIException error )
+  catch( H5::DataSetIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSpace operations
-  catch( H5::DataSpaceIException error )
+  catch( H5::DataSpaceIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSpace operations
-  catch( H5::DataTypeIException error )
+  catch( H5::DataTypeIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
@@ -1266,25 +1291,25 @@ HDF5ImageIO
     H5::DataSpace dspace;
     this->SetupStreaming(&imageSpace,&dspace);
     this->m_VoxelDataSet->write(buffer,dataType,dspace,imageSpace);
-    delete [] dims;
+    delete[] dims;
     }
   // catch failure caused by the H5File operations
-  catch( H5::FileIException error )
+  catch( H5::FileIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSet operations
-  catch( H5::DataSetIException error )
+  catch( H5::DataSetIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSpace operations
-  catch( H5::DataSpaceIException error )
+  catch( H5::DataSpaceIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }
   // catch failure caused by the DataSpace operations
-  catch( H5::DataTypeIException error )
+  catch( H5::DataTypeIException & error )
     {
     itkExceptionMacro(<< error.getCDetailMsg());
     }

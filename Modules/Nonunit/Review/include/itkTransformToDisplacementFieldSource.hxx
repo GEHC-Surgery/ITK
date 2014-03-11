@@ -30,7 +30,7 @@ namespace itk
 /**
  * Constructor
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::TransformToDisplacementFieldSource()
 {
@@ -55,7 +55,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
  *
  * \todo Add details about this class
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::PrintSelf(std::ostream & os, Indent indent) const
@@ -72,7 +72,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * Set the output image size.
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::SetOutputSize(const SizeType & size)
@@ -83,7 +83,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * Get the output image size.
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 const typename TransformToDisplacementFieldSource< TOutputImage,
                                                   TTransformPrecisionType >
 ::SizeType &
@@ -96,7 +96,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * Set the output image index.
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::SetOutputIndex(const IndexType & index)
@@ -107,7 +107,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * Get the output image index.
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 const typename TransformToDisplacementFieldSource< TOutputImage,
                                                   TTransformPrecisionType >
 ::IndexType &
@@ -120,12 +120,16 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * Set the output image spacing.
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::SetOutputSpacing(const double *spacing)
 {
-  SpacingType s(spacing);
+  SpacingType s;
+  for(unsigned int i = 0; i < TOutputImage::ImageDimension; ++i)
+    {
+    s[i] = static_cast<SpacePrecisionType>(spacing[i]);
+    }
 
   this->SetOutputSpacing(s);
 } // end SetOutputSpacing()
@@ -133,7 +137,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * Set the output image origin.
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::SetOutputOrigin(const double *origin)
@@ -144,7 +148,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 }
 
 /** Helper method to set the output parameters based on this image */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::SetOutputParametersFromImage(const ImageBaseType *image)
@@ -165,7 +169,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
  * InterpolatorType::SetInputImage is not thread-safe and hence
  * has to be set up before ThreadedGenerateData
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::BeforeThreadedGenerateData(void)
@@ -179,7 +183,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * ThreadedGenerateData
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::ThreadedGenerateData(
@@ -200,7 +204,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
   this->NonlinearThreadedGenerateData(outputRegionForThread, threadId);
 } // end ThreadedGenerateData()
 
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::NonlinearThreadedGenerateData(
@@ -250,7 +254,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
     }
 } // end NonlinearThreadedGenerateData()
 
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::LinearThreadedGenerateData(
@@ -335,7 +339,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * Inform pipeline of required output region
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 void
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::GenerateOutputInformation(void)
@@ -360,7 +364,7 @@ TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 /**
  * Verify if any of the components has been modified.
  */
-template< class TOutputImage, class TTransformPrecisionType >
+template< typename TOutputImage, typename TTransformPrecisionType >
 ModifiedTimeType
 TransformToDisplacementFieldSource< TOutputImage, TTransformPrecisionType >
 ::GetMTime(void) const

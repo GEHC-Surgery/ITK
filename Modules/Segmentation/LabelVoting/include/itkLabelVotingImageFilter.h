@@ -72,7 +72,7 @@ namespace itk
  * \ingroup ITKLabelVoting
  */
 template< typename TInputImage, typename TOutputImage = TInputImage >
-class ITK_EXPORT LabelVotingImageFilter:
+class LabelVotingImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -105,6 +105,8 @@ public:
   typedef TOutputImage                          OutputImageType;
   typedef typename InputImageType::ConstPointer InputImagePointer;
   typedef typename OutputImageType::Pointer     OutputImagePointer;
+
+  typedef unsigned long                         LabelCountType;
 
   /** Superclass typedefs. */
   typedef typename Superclass::OutputImageRegionType OutputImageRegionType;
@@ -141,15 +143,15 @@ public:
   }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputConvertibleToOutputCheck,
                    ( Concept::Convertible< InputPixelType, OutputPixelType > ) );
   itkConceptMacro( IntConvertibleToInputCheck,
                    ( Concept::Convertible< int, InputPixelType > ) );
   itkConceptMacro( SameDimensionCheck,
                    ( Concept::SameDimension< InputImageDimension, ImageDimension > ) );
-  itkConceptMacro( InputConvertibleToUnsignedIntCheck,
-                   ( Concept::Convertible< InputPixelType, unsigned int > ) );
+  itkConceptMacro( InputUnsignedIntCheck,
+                   ( Concept::IsUnsignedInteger< InputPixelType > ) );
   itkConceptMacro( IntConvertibleToOutputPixelType,
                    ( Concept::Convertible< int, OutputPixelType > ) );
   itkConceptMacro( InputPlusIntCheck,
@@ -158,11 +160,11 @@ public:
                    ( Concept::IncrementDecrementOperators< InputPixelType > ) );
   itkConceptMacro( OutputOStreamWritableCheck,
                    ( Concept::OStreamWritable< OutputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:
-  LabelVotingImageFilter() { this->m_HasLabelForUndecidedPixels = false; }
+  LabelVotingImageFilter();
   virtual ~LabelVotingImageFilter() {}
 
   /** Determine maximum label value in all input images and initialize
@@ -183,7 +185,7 @@ private:
 
   OutputPixelType m_LabelForUndecidedPixels;
   bool            m_HasLabelForUndecidedPixels;
-  InputPixelType  m_TotalLabelCount;
+  size_t          m_TotalLabelCount;
 };
 } // end namespace itk
 

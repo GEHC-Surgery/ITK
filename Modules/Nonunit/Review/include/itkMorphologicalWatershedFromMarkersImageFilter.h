@@ -76,8 +76,8 @@ namespace itk
  * \ingroup ImageEnhancement  MathematicalMorphologyImageFilters
  * \ingroup ITKReview
  */
-template< class TInputImage, class TLabelImage >
-class ITK_EXPORT MorphologicalWatershedFromMarkersImageFilter:
+template< typename TInputImage, typename TLabelImage >
+class MorphologicalWatershedFromMarkersImageFilter:
   public ImageToImageFilter< TInputImage, TLabelImage >
 {
 public:

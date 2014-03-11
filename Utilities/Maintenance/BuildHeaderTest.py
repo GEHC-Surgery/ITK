@@ -30,7 +30,6 @@ for syntax and missing #include's.
 
 # Headers to not test because of dependecy issues, etc.
 BANNED_HEADERS = set(('itkExceptionObject.h', # There is a pre-processor check so people use itkMacro.h instead.
-    'itkMINC2ImageIO.h', # In case minc2.h is not available.
     'itkFFTWForwardFFTImageFilter.h',
     'itkFFTWInverseFFTImageFilter.h',
     'itkFFTWRealToHalfHermitianForwardFFTImageFilter.h',
@@ -41,12 +40,6 @@ BANNED_HEADERS = set(('itkExceptionObject.h', # There is a pre-processor check s
     'itkVanHerkGilWermanErodeDilateImageFilter.h', # circular include's
     'itkBSplineDeformableTransform.h',   # deprecated
     'vtkCaptureScreen.h',  # these includes require VTK
-    'vtkVisualize3DLevelSetImage.h',
-    'vtkVisualize2DSparseLevelSetLayers.h',
-    'vtkVisualize2DSparseLevelSetLayersBase.h',
-    'itkVTKVisualizeImageLevelSet.h',
-    'itkVTKVisualizeImageLevelSetIsoValues.h',
-    'itkVTKVisualize2DLevelSetAsElevationMap.h',
     'itkBSplineDeformableTransformInitializer.h'))
 
 HEADER = """/*=========================================================================
@@ -121,7 +114,8 @@ def main():
         for i in range(added_header_idx, max_idx):
             # Use the .hxx if possible.
             hxx_file = h_files[i][:-1] + 'hxx'
-            if h_files[i] in BANNED_HEADERS:
+            # Files that include VTK headers need to link to VTK.
+            if h_files[i] in BANNED_HEADERS or h_files[i].lower().find('vtk') != -1:
                 to_include = '// #include "' + h_files[i] + '" // Banned in BuildHeaderTest.py\n'
             elif os.path.exists(os.path.join(module_source_path, 'include',
                 hxx_file)):

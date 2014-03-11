@@ -40,9 +40,10 @@ int main(int, char * [] )
 //
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet
-  typedef itk::Image<unsigned char,2> ImageType;
-  typedef itk::RandomImageSource<ImageType> RandomImageSourceType;
-  RandomImageSourceType::Pointer randomImageSource = RandomImageSourceType::New();
+  typedef itk::Image< unsigned char, 2 >      ImageType;
+  typedef itk::RandomImageSource< ImageType > RandomImageSourceType;
+  RandomImageSourceType::Pointer randomImageSource
+                                               = RandomImageSourceType::New();
   ImageType::SizeValueType size[2];
   size[0] = 10;
   size[1] = 10;
@@ -97,7 +98,7 @@ int main(int, char * [] )
 // Software Guide : EndLatex
 // Software Guide : BeginCodeSnippet
   calculator->Update();
-  std::cout << "Sample mean = " << calculator->GetMean() << std::endl ;
+  std::cout << "Sample mean = " << calculator->GetMean() << std::endl;
   std::cout << "Sample covariance = " << calculator->GetCovarianceMatrix();
 // Software Guide : EndCodeSnippet
 

@@ -41,8 +41,8 @@ namespace itk
  *
  * \ingroup ITKFastMarching
  */
-template< class TPixel, unsigned int VSetDimension = 2 >
-class ITK_EXPORT LevelSetNode
+template< typename TPixel, unsigned int VSetDimension = 2 >
+class LevelSetNode
 {
 public:
   /** Standard class typedefs. */
@@ -77,10 +77,11 @@ public:
    * are the same. */
   Self & operator=(const Self & rhs)
   {
-    if ( this == &rhs ) { return *this; }
-
-    m_Value = rhs.m_Value;
-    m_Index = rhs.m_Index;
+    if ( this != &rhs )
+      {
+      m_Value = rhs.m_Value;
+      m_Index = rhs.m_Index;
+      }
     return *this;
   }
 

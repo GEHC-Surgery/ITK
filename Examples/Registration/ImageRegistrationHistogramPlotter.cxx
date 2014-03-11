@@ -99,7 +99,6 @@
 //   Software Guide : EndLatex
 
 
-
 #include "itkImageRegistrationMethod.h"
 #include "itkTranslationTransform.h"
 #include "itkRegularStepGradientDescentOptimizer.h"
@@ -109,6 +108,8 @@
 #include "itkImageFileWriter.h"
 #include "itkResampleImageFilter.h"
 #include "itkCastImageFilter.h"
+
+#include <iomanip>
 
 // Software Guide : BeginLatex
 //
@@ -147,7 +148,7 @@ public:
         }
       else
         {
-        return static_cast<OutputPixelType>( -(30.0 * vcl_log(A)) );
+        return itk::Math::Round<OutputPixelType>( -(30.0 * vcl_log(A)) );
         }
       }
     else
@@ -167,6 +168,8 @@ public:
 // Software Guide : EndLatex
 
 // Software Guide : BeginCodeSnippet
+namespace
+{
 class HistogramWriter
 {
 public:
@@ -185,7 +188,7 @@ public:
   // Software Guide : BeginCodeSnippet
   typedef MetricType::HistogramType   HistogramType;
 
-  typedef itk::HistogramToEntropyImageFilter< HistogramType >
+  typedef itk::HistogramToEntropyImageFilter< HistogramType, InternalImageType>
                                 HistogramToEntropyImageFilterType;
 
   typedef HistogramToEntropyImageFilterType::Pointer
@@ -227,10 +230,6 @@ public:
     this->m_HistogramFileWriter->SetInput( this->m_Filter->GetOutput() );
     // Software Guide : EndCodeSnippet
 
-    std::string outputFileBase = "JointHistogram";
-            // Base of series filenames ( of the joint histogram )
-    this->outputFile = outputFileBase + "%03d.";
-    this->outputFile += "mhd";   // histogram filename extension
     }
 
   ~HistogramWriter() { };
@@ -246,12 +245,17 @@ public:
     }
 
   void WriteHistogramFile( unsigned int iterationNumber )
-    {
-    char outputFilename[1000];
-    sprintf (outputFilename, this->outputFile.c_str(), iterationNumber );
-
-    m_HistogramFileWriter->SetFileName( outputFilename );
-    this->m_Filter->SetInput( m_Metric->GetHistogram() );
+  {
+    std::string outputFileBase = "JointHistogram";
+    std::ostringstream outputFilename;
+    outputFilename << outputFileBase
+                   << "."
+                   << std::setfill('0') << std::setw(3) << iterationNumber
+                   << "."
+                   << "mhd";
+    m_HistogramFileWriter->SetFileName( outputFilename.str() );
+    this->m_Filter->SetInput( this->GetMetric()->GetHistogram() );
+    this->m_Filter->Modified();
 
     try
       {
@@ -273,7 +277,7 @@ public:
       }
 
     std::cout << "Joint Histogram file: ";
-    std::cout << outputFilename << " written" << std::endl;
+    std::cout << outputFilename.str() << " written" << std::endl;
 
     }
 
@@ -288,13 +292,15 @@ public:
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  void WriteHistogramFile( const char * outputFilename  )
+  void WriteHistogramFile( std::string &outputFilename  )
     {
     // Software Guide : EndCodeSnippet
 
 
     // Software Guide : BeginCodeSnippet
-    this->m_Filter->SetInput( m_Metric->GetHistogram() );
+    this->m_Filter->SetInput( this->GetMetric()->GetHistogram() );
+    this->m_Filter->Modified();
+
     // Software Guide : EndCodeSnippet
 
     // Software Guide : BeginLatex
@@ -375,8 +381,9 @@ private:
   HistogramToImageFilterPointer   m_Filter;
   HistogramFileWriterPointer      m_HistogramFileWriter;
   // Software Guide : EndCodeSnippet
-  std::string   outputFile;
+  std::string   m_OutputFile;
 };
+} // end anonymous namespace
 
 
 // Command - observer invoked after every iteration of the optimizer
@@ -430,12 +437,13 @@ public:
       // Software Guide : EndLatex
 
       // Software Guide : BeginCodeSnippet
-      m_JointHistogramWriter.WriteHistogramFile( m_InitialHistogramFile.c_str() );
+      m_JointHistogramWriter.WriteHistogramFile( m_InitialHistogramFile );
       // Software Guide : EndCodeSnippet
       }
     if( m_WriteHistogramsAfterEveryIteration )
       {
-      m_JointHistogramWriter.WriteHistogramFile( optimizer->GetCurrentIteration() );
+      m_JointHistogramWriter.WriteHistogramFile(
+                                           optimizer->GetCurrentIteration() );
       }
     }
 
@@ -530,6 +538,7 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   unsigned int numberOfHistogramBins = atoi( argv[7] );
   MetricType::HistogramType::SizeType histogramSize;
+  histogramSize.SetSize(2);
   histogramSize[0] = numberOfHistogramBins;
   histogramSize[1] = numberOfHistogramBins;
   metric->SetHistogramSize( histogramSize );
@@ -593,7 +602,17 @@ int main( int argc, char *argv[] )
   registration->SetMovingImage(   movingSmoother->GetOutput()   );
 
 
-  fixedNormalizer->Update();
+  try
+    {
+    fixedNormalizer->Update();
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cout << "ExceptionObject caught !" << std::endl;
+    std::cout << err << std::endl;
+    return EXIT_FAILURE;
+    }
+
   registration->SetFixedImageRegion(
        fixedNormalizer->GetOutput()->GetBufferedRegion() );
 
@@ -621,7 +640,6 @@ int main( int argc, char *argv[] )
     {
     observer->SetWriteHistogramsAfterEveryIteration( true );
     }
-
 
 
   try
@@ -655,7 +673,17 @@ int main( int argc, char *argv[] )
   std::cout << " Metric value  = " << bestValue          << std::endl;
 
   //Write Joint Entropy Histogram after registration.
-  observer->m_JointHistogramWriter.WriteHistogramFile( argv[6] );
+  std::string histogramAfter(argv[6]);
+  try
+    {
+    observer->m_JointHistogramWriter.WriteHistogramFile( histogramAfter );
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cerr << "ERROR: ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    return EXIT_FAILURE;
+    }
 
   typedef itk::ResampleImageFilter<
                             MovingImageType,
@@ -700,7 +728,15 @@ int main( int argc, char *argv[] )
 
   caster->SetInput( resample->GetOutput() );
   writer->SetInput( caster->GetOutput()   );
-  writer->Update();
+  try
+    {
+    writer->Update();
+    }
+  catch( itk::ExceptionObject & err )
+    {
+    std::cerr << "ERROR: ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    }
 
   return EXIT_SUCCESS;
 
@@ -723,8 +759,8 @@ int main( int argc, char *argv[] )
 // after registration.
 // \begin{figure}
 // \center
-// \includegraphics[width=0.44\textwidth]{JointEntropyHistogramPriorToRegistration.eps}
-// \includegraphics[width=0.44\textwidth]{JointEntropyHistogramAfterRegistration.eps}
+// \includegraphics[width=0.44\textwidth]{JointEntropyHistogramPriorToRegistration}
+// \includegraphics[width=0.44\textwidth]{JointEntropyHistogramAfterRegistration}
 // \itkcaption[Multi-modality joint histograms]{Joint entropy histograms before and
 // after registration. The final transform was within half a pixel of true misalignment.}
 // \label{fig:JointEntropyHistograms}

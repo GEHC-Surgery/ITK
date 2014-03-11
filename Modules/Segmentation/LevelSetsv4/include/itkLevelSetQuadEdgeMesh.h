@@ -31,7 +31,7 @@ namespace itk
  *  \tparam TMesh Input mesh type of the level set function
  *  \ingroup ITKLevelSetsv4
  */
-template< class TMesh >
+template< typename TMesh >
 class LevelSetQuadEdgeMesh :
     public LevelSetBase<
       typename TMesh::PointIdentifier,
@@ -65,7 +65,7 @@ public:
   typedef typename Superclass::LevelSetDataType LevelSetDataType;
 
   itkSetObjectMacro( Mesh, MeshType );
-  itkGetObjectMacro( Mesh, MeshType );
+  itkGetModifiableObjectMacro(Mesh, MeshType );
 
   /** Returns the value of the level set function at a given location iP */
   virtual OutputType Evaluate( const InputType& iP ) const;

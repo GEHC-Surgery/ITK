@@ -61,9 +61,9 @@ namespace itk
  * \ingroup Operators
  * \ingroup ITKCommon
  */
-template< class TPixel, unsigned int VDimension,
-          class TAllocator = NeighborhoodAllocator< TPixel > >
-class ITK_EXPORT NeighborhoodOperator:
+template< typename TPixel, unsigned int VDimension,
+          typename TAllocator = NeighborhoodAllocator< TPixel > >
+class NeighborhoodOperator:
   public Neighborhood< TPixel, VDimension, TAllocator >
 {
 public:
@@ -144,7 +144,7 @@ public:
 protected:
   /** Typedef support  for coefficient vector type.  Necessary
    * to fix bug in the microsoft VC++ compiler. */
-  typedef std::vector< double > CoefficientVector;
+  typedef std::vector< PixelRealType > CoefficientVector;
 
   /** A subclass-specific algorithm that computes the coefficients
    * of the operator. */

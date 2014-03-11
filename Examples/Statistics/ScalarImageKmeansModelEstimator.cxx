@@ -37,7 +37,6 @@
 //
 // Software Guide : EndLatex
 
-
 #include "itkKdTree.h"
 #include "itkKdTreeBasedKmeansEstimator.h"
 #include "itkWeightedCentroidKdTreeGenerator.h"
@@ -55,7 +54,6 @@ int main( int argc, char * argv [] )
     std::cerr << "Usage :  " << argv[0] << "  inputImageFileName " << std::endl;
     return -1;
     }
-
 
   typedef unsigned char       PixelType;
   const unsigned int          Dimension = 2;
@@ -80,7 +78,6 @@ int main( int argc, char * argv [] )
     }
 
 
-
   // Software Guide : BeginCodeSnippet
 
   // Create a List from the scalar image
@@ -91,16 +88,12 @@ int main( int argc, char * argv [] )
   adaptor->SetImage(  reader->GetOutput() );
 
 
-
   // Define the Measurement vector type from the AdaptorType
   typedef AdaptorType::MeasurementVectorType  MeasurementVectorType;
 
-
   // Create the K-d tree structure
   typedef itk::Statistics::WeightedCentroidKdTreeGenerator<
-                                                      AdaptorType >
-                                                              TreeGeneratorType;
-
+                                      AdaptorType > TreeGeneratorType;
   TreeGeneratorType::Pointer treeGenerator = TreeGeneratorType::New();
 
   treeGenerator->SetSample( adaptor );
@@ -108,9 +101,9 @@ int main( int argc, char * argv [] )
   treeGenerator->Update();
 
 
-
   typedef TreeGeneratorType::KdTreeType TreeType;
-  typedef itk::Statistics::KdTreeBasedKmeansEstimator<TreeType> EstimatorType;
+  typedef itk::Statistics::KdTreeBasedKmeansEstimator< TreeType >
+                                        EstimatorType;
 
   EstimatorType::Pointer estimator = EstimatorType::New();
 
@@ -130,7 +123,7 @@ int main( int argc, char * argv [] )
 
   EstimatorType::ParametersType estimatedMeans = estimator->GetParameters();
 
-  for ( unsigned int i = 0 ; i < numberOfClasses ; ++i )
+  for ( unsigned int i = 0; i < numberOfClasses; ++i )
     {
     std::cout << "cluster[" << i << "] " << std::endl;
     std::cout << "    estimated mean : " << estimatedMeans[i] << std::endl;
@@ -141,7 +134,7 @@ int main( int argc, char * argv [] )
   //  Software Guide : BeginLatex
   //
   // \begin{figure} \center
-  // \includegraphics[width=0.44\textwidth]{BrainT1Slice.eps}
+  // \includegraphics[width=0.44\textwidth]{BrainT1Slice}
   // \itkcaption[Output of the ScalarImageKmeansModelEstimator]{Test image for the
   // KMeans model estimator.}
   // \label{fig:ScalarImageKmeansModelEstimatorTestImage}
@@ -152,9 +145,5 @@ int main( int argc, char * argv [] )
   //
   //  Software Guide : EndLatex
 
-
   return EXIT_SUCCESS;
-
 }
-
-

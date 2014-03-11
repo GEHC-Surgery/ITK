@@ -33,11 +33,11 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  const     unsigned int   Dimension = 2;
-  typedef   unsigned char  InputPixelType;
-  typedef   unsigned char  OutputPixelType;
-  typedef itk::Image< InputPixelType,  Dimension >   InputImageType;
-  typedef itk::Image< OutputPixelType, Dimension >   OutputImageType;
+  const unsigned int                               Dimension = 2;
+  typedef unsigned char                            InputPixelType;
+  typedef unsigned char                            OutputPixelType;
+  typedef itk::Image< InputPixelType,  Dimension > InputImageType;
+  typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
@@ -54,17 +54,17 @@ int main( int argc, char * argv[] )
 
   filter->SetDefaultPixelValue( 0 );
 
-  double spacing[ Dimension ];
-  spacing[0] = 1.0; // pixel spacing in millimeters along X
-  spacing[1] = 1.0; // pixel spacing in millimeters along Y
+    {
+    //pixel spacing in millimeters
+    const double spacing[ Dimension ] = { 1.0, 1.0 };
+    filter->SetOutputSpacing( spacing );
+    }
 
-  filter->SetOutputSpacing( spacing );
-
-  double origin[ Dimension ];
-  origin[0] = 0.0;  // X space coordinate of origin
-  origin[1] = 0.0;  // Y space coordinate of origin
-
-  filter->SetOutputOrigin( origin );
+    {
+    // space coordinate of origin
+    const double origin[ Dimension ] = { 0.0, 0.0 };
+    filter->SetOutputOrigin( origin );
+    }
 
   OutputImageType::DirectionType direction;
   direction(0,0) = atoi(argv[3]);
@@ -74,7 +74,6 @@ int main( int argc, char * argv[] )
   filter->SetOutputDirection(direction);
 
   InputImageType::SizeType   size;
-
   size[0] = 300;  // number of pixels along X
   size[1] = 300;  // number of pixels along Y
 
@@ -85,4 +84,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

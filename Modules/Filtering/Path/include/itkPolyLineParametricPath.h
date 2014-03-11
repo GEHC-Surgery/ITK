@@ -53,7 +53,7 @@ namespace itk
  * \endwiki
  */
 template< unsigned int VDimension >
-class ITK_EXPORT PolyLineParametricPath:public
+class PolyLineParametricPath:public
   ParametricPath< VDimension >
 {
 public:
@@ -73,14 +73,14 @@ public:
   typedef typename Superclass::OutputType OutputType;
 
   /** Basic data-structure types used */
-  typedef ContinuousIndex< double, VDimension >   ContinuousIndexType;
-  typedef Index<  VDimension >                    IndexType;
-  typedef Offset< VDimension >                    OffsetType;
-  typedef Point< double, VDimension >             PointType;
-  typedef Vector< double, VDimension >            VectorType;
-  typedef ContinuousIndexType                     VertexType;
-  typedef VectorContainer< unsigned, VertexType > VertexListType;
-  typedef typename VertexListType::Pointer        VertexListPointer;
+  typedef typename Superclass::ContinuousIndexType ContinuousIndexType;
+  typedef Index<  VDimension >                     IndexType;
+  typedef Offset< VDimension >                     OffsetType;
+  typedef Point< double, VDimension >              PointType;
+  typedef Vector< double, VDimension >             VectorType;
+  typedef ContinuousIndexType                      VertexType;
+  typedef VectorContainer< unsigned, VertexType >  VertexListType;
+  typedef typename VertexListType::Pointer         VertexListPointer;
 
   /** Return the location of the parametric path at the specified location. */
   virtual OutputType Evaluate(const InputType & input) const;
@@ -117,7 +117,18 @@ public:
   }
 
   /** Return the container of Vertices as a const object. */
-  itkGetConstObjectMacro(VertexList, VertexListType);
+  itkGetModifiableObjectMacro(VertexList, VertexListType);
+
+  /** This function overrides the superclass IncrementInput and calculates
+   *  the next pixel along the path to visit by using the instantaneous
+   *  partial derivatives to calculate the timestep needed to move along the
+   *  path by one pixel */
+  virtual OffsetType IncrementInput(InputType & input) const;
+
+  /** This function overrides the superclass EvaluateDerivative and instead
+   *  calculates the instantaneous derivative of input by taking the index
+   *  of the previous and next integral timepoints and subtracting them */
+  virtual VectorType EvaluateDerivative(const InputType & input) const;
 
 protected:
   PolyLineParametricPath();

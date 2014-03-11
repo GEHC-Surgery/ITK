@@ -8,6 +8,9 @@ itkNonUniformBSplineTest.cxx
 itkReflectImageFilterTest.cxx
 itkShiftScaleInPlaceImageFilterTest.cxx
 itkTwoOutputExampleImageFilterTest.cxx
+itkStreamingImageFilterTest.cxx
+itkStreamingImageFilterTest2.cxx
+itkStreamingImageFilterTest3.cxx
 )
 
 # For itkTestDriverIncludeDeprecatedIOFactories.h.
@@ -29,7 +32,17 @@ itk_add_test(NAME itkShiftScaleInPlaceImageFilterTest
       COMMAND ITKDeprecatedTestDriver itkShiftScaleInPlaceImageFilterTest)
 itk_add_test(NAME itkTwoOutputExampleImageFilterTest
       COMMAND ITKDeprecatedTestDriver itkTwoOutputExampleImageFilterTest)
-
+itk_add_test(NAME itkDeprecatedStreamingImageFilterTest COMMAND ITKDeprecatedTestDriver itkStreamingImageFilterTest)
+itk_add_test(NAME itkDeprecatedStreamingImageFilterTest2 COMMAND ITKDeprecatedTestDriver itkStreamingImageFilterTest2)
+itk_add_test(NAME itkDeprecatedStreamingImageFilterTest3_1 COMMAND ITKDeprecatedTestDriver
+    --compare DATA{${ITK_DATA_ROOT}/Input/CellsFluorescence1.png}
+              ${ITK_TEST_OUTPUT_DIR}/itkStreamingImageFilterTest3_1.png
+    itkStreamingImageFilterTest3 DATA{${ITK_DATA_ROOT}/Input/CellsFluorescence1.png} ${ITK_TEST_OUTPUT_DIR}/itkStreamingImageFilterTest3_1.png 10)
+itk_add_test(NAME itkDeprecatedStreamingImageFilterTest3_2
+      COMMAND ITKDeprecatedTestDriver
+    --compare DATA{${ITK_DATA_ROOT}/Input/CellsFluorescence1.png}
+              ${ITK_TEST_OUTPUT_DIR}/itkStreamingImageFilterTest3_2.png
+    itkStreamingImageFilterTest3 DATA{${ITK_DATA_ROOT}/Input/CellsFluorescence1.png} ${ITK_TEST_OUTPUT_DIR}/itkStreamingImageFilterTest3_2.png 1000)
 
 create_test_sourcelist(DeprecatedIOTests  DeprecatedIOTestDriver.cxx
         itkDICOMImageIO2Test.cxx
@@ -99,21 +112,16 @@ itk_add_test(NAME itkAnalyzeImageIOBadHeader
 itk_add_test(NAME itkAnalyzeImageIORGBImageTest
       COMMAND DeprecatedIOTestDriver itkAnalyzeImageIORGBImageTest
                                        ${ITK_TEST_OUTPUT_DIR})
-# DICOM
-## Construct the DICOMSERIES_DIR from external data, and set up the proper dependancies.
-ExternalData_expand_arguments(ITKData VAR_IMAGE0075 DATA{${ITK_DATA_ROOT}/Input/DicomSeries/Image0075.dcm})
-ExternalData_expand_arguments(ITKData VAR_IMAGE0076 DATA{${ITK_DATA_ROOT}/Input/DicomSeries/Image0076.dcm})
-ExternalData_expand_arguments(ITKData VAR_IMAGE0077 DATA{${ITK_DATA_ROOT}/Input/DicomSeries/Image0077.dcm})
-get_filename_component(DICOMSERIES_DIR ${VAR_IMAGE0075} PATH)
 
 itk_add_test(NAME itkDICOMImageSeriesTest
      COMMAND DeprecatedIOTestDriver itkDICOMImageSeriesTest
-             ${DICOMSERIES_DIR} 0)
+             DATA{${ITK_DATA_ROOT}/Input/DicomSeries/,REGEX:Image[0-9]+.dcm} 0)
 itk_add_test(NAME itkDICOMImageSeriesTest2
      COMMAND DeprecatedIOTestDriver  itkDICOMImageSeriesTest2
-             ${DICOMSERIES_DIR} )
+             DATA{${ITK_DATA_ROOT}/Input/DicomSeries/,REGEX:Image[0-9]+.dcm})
 itk_add_test(NAME itkDICOMSeriesFileNamesTest
-     COMMAND DeprecatedIOTestDriver itkDICOMSeriesFileNamesTest ${DICOMSERIES_DIR})
+     COMMAND DeprecatedIOTestDriver itkDICOMSeriesFileNamesTest
+             DATA{${ITK_DATA_ROOT}/Input/DicomSeries/,REGEX:Image[0-9]+.dcm})
 itk_add_test(NAME itkDicomDifficultFile
      COMMAND DeprecatedIOTestDriver
          itkDicomImageIOTest DATA{${ITK_DATA_ROOT}/Input/012345.002.050}
@@ -129,10 +137,6 @@ itk_add_test(NAME itkImageReadDICOMSeriesWriteWithDirection002Test
        COMMAND DeprecatedIOTestDriver
       itkImageReadDICOMSeriesWriteTest DATA{${ITK_DATA_ROOT}/Input/HeadMRVolumeWithDirection002.mhd}
   ${ITK_TEST_OUTPUT_DIR}/DICOMSeriesOutputHeadMRVolumeWithDirection002)
-itk_add_test(NAME itkImageReadDICOMSeriesWriteWithDirection003Test
-       COMMAND DeprecatedIOTestDriver
-      itkImageReadDICOMSeriesWriteTest DATA{${ITK_DATA_ROOT}/Input/HeadMRVolumeWithDirection003.mhd}
-  ${ITK_TEST_OUTPUT_DIR}/DICOMSeriesOutputHeadMRVolumeWithDirection003)
 
 ## The following an expample of how to write a program that uses the deprecated AnalyzeIO class.
 add_executable(ConvertAnalyzeFile ConvertAnalyzeFile.cxx)

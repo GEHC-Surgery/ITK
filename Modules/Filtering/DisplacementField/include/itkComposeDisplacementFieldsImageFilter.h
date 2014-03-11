@@ -36,7 +36,7 @@ namespace itk
  *
  */
 
-template <class TInputImage, class TOutputImage = TInputImage>
+template <typename TInputImage, typename TOutputImage = TInputImage>
 class ComposeDisplacementFieldsImageFilter
   : public ImageToImageFilter<TInputImage, TOutputImage>
 {
@@ -74,7 +74,7 @@ public:
     <InputFieldType, RealType>                    InterpolatorType;
 
   /** Get the interpolator. */
-  itkGetObjectMacro( Interpolator, InterpolatorType );
+  itkGetModifiableObjectMacro( Interpolator, InterpolatorType );
 
   /** Set the deformation field */
   void SetDisplacementField( const InputFieldType *field )

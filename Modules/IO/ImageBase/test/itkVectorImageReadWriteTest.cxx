@@ -35,10 +35,10 @@ int itkVectorImageReadWriteTest(int argc, char * argv [])
   const unsigned int Dimension = 2;
 
   // Create image of vector pixels
-  typedef itk::Vector< double, 4 >          PixelType;
-  typedef itk::Image < PixelType, Dimension>        ImageType;
-  typedef itk::ImageFileReader< ImageType > ReaderType;
-  typedef itk::ImageFileWriter< ImageType > WriterType;
+  typedef itk::Vector< double, 4 >           PixelType;
+  typedef itk::Image < PixelType, Dimension> ImageType;
+  typedef itk::ImageFileReader< ImageType >  ReaderType;
+  typedef itk::ImageFileWriter< ImageType >  WriterType;
 
   ImageType::Pointer   inputImage  = ImageType::New();
   ReaderType::Pointer  reader      = ReaderType::New();
@@ -113,7 +113,7 @@ int itkVectorImageReadWriteTest(int argc, char * argv [])
     return EXIT_FAILURE;
     }
 
-  itk::ImageIOBase::Pointer io = reader->GetImageIO();
+  itk::ImageIOBase::Pointer io = reader->GetModifiableImageIO();
 
 
   std::cout << "ImageIO Pixel Information: "

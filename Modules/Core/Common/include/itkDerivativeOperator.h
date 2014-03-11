@@ -62,9 +62,9 @@ namespace itk
  * \wikiexample{Operators/DerivativeOperator,Create a derivative kernel}
  * \endwiki
  */
-template< class TPixel, unsigned int VDimension = 2,
-          class TAllocator = NeighborhoodAllocator< TPixel > >
-class ITK_EXPORT DerivativeOperator:
+template< typename TPixel, unsigned int VDimension = 2,
+          typename TAllocator = NeighborhoodAllocator< TPixel > >
+class DerivativeOperator:
   public NeighborhoodOperator< TPixel, VDimension, TAllocator >
 {
 public:
@@ -87,8 +87,11 @@ public:
   /** Assignment operator */
   Self & operator=(const Self & other)
   {
-    Superclass::operator=(other);
-    m_Order = other.m_Order;
+    if(this != &other)
+      {
+      Superclass::operator=(other);
+      m_Order = other.m_Order;
+      }
     return *this;
   }
 

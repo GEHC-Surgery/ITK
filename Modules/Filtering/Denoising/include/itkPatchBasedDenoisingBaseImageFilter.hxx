@@ -25,7 +25,7 @@
 namespace itk
 {
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::PatchBasedDenoisingBaseImageFilter()
 {
@@ -33,18 +33,18 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   m_PatchRadius = 4;
 
   // Default strategy for kernel-bandwidth estimation
-  m_DoKernelBandwidthEstimation = true;
+  m_KernelBandwidthEstimation = false;
   m_KernelBandwidthUpdateFrequency = 3;
 
   // Default for number of denoising iterations to perform
-  m_NumberOfIterations      = 5;
+  m_NumberOfIterations      = 1;
   m_ElapsedIterations       = 0;
 
   // Default noise model.
-  m_NoiseModel = GAUSSIAN;
+  m_NoiseModel                = NOMODEL;
   // Default weights for the smoothing and fidelity terms.
-  m_SmoothingWeight = 1.0;
-  m_FidelityWeight  = 0.0;
+  m_SmoothingWeight           = 1.0;
+  m_NoiseModelFidelityWeight  = 0.0;
 
   // Default to setting component space
   // based on pixel type
@@ -53,17 +53,18 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 
   m_ManualReinitialization  = false;
   m_State                   = UNINITIALIZED;
-  m_InputImage = 0;
+
+  m_InputImage  = 0;
   m_OutputImage = 0;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::~PatchBasedDenoisingBaseImageFilter()
 {
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::SetStateToInitialized()
@@ -71,7 +72,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   this->SetState(INITIALIZED);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::SetStateToUninitialized()
@@ -79,7 +80,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   this->SetState(UNINITIALIZED);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 PatchBasedDenoisingBaseImageFilter<TInputImage,TOutputImage>
 ::GenerateInputRequestedRegion()
@@ -89,7 +90,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage,TOutputImage>
   Superclass::GenerateInputRequestedRegion();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -132,7 +133,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
     // or otherwise setting up for the next iteration.
     this->InitializeIteration();
 
-    if ( (m_DoKernelBandwidthEstimation) &&
+    if ( (m_KernelBandwidthEstimation) &&
          (m_ElapsedIterations % m_KernelBandwidthUpdateFrequency == 0) )
       {
       // Find the optimal kernel bandwidth parameter.
@@ -168,7 +169,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   this->PostProcessOutput();
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::InitializePatchWeights()
@@ -183,7 +184,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   this->SetPatchWeights(patchWeights);
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::SetPatchWeights(const PatchWeightsType& weights)
@@ -203,7 +204,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 typename PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>::PatchWeightsType
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::GetPatchWeights() const
@@ -211,7 +212,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   return m_PatchWeights;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 typename PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>::PatchRadiusType::SizeValueType
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::GetPatchLengthInVoxels() const
@@ -226,7 +227,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   return length;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 typename PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>::PatchRadiusType
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::GetPatchDiameterInVoxels() const
@@ -241,7 +242,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   return diameter;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 typename PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>::PatchRadiusType
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::GetPatchRadiusInVoxels() const
@@ -272,7 +273,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
   return radius;
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 bool
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::Halt()
@@ -294,7 +295,7 @@ PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template <typename TInputImage, typename TOutputImage>
 void
 PatchBasedDenoisingBaseImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const

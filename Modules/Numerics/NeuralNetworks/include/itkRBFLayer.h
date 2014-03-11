@@ -35,7 +35,7 @@ namespace Statistics
  * \ingroup ITKNeuralNetworks
  */
 
-template<class TMeasurementVector, class TTargetVector>
+template<typename TMeasurementVector, typename TTargetVector>
 class RBFLayer : public LayerBase<TMeasurementVector, TTargetVector>
 {
 public:
@@ -107,15 +107,13 @@ public:
   itkGetConstReferenceMacro( Bias, ValueType );
 
   void SetDistanceMetric(DistanceMetricType* f);
-  itkGetObjectMacro( DistanceMetric, DistanceMetricType );
-  itkGetConstObjectMacro( DistanceMetric, DistanceMetricType );
+  itkGetModifiableObjectMacro(DistanceMetric, DistanceMetricType );
 
   itkSetMacro(NumClasses,unsigned int);
   itkGetConstReferenceMacro(NumClasses,unsigned int);
 
   void SetRBF(RBFType* f);
-  itkGetObjectMacro(RBF, RBFType);
-  itkGetConstObjectMacro(RBF, RBFType);
+  itkGetModifiableObjectMacro(RBF, RBFType);
 
 protected:
 

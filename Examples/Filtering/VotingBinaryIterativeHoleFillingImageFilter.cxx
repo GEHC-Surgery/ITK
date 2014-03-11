@@ -92,7 +92,7 @@ int main( int argc, char * argv[] )
   // Software Guide : EndCodeSnippet
 
 
-  typedef itk::ImageFileReader< ImageType  >  ReaderType;
+  typedef itk::ImageFileReader< ImageType >  ReaderType;
   typedef itk::ImageFileWriter< ImageType >  WriterType;
 
   ReaderType::Pointer reader = ReaderType::New();
@@ -146,7 +146,6 @@ int main( int argc, char * argv[] )
   // Software Guide : EndCodeSnippet
 
 
-
   //  Software Guide : BeginLatex
   //
   //  Since the filter is expecting a binary image as input, we must specify
@@ -163,7 +162,6 @@ int main( int argc, char * argv[] )
   filter->SetBackgroundValue(   0 );
   filter->SetForegroundValue( 255 );
   // Software Guide : EndCodeSnippet
-
 
 
   //  Software Guide : BeginLatex
@@ -206,9 +204,6 @@ int main( int argc, char * argv[] )
   // Software Guide : EndCodeSnippet
 
 
-
-
-
   //  Software Guide : BeginLatex
   //
   //  The input to the filter can be taken from any other filter, for example
@@ -240,10 +235,10 @@ int main( int argc, char * argv[] )
   //
   // \begin{figure}
   // \center
-  // \includegraphics[width=0.44\textwidth]{BinaryThresholdImageFilterOutput.eps}
-  // \includegraphics[width=0.44\textwidth]{VotingBinaryIterativeHoleFillingImageFilterOutput1.eps}
-  // \includegraphics[width=0.44\textwidth]{VotingBinaryIterativeHoleFillingImageFilterOutput2.eps}
-  // \includegraphics[width=0.44\textwidth]{VotingBinaryIterativeHoleFillingImageFilterOutput3.eps}
+  // \includegraphics[width=0.44\textwidth]{BinaryThresholdImageFilterOutput}
+  // \includegraphics[width=0.44\textwidth]{VotingBinaryIterativeHoleFillingImageFilterOutput1}
+  // \includegraphics[width=0.44\textwidth]{VotingBinaryIterativeHoleFillingImageFilterOutput2}
+  // \includegraphics[width=0.44\textwidth]{VotingBinaryIterativeHoleFillingImageFilterOutput3}
   // \itkcaption[Effect of the VotingBinaryIterativeHoleFilling filter.]{Effect of the
   // VotingBinaryIterativeHoleFillingImageFilter on a slice from a MRI proton density brain image
   // that has been thresholded in order to produce a binary image. The output
@@ -264,4 +259,3 @@ int main( int argc, char * argv[] )
 
   return EXIT_SUCCESS;
 }
-

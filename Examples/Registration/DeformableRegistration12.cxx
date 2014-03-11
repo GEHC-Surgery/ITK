@@ -226,7 +226,7 @@ int main( int argc, char *argv[] )
 
   for( unsigned int i=0; i< SpaceDimension; i++ )
     {
-    fixedOrigin = fixedImage->GetOrigin()[i];
+    fixedOrigin[i] = fixedImage->GetOrigin()[i];
     fixedPhysicalDimensions[i] = fixedImage->GetSpacing()[i] *
       static_cast<double>(
       fixedImage->GetLargestPossibleRegion().GetSize()[i] - 1 );
@@ -273,8 +273,10 @@ int main( int argc, char *argv[] )
   // Software Guide : BeginCodeSnippet
   OptimizerType::BoundSelectionType boundSelect(
     transform->GetNumberOfParameters() );
-  OptimizerType::BoundValueType upperBound( transform->GetNumberOfParameters() );
-  OptimizerType::BoundValueType lowerBound( transform->GetNumberOfParameters() );
+  OptimizerType::BoundValueType upperBound(
+                                         transform->GetNumberOfParameters() );
+  OptimizerType::BoundValueType lowerBound(
+                                         transform->GetNumberOfParameters() );
 
   boundSelect.Fill( 0 );
   upperBound.Fill( 0.0 );

@@ -63,8 +63,8 @@ namespace itk
  * \ingroup GeometricTransform
  * \ingroup ITKImageGrid
  */
-template< class TInputImage, class TOutputImage >
-class ITK_EXPORT ExpandImageFilter:
+template< typename TInputImage, typename TOutputImage >
+class ExpandImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -101,11 +101,9 @@ public:
   typedef LinearInterpolateImageFunction< InputImageType, CoordRepType >
   DefaultInterpolatorType;
 
-  /** Set the interpolator function. */
+  /** Get/Set the interpolator function. */
   itkSetObjectMacro(Interpolator, InterpolatorType);
-
-  /** Get a pointer to the interpolator function. */
-  itkGetObjectMacro(Interpolator, InterpolatorType);
+  itkGetModifiableObjectMacro(Interpolator, InterpolatorType);
 
   /** The type of the expand factors representation */
   typedef FixedArray< unsigned int, ImageDimension > ExpandFactorsType;
@@ -140,12 +138,12 @@ public:
   virtual void GenerateInputRequestedRegion();
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro( InputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< typename TInputImage::PixelType > ) );
   itkConceptMacro( OutputHasNumericTraitsCheck,
                    ( Concept::HasNumericTraits< OutputPixelType > ) );
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

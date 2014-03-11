@@ -60,7 +60,7 @@ namespace itk
  * \ingroup ITKIOCSV
  */
 
-class ITK_EXPORT CSVFileReaderBase:public LightProcessObject
+class CSVFileReaderBase:public LightProcessObject
 {
 public:
   /** Standard class typedefs */
@@ -130,7 +130,7 @@ public:
   *  the .cxx file or to use the export keyword, which will be removed
   *  from the c++ language.
   */
-  template <class TData>
+  template <typename TData>
   TData ConvertStringToValueType(const std::string str)
   {
     TData value;

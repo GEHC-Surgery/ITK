@@ -32,7 +32,7 @@
  *  at each iteration according to the shift of each step.
  */
 
-template< class TMovingTransform >
+template< typename TMovingTransform >
 int itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated(int numberOfIterations, double shiftOfStep, std::string scalesOption)
 {
   const unsigned int Dimension = TMovingTransform::SpaceDimension;
@@ -83,8 +83,8 @@ int itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated(int numberOfIt
   typedef typename MovingTransformType::ParametersType ParametersType;
 
   // Metric
-  typedef itk::VectorImageToImageMetricTraitsv4< FixedImageType, MovingImageType, FixedImageType, PixelType::Dimension > MetricTraitsType;
-  typedef itk::MeanSquaresImageToImageMetricv4< FixedImageType, MovingImageType, FixedImageType, MetricTraitsType > MetricType;
+  typedef itk::VectorImageToImageMetricTraitsv4< FixedImageType, MovingImageType, FixedImageType, PixelType::Dimension, double > MetricTraitsType;
+  typedef itk::MeanSquaresImageToImageMetricv4< FixedImageType, MovingImageType, FixedImageType, double, MetricTraitsType > MetricType;
   typename MetricType::Pointer metric = MetricType::New();
 
   // Assign images and transforms to the metric.
@@ -229,15 +229,14 @@ int itkAutoScaledGradientDescentRegistrationOnVectorTest(int argc, char ** const
     }
 
   const unsigned int Dimension = 2;
-  int ret1 = EXIT_SUCCESS, ret2 = EXIT_SUCCESS;
 
   std::cout << std::endl << "Optimizing translation transform with shift scales" << std::endl;
   typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
-  ret1 = itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated<TranslationTransformType>(numberOfIterations, shiftOfStep, "shift");
+  int ret1 = itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated<TranslationTransformType>(numberOfIterations, shiftOfStep, "shift");
 
   std::cout << std::endl << "Optimizing translation transform with Jacobian scales" << std::endl;
   typedef itk::TranslationTransform<double, Dimension> TranslationTransformType;
-  ret2 = itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated<TranslationTransformType>(numberOfIterations, 0.0, "jacobian");
+  int ret2 = itkAutoScaledGradientDescentRegistrationOnVectorTestTemplated<TranslationTransformType>(numberOfIterations, 0.0, "jacobian");
 
   if ( ret1 == EXIT_SUCCESS && ret2 == EXIT_SUCCESS )
     {

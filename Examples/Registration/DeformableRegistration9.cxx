@@ -19,7 +19,7 @@
 #include "itkConfigure.h"
 
 
-#ifndef USE_FFTWD
+#ifndef ITK_USE_FFTWD
 #error "This program needs single precision FFTWD to work."
 #endif
 
@@ -201,7 +201,7 @@ int main( int argc, char *argv[] )
       {
       fieldWriter->Update();
       }
-    catch ( itk::ExceptionObject e )
+    catch ( itk::ExceptionObject & e )
       {
       e.Print( std::cerr );
       }

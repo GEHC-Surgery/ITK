@@ -57,10 +57,10 @@ namespace itk
  * \ingroup ITKRegistrationCommon
  * \ingroup ITKTransform
  */
-template< class TTransform,
-          class TFixedImage,
-          class TMovingImage >
-class ITK_EXPORT CenteredTransformInitializer:public Object
+template< typename TTransform,
+          typename TFixedImage,
+          typename TMovingImage >
+class CenteredTransformInitializer:public Object
 {
 public:
   /** Standard class typedefs. */
@@ -128,8 +128,8 @@ public:
   void MomentsOn()  { m_UseMoments = true; }
 
   /** Get() access to the moments calculators */
-  itkGetConstObjectMacro(FixedCalculator,  FixedImageCalculatorType);
-  itkGetConstObjectMacro(MovingCalculator, MovingImageCalculatorType);
+  itkGetModifiableObjectMacro(FixedCalculator, FixedImageCalculatorType);
+  itkGetModifiableObjectMacro(MovingCalculator, MovingImageCalculatorType);
 
 protected:
   CenteredTransformInitializer();
@@ -137,7 +137,7 @@ protected:
 
   void PrintSelf(std::ostream & os, Indent indent) const;
 
-  itkGetObjectMacro(Transform, TransformType);
+  itkGetModifiableObjectMacro(Transform, TransformType);
 
 private:
   CenteredTransformInitializer(const Self &); //purposely not implemented

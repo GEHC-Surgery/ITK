@@ -56,8 +56,8 @@ namespace itk {
  * \ingroup ITKThresholding
  */
 
-template<class TInputImage, class TOutputImage, class TMaskImage=TOutputImage>
-class ITK_EXPORT HistogramThresholdImageFilter :
+template<typename TInputImage, typename TOutputImage, typename TMaskImage=TOutputImage>
+class HistogramThresholdImageFilter :
     public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
@@ -186,17 +186,17 @@ public:
 
   /** Set/Get the calculator to use to compute the threshold */
   itkSetObjectMacro(Calculator, CalculatorType);
-  itkGetObjectMacro(Calculator, CalculatorType);
+  itkGetModifiableObjectMacro(Calculator, CalculatorType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
+  // Begin concept checking
   itkConceptMacro(OutputEqualityComparableCheck,
     (Concept::EqualityComparable<OutputPixelType>));
   itkConceptMacro(InputOStreamWritableCheck,
     (Concept::OStreamWritable<InputPixelType>));
   itkConceptMacro(OutputOStreamWritableCheck,
     (Concept::OStreamWritable<OutputPixelType>));
-  /** End concept checking */
+  // End concept checking
 #endif
 
 protected:

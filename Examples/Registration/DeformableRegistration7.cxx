@@ -21,8 +21,8 @@
 // This example illustrates the use of the \doxygen{BSplineTransform}
 // class for performing registration of two $3D$ images. The example code is
 // for the most part identical to the code presented in
-// Section~\ref{sec:DeformableRegistration}.  The major difference is that this
-// example we set the image dimension to 3 and replace the
+// Section~\ref{sec:BSplinesMultiGridImageRegistration}. The major difference is
+// that this example we set the image dimension to 3 and replace the
 // \doxygen{LBFGSOptimizer} optimizer with the \doxygen{LBFGSBOptimizer}. We
 // made the modification because we found that LBFGS does not behave well when
 // the starting positions is at or close to optimal; instead we used LBFGSB in
@@ -227,7 +227,7 @@ int main( int argc, char *argv[] )
 
   for( unsigned int i=0; i< SpaceDimension; i++ )
     {
-    fixedOrigin = fixedImage->GetOrigin()[i];
+    fixedOrigin[i] = fixedImage->GetOrigin()[i];
     fixedPhysicalDimensions[i] = fixedImage->GetSpacing()[i] *
       static_cast<double>(
       fixedImage->GetLargestPossibleRegion().GetSize()[i] - 1 );

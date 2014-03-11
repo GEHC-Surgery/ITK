@@ -138,8 +138,9 @@ int main( int argc, char *argv[] )
   typedef itk::CastImageFilter< MovingImageType,
                                 InternalImageType >  MovingImageCasterType;
 
-  FixedImageCasterType::Pointer fixedImageCaster   = FixedImageCasterType::New();
-  MovingImageCasterType::Pointer movingImageCaster = MovingImageCasterType::New();
+  FixedImageCasterType::Pointer fixedImageCaster = FixedImageCasterType::New();
+  MovingImageCasterType::Pointer movingImageCaster
+                                                = MovingImageCasterType::New();
 
   fixedImageCaster->SetInput( fixedImageReader->GetOutput() );
   movingImageCaster->SetInput( movingImageReader->GetOutput() );
@@ -233,7 +234,7 @@ int main( int argc, char *argv[] )
   typedef itk::SymmetricForcesDemonsRegistrationFilter<
                                 InternalImageType,
                                 InternalImageType,
-                                DisplacementFieldType>   RegistrationFilterType;
+                                DisplacementFieldType> RegistrationFilterType;
   RegistrationFilterType::Pointer filter = RegistrationFilterType::New();
   // Software Guide : EndCodeSnippet
 
@@ -369,8 +370,8 @@ int main( int argc, char *argv[] )
   // \end{itemize}
   //
   // \begin{figure} \center
-  // \includegraphics[width=0.44\textwidth]{DeformableRegistration2CheckerboardBefore.eps}
-  // \includegraphics[width=0.44\textwidth]{DeformableRegistration2CheckerboardAfter.eps}
+  // \includegraphics[width=0.44\textwidth]{DeformableRegistration2CheckerboardBefore}
+  // \includegraphics[width=0.44\textwidth]{DeformableRegistration2CheckerboardAfter}
   // \itkcaption[Demon's deformable registration output]{Checkerboard comparisons
   // before and after demons-based deformable registration.}
   // \label{fig:DeformableRegistration3Output}

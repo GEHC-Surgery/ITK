@@ -66,8 +66,8 @@ namespace itk
  * \ingroup ITKMetricsv4
  */
 
-template<class TFixedPointSet,  class TMovingPointSet>
-class ITK_EXPORT PointSetToPointSetMetricv4
+template<typename TFixedPointSet,  typename TMovingPointSet>
+class PointSetToPointSetMetricv4
 : public ObjectToObjectMetric<TFixedPointSet::PointDimension, TMovingPointSet::PointDimension>
 {
 public:
@@ -147,8 +147,8 @@ public:
   typedef typename PointsContainer::ElementIdentifier  PointIdentifier;
 
   /** Typedef for points locator class to speed up finding neighboring points */
-  typedef PointsLocator<PointIdentifier, itkGetStaticConstMacro( PointDimension ), CoordRepType, PointsContainer> PointsLocatorType;
-  typedef typename PointsLocatorType::NeighborsIdentifierType    NeighborsIdentifierType;
+  typedef PointsLocator< PointsContainer>                     PointsLocatorType;
+  typedef typename PointsLocatorType::NeighborsIdentifierType NeighborsIdentifierType;
 
   typedef PointSet<FixedPixelType, itkGetStaticConstMacro( PointDimension )>    FixedTransformedPointSetType;
   typedef PointSet<MovingPixelType, itkGetStaticConstMacro( PointDimension )>   MovingTransformedPointSetType;
@@ -171,23 +171,18 @@ public:
   typedef typename Superclass::VirtualPointSetType    VirtualPointSetType;
   typedef typename Superclass::VirtualPointSetPointer VirtualPointSetPointer;
 
-  /** Connect the fixed pointset.  */
+  /** Get/Set the fixed pointset.  */
   itkSetConstObjectMacro( FixedPointSet, FixedPointSetType );
-
-  /** Get the fixed point set. */
-  itkGetConstObjectMacro( FixedPointSet, FixedPointSetType );
+  itkGetConstObjectMacro(FixedPointSet, FixedPointSetType );
 
   /** Get the moving transformed point set.  */
-  itkGetConstObjectMacro( FixedTransformedPointSet, FixedTransformedPointSetType );
+  itkGetModifiableObjectMacro(FixedTransformedPointSet, FixedTransformedPointSetType );
 
-  /** Connect the moving point set.  */
-  itkSetObjectMacro( MovingPointSet, MovingPointSetType );
-
-  /** Get the moving point set. */
-  itkGetConstObjectMacro( MovingPointSet, MovingPointSetType );
+  /** Get/Set the moving point set.  */
+  itkSetConstObjectMacro( MovingPointSet, MovingPointSetType );
 
   /** Get the moving transformed point set.  */
-  itkGetConstObjectMacro( MovingTransformedPointSet, MovingTransformedPointSetType );
+  itkGetModifiableObjectMacro(MovingTransformedPointSet, MovingTransformedPointSetType );
 
   /**
    * For now return the number of points used in the value/derivative calculations.
@@ -254,7 +249,7 @@ public:
    * Get the virtual point set, derived from the fixed point set.
    * If the virtual point set has not yet been derived, it will be
    * in this call. */
-  const VirtualPointSetType * GetVirtualTransformedPointSet();
+  const VirtualPointSetType * GetVirtualTransformedPointSet( void ) const;
 
   /**
    * Initialize the metric by making sure that all the components
