@@ -70,10 +70,8 @@ set(ITKCommon_LIBRARIES ITKCommon)
 
 # TODO: Make CUDA support optional based on ITK_USE_GPU (or add a option like ITK_USE_CUDA)
 #if (ITK_USE_GPU)
-  list(APPEND ITKCommon_LIBRARIES ITKCommon cudart cuda)
+  list(APPEND ITKCommon_LIBRARIES ITKCommon ${CUDA_CUDART_LIBRARY})
   set(ITKCommon_SYSTEM_INCLUDE_DIRS ${CUDA_INCLUDE_DIRS})
-  get_filename_component(CUDA_LIB_DIR "${CUDA_CUDART_LIBRARY}" PATH)
-  set(ITKCommon_SYSTEM_LIBRARY_DIRS ${CUDA_LIB_DIR})
 #endif()
 
 itk_module_impl()
