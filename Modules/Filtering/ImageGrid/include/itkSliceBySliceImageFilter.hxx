@@ -184,6 +184,8 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
 
   InternalRegionType internalOutputRegion;
   InternalRegionType internalInputRegion;
+  InternalSpacingType internalInputSpacing;
+  InternalPointType internalInputOrigin;
 
   // copy the requested region to the internal slice region in
   // dimension order
@@ -200,6 +202,8 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
     internalInputRegion.SetSize( internal_i, this->GetInput(0)->GetRequestedRegion().GetSize(i) );
     internalInputRegion.SetIndex( internal_i, this->GetInput(0)->GetRequestedRegion().GetIndex(i) );
 
+    internalInputSpacing[internal_i] = this->GetInput(0)->GetSpacing()[i];
+    internalInputOrigin[internal_i] = this->GetInput(0)->GetOrigin()[i];
     }
 
   ProgressReporter progress(this, 0, requestedSize[m_Dimension]);
@@ -252,6 +256,8 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
       {
       internalInputs[i]->SetRegions( internalInputRegion );
       internalInputs[i]->Allocate();
+      internalInputs[i]->SetSpacing(internalInputSpacing);
+      internalInputs[i]->SetOrigin(internalInputOrigin);
       m_InputFilter->SetInput(i, internalInputs[i]);
 
       ImageAlgorithm::Copy( this->GetInput( i ), internalInputs[i].GetPointer(), inputRegion, internalInputRegion );
