@@ -184,8 +184,6 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
 
   InternalRegionType internalOutputRegion;
   InternalRegionType internalInputRegion;
-  InternalSpacingType internalInputSpacing;
-  InternalPointType internalInputOrigin;
 
   // copy the requested region to the internal slice region in
   // dimension order
@@ -201,9 +199,6 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
 
     internalInputRegion.SetSize( internal_i, this->GetInput(0)->GetRequestedRegion().GetSize(i) );
     internalInputRegion.SetIndex( internal_i, this->GetInput(0)->GetRequestedRegion().GetIndex(i) );
-
-    internalInputSpacing[internal_i] = this->GetInput(0)->GetSpacing()[i];
-    internalInputOrigin[internal_i] = this->GetInput(0)->GetOrigin()[i];
     }
 
   ProgressReporter progress(this, 0, requestedSize[m_Dimension]);
@@ -211,6 +206,33 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
   // allocate a vector to store internal image
   typedef typename InternalInputImageType::Pointer InternalInputImagePointer;
   std::vector< InternalInputImagePointer > internalInputs( this->GetNumberOfIndexedInputs() );
+
+  typename InputImageType::IndexType inputOriginIndex;
+  inputOriginIndex.Fill(0);
+  for ( unsigned int i = 0; i < numberOfIndexedInputs; i++ )
+    {
+    // Passing through a N-1 direction matrix to the internal slice filter is
+    // not supported to avoid dealing with singularities, but we still account
+    // for the direction matrix when collapsing the origin to an N-1 point.
+    typename InputImageType::PointType inputOrigin;
+    this->GetInput(i)->TransformIndexToPhysicalPoint(inputOriginIndex, inputOrigin);
+
+    InternalSpacingType internalInputSpacing;
+    InternalPointType internalInputOrigin;
+    unsigned int internal_dim = 0;
+    for ( unsigned int dim = 0; internal_dim < InternalImageDimension; ++dim, ++internal_dim )
+      {
+      if ( dim == this->m_Dimension )
+        {
+        ++dim;
+        }
+      internalInputSpacing[internal_dim] = this->GetInput(i)->GetSpacing()[dim];
+      internalInputOrigin[internal_dim] = inputOrigin[dim];
+      }
+    internalInputs[i]->SetSpacing(internalInputSpacing);
+    internalInputs[i]->SetOrigin(internalInputOrigin);
+    }
+
 
   // keep the internal input around each iteration, because if the
   // fitlers are not run inplace, we don't need to reallocate each iteration
@@ -256,8 +278,6 @@ SliceBySliceImageFilter< TInputImage, TOutputImage, TInputFilter, TOutputFilter,
       {
       internalInputs[i]->SetRegions( internalInputRegion );
       internalInputs[i]->Allocate();
-      internalInputs[i]->SetSpacing(internalInputSpacing);
-      internalInputs[i]->SetOrigin(internalInputOrigin);
       m_InputFilter->SetInput(i, internalInputs[i]);
 
       ImageAlgorithm::Copy( this->GetInput( i ), internalInputs[i].GetPointer(), inputRegion, internalInputRegion );
